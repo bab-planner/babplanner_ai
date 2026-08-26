@@ -29,6 +29,11 @@ TEST_ENV = {
 os.environ.update(TEST_ENV)
 os.environ.pop("AI_MAX_IMAGE_BYTES", None)
 
+#: 이 환경의 socket 생성이 간헐적으로 내는 오류. 다른 OSError는 다시
+#: 시도하지 않는다.
+WINDOWS_INVALID_POINTER = 10014
+MAX_CLIENT_ATTEMPTS = 3
+
 
 def png_bytes(size: tuple[int, int] = (8, 8)) -> bytes:
     """합성 PNG. 개인정보가 담긴 실제 사진을 쓰지 않는다."""
@@ -60,14 +65,21 @@ def client() -> Iterator[TestClient]:
 
     with ExitStack() as stack:
         test_client = None
-        # socketpair가 간헐적으로 실패하는 환경이라 몇 번 다시 시도한다.
-        # 여기서 한 번 실패하면 client를 쓰는 테스트가 전부 무너진다.
-        for attempt in range(5):
+        # 이 환경은 socketpair 생성 자체가 간헐적으로 WinError 10014로
+        # 실패한다. 여기서 한 번 실패하면 client를 쓰는 테스트가 전부
+        # 무너지므로 그 오류에 한해 다시 시도한다.
+        #
+        # 다시 시도하는 범위는 client를 만드는 것뿐이다. 요청 결과나 단언
+        # 실패는 다시 하지 않는다. 그건 감춰야 할 것이 아니라 봐야 할 것이다.
+        for attempt in range(MAX_CLIENT_ATTEMPTS):
             try:
                 test_client = stack.enter_context(TestClient(create_app()))
                 break
-            except OSError:
-                if attempt == 4:
+            except OSError as error:
+                if (
+                    getattr(error, "winerror", None) != WINDOWS_INVALID_POINTER
+                    or attempt == MAX_CLIENT_ATTEMPTS - 1
+                ):
                     raise
         yield test_client
 
