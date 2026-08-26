@@ -60,7 +60,7 @@ def test_menu_id_reaches_the_estimator(client: TestClient) -> None:
                 decision=WasteAnalysisDecision.APPROVED,
                 waste_rate=0.1,
                 confidence=0.9,
-                model_version="fixture-waste-v1",
+                model_version="fastapi-fixture-waste-v1",
             )
 
     client.app.dependency_overrides[api.get_estimator] = lambda: Recording()
@@ -80,7 +80,7 @@ def test_image_bytes_reach_the_estimator(client: TestClient) -> None:
         def estimate(self, image: bytes, menu_id: int) -> WasteEstimate:
             seen.append(image)
             return WasteEstimate(
-                decision=WasteAnalysisDecision.REJECTED, model_version="fixture-waste-v1"
+                decision=WasteAnalysisDecision.REJECTED, model_version="fastapi-fixture-waste-v1"
             )
 
     client.app.dependency_overrides[api.get_estimator] = lambda: Recording()
@@ -165,6 +165,24 @@ def test_model_version_marks_itself_as_a_fixture(client: TestClient) -> None:
         assert misleading not in body["modelVersion"]
 
 
+def test_model_version_names_this_process(client: TestClient) -> None:
+    # 서비스 백엔드 안의 개발용 분석기와 구분돼야, 저장된 결과만 보고도
+    # 어느 쪽을 거쳐 왔는지 알 수 있다.
+    body = analyze(client).json()
+
+    assert body["modelVersion"] == "fastapi-fixture-waste-v1"
+    assert body["modelVersion"].startswith("fastapi-")
+
+
+def test_backend_fixture_name_is_not_used_here() -> None:
+    source = "".join(
+        inspect.getsource(module) for module in (fixture_estimator, api, service)
+    )
+
+    # 이 이름은 서비스 백엔드 쪽 fixture 것이다.
+    assert "spring-fixture-waste-v1" not in source
+
+
 def test_approved_must_carry_rate_and_confidence(client: TestClient) -> None:
     body = analyze(client).json()
 
@@ -177,7 +195,7 @@ def test_rejected_may_omit_rate_and_confidence(client: TestClient) -> None:
     class Rejecting:
         def estimate(self, image: bytes, menu_id: int) -> WasteEstimate:
             return WasteEstimate(
-                decision=WasteAnalysisDecision.REJECTED, model_version="fixture-waste-v1"
+                decision=WasteAnalysisDecision.REJECTED, model_version="fastapi-fixture-waste-v1"
             )
 
     client.app.dependency_overrides[api.get_estimator] = lambda: Rejecting()
@@ -213,7 +231,7 @@ def test_out_of_range_estimate_is_rejected_by_the_model() -> None:
             decision=WasteAnalysisDecision.APPROVED,
             waste_rate=1.5,
             confidence=0.9,
-            model_version="fixture-waste-v1",
+            model_version="fastapi-fixture-waste-v1",
         )
 
 

@@ -8,11 +8,16 @@ from __future__ import annotations
 
 from babplanner_ai.waste.models import WasteAnalysisDecision, WasteEstimate
 
-#: 서비스 백엔드의 개발용 분석기와 같은 값을 쓴다. 두 곳의 개발 결과가
-#: 달라 보이면 어느 쪽을 거쳐 왔는지 헷갈린다.
 FIXTURE_WASTE_RATE = 0.15
 FIXTURE_CONFIDENCE = 0.92
-FIXTURE_MODEL_VERSION = "fixture-waste-v1"
+
+#: 서비스 백엔드에도 이름이 같은 개발용 분석기가 있다. 두 값이 같으면
+#: 저장된 결과만 보고 어느 쪽을 거쳐 왔는지 알 수 없어, 설정이 잘못돼
+#: HTTP 경로가 아닌 백엔드 내부 fixture를 쓰고 있어도 알아차리지 못한다.
+#: 그래서 어느 프로세스가 낸 값인지 이름에 드러낸다.
+#:
+#: 실제 모델이 생기면 이 값은 모델 release 식별자로 바뀐다.
+FIXTURE_MODEL_VERSION = "fastapi-fixture-waste-v1"
 
 
 class FixtureWasteEstimator:

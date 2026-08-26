@@ -9,6 +9,7 @@ from __future__ import annotations
 import io
 import os
 from collections.abc import Iterator
+from contextlib import ExitStack
 
 import pytest
 from fastapi.testclient import TestClient
@@ -57,7 +58,17 @@ def client() -> Iterator[TestClient]:
     os.environ.pop("AI_MAX_IMAGE_BYTES", None)
     get_settings.cache_clear()
 
-    with TestClient(create_app()) as test_client:
+    with ExitStack() as stack:
+        test_client = None
+        # socketpair가 간헐적으로 실패하는 환경이라 몇 번 다시 시도한다.
+        # 여기서 한 번 실패하면 client를 쓰는 테스트가 전부 무너진다.
+        for attempt in range(5):
+            try:
+                test_client = stack.enter_context(TestClient(create_app()))
+                break
+            except OSError:
+                if attempt == 4:
+                    raise
         yield test_client
 
     get_settings.cache_clear()
