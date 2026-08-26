@@ -29,3 +29,23 @@
 ## 테스트
 
     pytest
+
+## 데이터셋 도구
+
+아직 모델이 없다. 먼저 무엇을 맞히려는 것인지부터 정해 두었다.
+
+정답은 질량비다.
+
+    waste_rate = leftover_edible_mass_g / served_edible_mass_g
+
+사진의 면적 비율도, 사람의 눈대중도 정답으로 쓰지 않는다. 자세한 것은
+`docs/waste_ground_truth_protocol.md`.
+
+    python -m babplanner_ai.dataset validate --manifest ... --root ...
+    python -m babplanner_ai.dataset summarize --manifest ...
+    python -m babplanner_ai.dataset make-splits --manifest ... --out ...
+
+- `docs/waste_ground_truth_protocol.md` — 잔반률의 정의와 측정 절차
+- `docs/waste_dataset_spec.md` — 매니페스트 열, 개인정보 규칙, 분할 기준
+- `docs/waste_evaluation_protocol.md` — 지표와 Go/No-Go
+- `data/README.md` — 데이터 배치와 커밋 금지 규칙
