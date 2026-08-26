@@ -265,6 +265,16 @@ python -m babplanner_ai.collection close-session --root data/private --session c
 
 ---
 
+## 12. 파일럿을 마친 뒤
+
+[Pilot-0 보고서 양식](pilot0_waste_collection_report.md)을 채운다. 집계값만
+적고 참가자 번호 목록이나 실제 사진은 넣지 않는다.
+
+마지막에 Data Gate를 판단한다. 여기서 "모델 단계로 넘어가도 되는가"가
+정해진다.
+
+---
+
 ## 자주 나오는 질문
 
 **Q. 식기를 빼고 음식만 저울에 올리면 안 되나요?**
