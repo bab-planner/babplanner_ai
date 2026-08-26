@@ -11,10 +11,20 @@
 ```
 data/
 ├─ README.md          # 이 파일. 저장소에 있는 유일한 것
-├─ raw/               # 수집 원본. 커밋 금지
-├─ processed/         # 학습용 사본(EXIF 제거 등). 커밋 금지
-└─ private/           # 그 외 반출 금지 자료. 커밋 금지
+├─ private/           # 현장 수집. 커밋 금지
+│  └─ sessions/<cs_...>/
+│     ├─ session.json          # 회차 정보
+│     ├─ tare_profiles.jsonl   # 식기 무게
+│     ├─ journal.jsonl         # 원시 기록(덧붙이기만)
+│     ├─ raw_images/           # 원본 사진. 절대 커밋 금지
+│     ├─ sanitized_images/     # EXIF 제거 사본
+│     └─ exports/              # 학습용 매니페스트
+├─ raw/               # 외부에서 받은 원본. 커밋 금지
+└─ processed/         # 정리한 데이터셋. 커밋 금지
 ```
+
+현장 수집은 도구가 이 구조를 만들어 준다. 손으로 만들지 않는다. 절차는
+[현장 운영 안내](../docs/waste_pilot_collection_runbook.md).
 
 각 데이터셋은 이런 모양이다.
 
@@ -39,6 +49,17 @@ sample_id,image_path,menu_id,capture_session_id,served_edible_mass_g,leftover_ed
 ```
 
 ## 도구
+
+### 현장 수집
+
+```bash
+python -m babplanner_ai.collection init-session --root data/private ...
+python -m babplanner_ai.collection add-sample   --root data/private ...
+python -m babplanner_ai.collection qc           --root data/private ...
+python -m babplanner_ai.collection export       --root data/private ...
+```
+
+### 데이터셋 점검
 
 ```bash
 # 점검 — 문제가 있으면 0이 아닌 값으로 끝난다

@@ -49,3 +49,21 @@
 - `docs/waste_dataset_spec.md` — 매니페스트 열, 개인정보 규칙, 분할 기준
 - `docs/waste_evaluation_protocol.md` — 지표와 Go/No-Go
 - `data/README.md` — 데이터 배치와 커밋 금지 규칙
+
+## 현장 수집 도구
+
+파일럿에서 실제 정답을 모으는 쪽이다. 저울 숫자와 사진을 받아 원시 기록으로
+남기고, EXIF를 벗긴 사본을 만들고, 위 계약에 맞는 매니페스트로 내보낸다.
+
+    python -m babplanner_ai.collection init-session --root data/private ...
+    python -m babplanner_ai.collection add-sample --root data/private ...
+    python -m babplanner_ai.collection qc --root data/private ...
+    python -m babplanner_ai.collection export --root data/private ...
+
+원시 기록과 학습용 매니페스트를 나눠 둔다. 잘못 적은 값을 고치거나 정답
+정의가 바뀌어도 원래 숫자에서 다시 만들 수 있어야 하기 때문이다.
+
+- `docs/waste_pilot_collection_runbook.md` — 현장 담당자용 절차
+- `docs/waste_pilot_checklist.md` — 인쇄용 체크리스트
+
+**아직 실제 파일럿 데이터는 없다.** 저장소에 있는 것은 합성 fixture뿐이다.
