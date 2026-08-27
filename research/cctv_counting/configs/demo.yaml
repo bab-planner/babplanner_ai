@@ -44,7 +44,7 @@ line:
   anchor: BOTTOM_CENTER
   band: 0.01
   min_confirm_distance: 0.03
-  cooldown_frames: 15
+  cooldown_seconds: 0.5
 
 reliability:
   min_mean_confidence: 0.45

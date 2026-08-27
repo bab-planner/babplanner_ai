@@ -12,6 +12,7 @@ from cctv_counting.config import (
     ConfigError,
     Device,
     LineConfig,
+    ReliabilityConfig,
     RoiConfig,
     TrackerConfig,
     config_to_dict,
@@ -169,3 +170,35 @@ def test_shipped_baselines_share_detector_settings():
     assert detection.detector == tracking.detector
     assert detection.line == tracking.line
     assert detection.roi == tracking.roi
+
+
+def test_cooldown_is_configured_in_seconds():
+    """프레임 수 기반 설정이 되살아나면 여기서 걸린다."""
+    line = LineConfig()
+    assert hasattr(line, "cooldown_seconds")
+    assert not hasattr(line, "cooldown_frames")
+    assert line.cooldown_seconds == pytest.approx(0.5)
+
+
+def test_negative_cooldown_seconds_is_rejected():
+    with pytest.raises(ValidationError):
+        LineConfig(cooldown_seconds=-0.1)
+
+
+def test_reliability_config_has_no_crowding_knob():
+    """혼잡도는 신뢰도 축이 아니다. 설정에서도 되살릴 수 없어야 한다."""
+    with pytest.raises(ValidationError):
+        ReliabilityConfig(crowded_track_count=30)
+
+
+def test_shipped_configs_use_seconds_for_cooldown():
+    yaml = pytest.importorskip("yaml")
+    from pathlib import Path
+
+    configs = Path(__file__).resolve().parents[1] / "configs"
+    for path in sorted(configs.glob("*.yaml")):
+        text = path.read_text(encoding="utf-8")
+        assert "cooldown_frames" not in text, path.name
+        assert "crowded_track_count" not in text, path.name
+        payload = yaml.safe_load(text)
+        assert "cooldown_seconds" in payload["line"], path.name

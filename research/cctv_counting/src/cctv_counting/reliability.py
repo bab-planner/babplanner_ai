@@ -4,20 +4,23 @@
 사람이 반쯤만 잡히는 프레임과, 잘 보이는 프레임이 같은 값으로 나가면 안
 된다. 그래서 관측마다 신뢰 신호를 같이 낸다.
 
-**confidence를 정확도로 읽지 마라.** detector가 낸 confidence 0.8은 "이 상자가
-사람일 가능성에 대해 모델이 매긴 점수"이지 "사람 수를 80% 맞혔다"가 아니다.
-둘은 다른 축이다. 실제로 이런 일이 일어난다.
+**여기는 detector가 낸 신뢰도와 상자의 유무만 본다.** 장면이 어떤 장면인지는
+보지 않는다. 사람이 많다, 어둡다, 가려져 있다 같은 것은 **scene condition**
+이고 별개의 축이다. 두 축을 한 필드에 담으면 그 필드는 아무것도 뜻하지 않게
+된다. 조건 태그는 평가 metadata 쪽(`groundtruth.py`의 condition 열)에서
+다루고, 데이터셋이 제공했거나 사람이 직접 붙인 경우에만 쓴다.
 
-- 사람이 겹쳐 있어 두 명을 한 상자로 잡았다. 그 상자의 confidence는 높다.
-  숫자는 확신하지만 개수는 틀렸다.
-- 사람이 아닌 것을 사람으로 잡았는데 confidence가 0.9다.
-- 사람이 아예 안 잡혔다. 못 잡은 것에는 confidence 자체가 없다. **누락은
-  이 신호로 절대 알 수 없다.**
+**특히 "사람이 많다"는 여기 들어오지 않는다.** 이유가 셋이다.
 
-그러니 여기 있는 flag는 "이 값이 틀렸다"가 아니라 "이 프레임은 조건이 나쁘니
-자동으로 믿지 말고 사람이 확인할 후보로 두자"라는 뜻이다. 이 flag와 실제
-계수 오차 사이의 관계는 정답이 붙은 데이터로 재 보기 전에는 모른다. 그것이
-RQ3이고, 아직 측정하지 않았다.
+1. 혼잡도와 신뢰도는 다른 개념이다. 붐빈다고 관측이 자동으로 못 믿을
+   것이 되지는 않는다.
+2. 백엔드에 이미 `CROWDED`라는 업무 등급이 있다. 같은 이름을 다른 뜻으로
+   쓰면 반드시 섞인다.
+3. 몇 명부터 붐비는 것인지는 급식소 좌석 수에 달렸고, 그 임계값은 아직
+   정해진 적이 없다. 정해지지 않은 정책을 모델 출력에 박을 수 없다.
+
+**이것은 보정된(calibrated) 불확실성 추정이 아니다.** heuristic 신호다. 이
+신호가 실제 계수 오차와 상관이 있는지는 아직 재지 않았다. 그것이 RQ3이다.
 """
 
 from __future__ import annotations
@@ -32,22 +35,21 @@ class ReliabilityError(ValueError):
 
 
 class ReliabilityFlag(str, Enum):
-    """이 관측을 어떻게 다룰 것인가."""
+    """detector 출력만 보고 매긴, 이 관측을 자동으로 믿을지에 대한 신호."""
 
-    #: 조건이 나쁘다고 볼 이유가 없다.
+    #: 상자가 있고 신뢰도가 낮다고 볼 이유가 없다.
     OK = "OK"
 
     #: 상자는 있는데 신뢰도가 낮다. 조명, 가림, 원거리에서 잘 나온다.
     LOW_CONFIDENCE = "LOW_CONFIDENCE"
 
-    #: 아무도 없다. 이것은 낮은 신뢰도와 다르다. 빈 식당일 수도 있고
-    #: detector가 전부 놓친 것일 수도 있는데, 그 둘을 여기서는 구분할 수
-    #: 없다. 구분할 수 없다는 사실 자체를 값으로 남긴다.
+    #: detector가 유효한 사람 상자를 하나도 내지 않았다.
+    #:
+    #: 이 값은 "식당이 비었다"가 아니고 "모델이 실패했다"도 아니다. 그 둘을
+    #: 런타임에서 구분할 방법이 없다는 뜻일 뿐이다. 실제로 아무도 없었을
+    #: 수도 있고, 있었는데 전부 놓쳤을 수도 있다. 구분할 수 없다는 사실
+    #: 자체를 값으로 남긴다.
     NO_DETECTION = "NO_DETECTION"
-
-    #: 사람이 너무 많아 상자가 서로 겹친다. 이 구간의 계수는 대체로
-    #: 과소 추정이다.
-    CROWDED = "CROWDED"
 
 
 @dataclass(frozen=True)
@@ -63,8 +65,8 @@ class ReliabilitySignal:
     def is_low_reliability(self) -> bool:
         """downstream에서 보류 후보로 볼 것인가.
 
-        NO_DETECTION을 낮은 신뢰로 묶는 이유는, 빈 화면과 전부 놓친 화면을
-        구분할 수 없기 때문이다. 구분할 수 없으면 자동으로 믿지 않는다.
+        NO_DETECTION을 여기 묶는 이유는, 빈 화면과 전부 놓친 화면을 구분할
+        수 없기 때문이다. 구분할 수 없으면 자동으로 믿지 않는다.
         """
         return self.flag is not ReliabilityFlag.OK
 
@@ -74,23 +76,17 @@ class ReliabilityPolicy:
     """어떤 조건에서 낮은 신뢰로 볼 것인가.
 
     min_mean_confidence: 평균 신뢰도가 이 아래면 LOW_CONFIDENCE.
-    crowded_track_count: 동시 track이 이 이상이면 CROWDED. None이면 끈다.
 
     기본값은 임의로 정한 것이고 근거가 되는 측정이 아직 없다. 정답 데이터가
-    생기면 이 값들은 재조정 대상이다.
+    생기면 재조정 대상이다.
     """
 
     min_mean_confidence: float = 0.45
-    crowded_track_count: int | None = None
 
     def __post_init__(self) -> None:
         if not 0.0 <= self.min_mean_confidence <= 1.0:
             raise ReliabilityError(
                 f"min_mean_confidence는 0~1이어야 합니다: {self.min_mean_confidence}"
-            )
-        if self.crowded_track_count is not None and self.crowded_track_count < 1:
-            raise ReliabilityError(
-                f"crowded_track_count는 1 이상이어야 합니다: {self.crowded_track_count}"
             )
 
 
@@ -104,6 +100,11 @@ def evaluate_reliability(
     confidences가 비면 평균과 최소는 None이다. 0.0으로 채우지 않는다. 0.0은
     "신뢰도가 0이었다"로 읽히고, 그것은 "잴 것이 없었다"와 다르다. 나중에
     평균을 내면 그 차이가 그대로 지표를 왜곡한다.
+
+    **평균 신뢰도가 높아도 누락은 전혀 잡히지 않는다.** 실제로 10명이 있는데
+    5명만 잡았고 그 5개의 신뢰도가 0.95라면, 평균 신뢰도는 높고 flag는 OK이며
+    계수는 절반이다. 못 잡은 것에는 confidence 자체가 없기 때문이다. 이 함수의
+    출력은 그런 상황에 대해 아무것도 말해 주지 않는다.
     """
     if active_track_count < 0:
         raise ReliabilityError(
@@ -125,16 +126,11 @@ def evaluate_reliability(
 
     mean_confidence = sum(confidences) / len(confidences)
     min_confidence = min(confidences)
-
-    if (
-        policy.crowded_track_count is not None
-        and active_track_count >= policy.crowded_track_count
-    ):
-        flag = ReliabilityFlag.CROWDED
-    elif mean_confidence < policy.min_mean_confidence:
-        flag = ReliabilityFlag.LOW_CONFIDENCE
-    else:
-        flag = ReliabilityFlag.OK
+    flag = (
+        ReliabilityFlag.LOW_CONFIDENCE
+        if mean_confidence < policy.min_mean_confidence
+        else ReliabilityFlag.OK
+    )
 
     return ReliabilitySignal(
         mean_detection_confidence=mean_confidence,

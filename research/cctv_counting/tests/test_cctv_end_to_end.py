@@ -48,7 +48,7 @@ def _config(**overrides) -> CctvConfig:
             "start": [0.0, 0.5],
             "end": [1.0, 0.5],
             "in_direction": "NEGATIVE",
-            "cooldown_frames": 10,
+            "cooldown_seconds": 0.4,
         },
         "window": {"enabled": True, "seconds": 1.0},
     }

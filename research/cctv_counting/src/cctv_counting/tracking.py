@@ -5,7 +5,37 @@
 같은 사람으로 이어 붙여야만 셀 수 있다. 이 둘은 다른 질문이고, 추적은 두
 번째 질문의 전제다.
 
-**왜 ByteTrack 계열인가.**
+**이것은 ByteTrack 구현이 아니다.**
+
+여기 있는 것은 ByteTrack의 high/low-confidence 2단계 연결 **아이디어에서
+영감을 받은** 별도 tracker다. 원 저자의 코드를 옮기거나 포팅한 것이 아니고,
+원 알고리즘을 재현한 것도 아니다. 이 구분을 흐리면 나중에 나올 숫자가
+ByteTrack의 성능으로 읽힌다. 그것은 사실이 아니다.
+
+    원 논문   Zhang et al., ByteTrack: Multi-Object Tracking by
+              Associating Every Detection Box, ECCV 2022
+    원 구현   ifzhang/ByteTrack (MIT). 여기서 코드를 가져오지 않았다.
+
+**빌려온 것은 하나뿐이다.** 신뢰도가 높은 상자로 먼저 잇고, 남은 track을
+신뢰도가 낮은 상자로 한 번 더 구제한다는 연결 전략.
+
+**나머지는 다르다.**
+
+    ByteTrack 원본                여기
+    ─────────────────────────────────────────────────────
+    Kalman filter                 직전 프레임 이동량 등속 외삽
+    Hungarian 최적 할당           IoU 내림차순 greedy 매칭
+
+단순화한 이유는 이 baseline의 목적에서 나온다. 익명 계수가 목적이고, 가벼운
+시연이 필요하고, 단위 테스트가 결정적이어야 하고, re-identification은 하지
+않기로 했다. numpy/scipy 없이 표준 라이브러리만으로 돌면 계수 로직 전체를
+무거운 의존성 없이 그대로 검증할 수 있다.
+
+**단순화가 더 빠르다거나 원본과 같은 성능이라고 주장하지 않는다.** 재 본 적이
+없다. 두 방식을 나란히 돌려 비교하는 것은 벤치마크 단계의 할 일이고,
+reports/cctv_baseline.md 의 다음 실험 목록에 있다.
+
+**왜 이 계열인가.**
 
 - 외형 특징(re-id embedding)을 쓰지 않는다. 사람을 식별하지 않겠다는 이
   프로젝트의 제약과 정확히 맞는다. 상자의 위치만으로 잇는다.
@@ -13,22 +43,6 @@
   겹치는 장면에서 가려진 사람의 신뢰도가 잠깐 떨어졌다고 track이 끊기면,
   같은 사람이 새 id를 받고 입장 인원이 부풀려진다.
 - detector 출력만 있으면 되고 별도 학습이 필요 없다. baseline으로 적당하다.
-- 실시간에 가깝게 돈다. 서비스에 붙일 것이므로 중요하다.
-
-원 논문: Zhang et al., ByteTrack: Multi-Object Tracking by Associating Every
-Detection Box, ECCV 2022. 공식 구현(ifzhang/ByteTrack)은 MIT다.
-
-**원 구현과 다른 점.** 여기 있는 것은 공식 구현을 옮긴 것이 아니라 BYTE의
-연결 규칙을 이 저장소 안에서 다시 쓴 것이다. 의도적으로 두 군데를 단순화했다.
-
-1. Kalman filter 대신 등속 외삽을 쓴다. 직전 두 프레임의 중심 이동량을
-   그대로 다음 프레임에 더한다.
-2. Hungarian 최적 할당 대신 IoU 내림차순 greedy 매칭을 쓴다.
-
-둘 다 numpy/scipy 없이 표준 라이브러리만으로 돌리기 위한 선택이고, core
-로직을 무거운 의존성 없이 그대로 단위 테스트할 수 있게 하는 것이 목적이다.
-그래서 여기서 나온 수치를 ByteTrack 논문 성능으로 읽으면 안 된다. 대가는
-reports/cctv_baseline.md 의 한계 절에 적어 둔다.
 """
 
 from __future__ import annotations
@@ -154,8 +168,8 @@ def greedy_match(
 
 
 @dataclass
-class ByteAssociationTracker:
-    """BYTE 방식 2단계 연결.
+class ByteTrackInspiredTracker:
+    """ByteTrack에서 영감을 받은 2단계 IoU 연결. ByteTrack 자체가 아니다.
 
     high_threshold: 이 이상이면 믿을 만한 상자. 새 track은 여기서만 생긴다.
     low_threshold:  이 미만은 아예 버린다. 그 사이는 2단계에서만 쓴다.

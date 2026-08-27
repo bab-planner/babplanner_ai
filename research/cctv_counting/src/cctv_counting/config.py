@@ -132,7 +132,10 @@ class LineConfig(Strict):
 
     band: float = Field(default=0.01, ge=0.0, le=1.0)
     min_confirm_distance: float = Field(default=0.03, ge=0.0, le=1.0)
-    cooldown_frames: int = Field(default=15, ge=0)
+    #: 사건을 낸 뒤 이만큼은 같은 track을 다시 세지 않는다. 프레임 수가
+    #: 아니라 초다. 프레임 수로 두면 같은 설정 파일이 10fps 영상과 60fps
+    #: 영상에서 서로 다른 정책이 된다.
+    cooldown_seconds: float = Field(default=0.5, ge=0.0)
 
     @model_validator(mode="after")
     def _valid(self) -> LineConfig:
@@ -161,8 +164,14 @@ class LineConfig(Strict):
 
 
 class ReliabilityConfig(Strict):
+    """detector 신뢰도만 본다.
+
+    장면이 얼마나 붐비는지는 여기 없다. 혼잡도와 신뢰도는 다른 축이고,
+    백엔드의 CROWDED 등급과 이름이 겹치며, 몇 명부터 붐비는지는 좌석 수에
+    달렸는데 그 임계값이 아직 없다. 조건 태그는 평가 metadata 쪽에서 다룬다.
+    """
+
     min_mean_confidence: float = Field(default=0.45, ge=0.0, le=1.0)
-    crowded_track_count: int | None = Field(default=None, ge=1)
 
 
 class WindowConfig(Strict):

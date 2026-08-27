@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 
 from cctv_counting.tracking import (
-    ByteAssociationTracker,
+    ByteTrackInspiredTracker,
     TrackingError,
     TrackState,
 )
@@ -13,10 +13,10 @@ from cctv_counting.tracking import (
 from conftest import person
 
 
-def _tracker(**overrides) -> ByteAssociationTracker:
+def _tracker(**overrides) -> ByteTrackInspiredTracker:
     defaults = dict(min_hits=2, max_age=3, iou_threshold=0.3)
     defaults.update(overrides)
-    return ByteAssociationTracker(**defaults)
+    return ByteTrackInspiredTracker(**defaults)
 
 
 def test_no_detections_yields_no_tracks():
@@ -149,14 +149,65 @@ def test_returned_person_exposes_center():
 
 def test_rejects_low_threshold_above_high_threshold():
     with pytest.raises(TrackingError):
-        ByteAssociationTracker(high_threshold=0.3, low_threshold=0.6)
+        ByteTrackInspiredTracker(high_threshold=0.3, low_threshold=0.6)
 
 
 def test_rejects_zero_max_age():
     with pytest.raises(TrackingError):
-        ByteAssociationTracker(max_age=0)
+        ByteTrackInspiredTracker(max_age=0)
 
 
 def test_rejects_out_of_range_iou():
     with pytest.raises(TrackingError):
-        ByteAssociationTracker(iou_threshold=1.5)
+        ByteTrackInspiredTracker(iou_threshold=1.5)
+
+
+def test_the_tracker_does_not_claim_to_be_bytetrack():
+    """이름이 구현 사실과 어긋나면 나중에 나올 숫자가 잘못 읽힌다.
+
+    이 tracker는 ByteTrack의 2단계 연결 아이디어를 빌렸을 뿐, 원 구현을
+    옮기거나 알고리즘을 재현한 것이 아니다. 이름과 문서가 그렇게 말하고
+    있는지를 값으로 고정한다.
+    """
+    name = ByteTrackInspiredTracker.__name__
+    assert "Inspired" in name
+
+    doc = ByteTrackInspiredTracker.__doc__ or ""
+    assert "ByteTrack 자체가 아니다" in doc
+
+
+def test_the_module_documents_what_was_simplified():
+    """무엇을 단순화했는지가 코드 옆에 남아 있어야 한다."""
+    import cctv_counting.tracking as tracking
+
+    doc = tracking.__doc__ or ""
+    assert "ByteTrack 구현이 아니다" in doc
+    for simplification in ("Kalman", "Hungarian", "greedy"):
+        assert simplification in doc
+
+
+def test_no_kalman_or_hungarian_is_actually_used():
+    """문서와 구현이 어긋나지 않는지 확인한다.
+
+    문서 문자열에는 "Kalman을 쓰지 않는다"라고 적혀 있으므로 본문 검색으로는
+    구분할 수 없다. 구문 트리에서 실제로 참조된 이름만 모아서 본다.
+    """
+    import ast
+    from pathlib import Path
+
+    import cctv_counting.tracking as tracking
+
+    tree = ast.parse(Path(tracking.__file__).read_text(encoding="utf-8"))
+    referenced: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name):
+            referenced.add(node.id)
+        elif isinstance(node, ast.Attribute):
+            referenced.add(node.attr)
+        elif isinstance(node, ast.Import):
+            referenced.update(alias.name.split(".")[0] for alias in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            referenced.add(node.module.split(".")[0])
+
+    for forbidden in ("KalmanFilter", "linear_sum_assignment", "scipy", "numpy"):
+        assert forbidden not in referenced

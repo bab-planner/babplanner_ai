@@ -27,16 +27,25 @@ def _counter(**overrides) -> LineCrossingCounter:
         in_direction=InDirection.NEGATIVE,
         band=0.01,
         min_confirm_distance=0.03,
-        cooldown_frames=10,
+        cooldown_seconds=10.0,
     )
     defaults.update(overrides)
     return LineCrossingCounter(**defaults)
 
 
-def _walk(counter: LineCrossingCounter, ys: list[float], track_id: int = 1) -> list:
+def _walk(
+    counter: LineCrossingCounter,
+    ys: list[float],
+    track_id: int = 1,
+    fps: float = 1.0,
+) -> list:
+    """프레임 번호와 시각을 함께 넣는다. 기본은 1fps(프레임당 1초)라
+    프레임 수와 초가 같아 읽기 쉽다."""
     events = []
     for frame, y in enumerate(ys):
-        events.extend(counter.update(frame, {track_id: NormalizedPoint(0.5, y)}))
+        events.extend(
+            counter.update(frame, frame / fps, {track_id: NormalizedPoint(0.5, y)})
+        )
     return events
 
 
@@ -100,7 +109,7 @@ def test_shallow_oscillation_past_the_band_is_still_ignored():
 
 
 def test_cooldown_suppresses_an_immediate_bounce_back():
-    counter = _counter(cooldown_frames=20)
+    counter = _counter(cooldown_seconds=20.0)
     events = _walk(counter, [0.80, 0.50, 0.80, 0.50])
     assert len(events) == 1
     assert events[0].event is CrossingEvent.ENTRY
@@ -108,7 +117,7 @@ def test_cooldown_suppresses_an_immediate_bounce_back():
 
 def test_genuine_re_entry_after_cooldown_counts_twice():
     """실제로 나갔다 다시 들어온 사람은 두 번 온 것이다."""
-    counter = _counter(cooldown_frames=3)
+    counter = _counter(cooldown_seconds=3.0)
     ys = [0.80] * 3 + [0.45] * 5 + [0.80] * 5 + [0.45] * 5
     events = _walk(counter, ys)
     kinds = [event.event for event in events]
@@ -131,7 +140,9 @@ def test_two_tracks_are_counted_independently():
         zip([0.80, 0.70, 0.55, 0.45], [0.40, 0.50, 0.68, 0.80])
     ):
         counter.update(
-            frame, {1: NormalizedPoint(0.3, a), 2: NormalizedPoint(0.7, b)}
+            frame,
+            float(frame),
+            {1: NormalizedPoint(0.3, a), 2: NormalizedPoint(0.7, b)},
         )
     assert counter.entries == 1
     assert counter.exits == 1
@@ -140,17 +151,19 @@ def test_two_tracks_are_counted_independently():
 def test_track_state_survives_a_missing_frame():
     """잠깐 가려졌다 다시 보인 사람은 이어서 판단해야 한다."""
     counter = _counter()
-    counter.update(0, {1: NormalizedPoint(0.5, 0.80)})
-    counter.update(1, {})
-    counter.update(2, {})
-    events = counter.update(3, {1: NormalizedPoint(0.5, 0.45)})
+    counter.update(0, 0.0, {1: NormalizedPoint(0.5, 0.80)})
+    counter.update(1, 1.0, {})
+    counter.update(2, 2.0, {})
+    events = counter.update(3, 3.0, {1: NormalizedPoint(0.5, 0.45)})
     assert [event.event for event in events] == [CrossingEvent.ENTRY]
 
 
 def test_forget_removes_state_of_dead_tracks():
     """끝난 track의 상태를 들고 있으면 번호가 재사용될 때 엉뚱하게 시작한다."""
     counter = _counter()
-    counter.update(0, {1: NormalizedPoint(0.5, 0.80), 2: NormalizedPoint(0.5, 0.20)})
+    counter.update(
+        0, 0.0, {1: NormalizedPoint(0.5, 0.80), 2: NormalizedPoint(0.5, 0.20)}
+    )
     assert counter.tracked_state_count == 2
     counter.forget({1})
     assert counter.tracked_state_count == 1
@@ -178,7 +191,18 @@ def test_min_confirm_distance_must_not_be_smaller_than_band():
 
 def test_negative_cooldown_is_rejected():
     with pytest.raises(CrossingError):
-        _counter(cooldown_frames=-1)
+        _counter(cooldown_seconds=-1.0)
+
+
+def test_non_finite_cooldown_is_rejected():
+    with pytest.raises(CrossingError):
+        _counter(cooldown_seconds=float("nan"))
+
+
+def test_non_finite_timestamp_is_rejected():
+    counter = _counter()
+    with pytest.raises(CrossingError):
+        counter.update(0, float("inf"), {1: NormalizedPoint(0.5, 0.8)})
 
 
 def test_naive_line_band_proxy_counts_every_frame_near_the_line():

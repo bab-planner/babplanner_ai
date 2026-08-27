@@ -24,9 +24,15 @@ y축이 아래로 향하므로 눈으로 볼 때는 반대로 보인다). config
 2. **이력(hysteresis).** band를 벗어났다고 바로 확정하지 않는다.
    min_confirm_distance 이상 떨어져야 그쪽에 있다고 확정한다. band보다
    크게 잡아, 넘어갔다 되돌아오는 얕은 진동을 걸러낸다.
-3. **재계수 금지 구간(cooldown).** 한 번 센 track은 cooldown_frames 동안
+3. **재계수 금지 구간(cooldown).** 한 번 센 track은 cooldown_seconds 동안
    다시 세지 않는다. 그 시간이 지난 뒤의 IN -> OUT -> IN은 실제 재방문으로
    보고 두 번 센다.
+
+**cooldown은 프레임 수가 아니라 초 단위다.** 프레임 수로 두면 같은 설정이
+영상마다 다른 정책이 된다. 15프레임은 30fps에서 0.5초지만 10fps에서는
+1.5초이고 60fps에서는 0.25초다. 카메라를 바꾸거나 frame_stride를 조정하는
+것만으로 계수 규칙이 조용히 달라진다. 그래서 판정을 관측 시각으로 한다.
+같은 사람이 같은 속도로 걸으면, 몇 fps로 샘플링하든 같은 수가 나와야 한다.
 
 track이 사라지면 그 상태도 함께 지운다. 상태를 영상 밖으로 들고 나가지
 않는다.
@@ -34,6 +40,7 @@ track이 사라지면 그 상태도 함께 지운다. 상태를 영상 밖으로
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 from enum import Enum
 
@@ -61,11 +68,13 @@ class Crossing:
     """통과 사건 하나.
 
     track_id는 영상 세션 안에서만 의미가 있는 임시 번호다. 이 사건을 밖으로
-    내보낼 때는 번호가 아니라 집계된 개수만 나간다.
+    내보낼 때는 번호가 아니라 집계된 개수만 나간다. frame_index는 영상에서
+    그 장면을 찾아보기 위한 것이고, 판정 자체는 timestamp_seconds로 한다.
     """
 
     track_id: int
     frame_index: int
+    timestamp_seconds: float
     event: CrossingEvent
 
 
@@ -76,11 +85,8 @@ class _TrackCrossingState:
     #: 마지막으로 확정된 쪽. 아직 확정된 적 없으면 None.
     confirmed_side: Side | None = None
 
-    #: 마지막으로 사건을 낸 프레임. 없으면 None.
-    last_event_frame: int | None = None
-
-    #: 마지막으로 관측된 프레임. 오래된 상태를 치우는 데 쓴다.
-    last_seen_frame: int = -1
+    #: 마지막으로 사건을 낸 시각(초). 없으면 None.
+    last_event_time: float | None = None
 
 
 @dataclass
@@ -89,14 +95,16 @@ class LineCrossingCounter:
 
     band:                 이 거리 안은 ON_LINE. 정규화 단위다.
     min_confirm_distance: 이 거리 이상 떨어져야 그쪽에 있다고 확정한다.
-    cooldown_frames:      사건을 낸 뒤 이만큼은 같은 track을 다시 세지 않는다.
+    cooldown_seconds:     사건을 낸 뒤 이만큼은 같은 track을 다시 세지 않는다.
+                          프레임 수가 아니라 초다. 영상 fps가 달라도 같은
+                          정책이 유지되어야 하기 때문이다.
     """
 
     line: Line
     in_direction: InDirection = InDirection.NEGATIVE
     band: float = 0.01
     min_confirm_distance: float = 0.03
-    cooldown_frames: int = 15
+    cooldown_seconds: float = 0.5
 
     entries: int = field(default=0, init=False)
     exits: int = field(default=0, init=False)
@@ -112,9 +120,14 @@ class LineCrossingCounter:
                 "min_confirm_distance는 band 이상이어야 합니다: "
                 f"{self.min_confirm_distance} < {self.band}"
             )
-        if self.cooldown_frames < 0:
+        if (
+            math.isnan(self.cooldown_seconds)
+            or math.isinf(self.cooldown_seconds)
+            or self.cooldown_seconds < 0.0
+        ):
             raise CrossingError(
-                f"cooldown_frames는 0 이상이어야 합니다: {self.cooldown_frames}"
+                f"cooldown_seconds는 0 이상의 유한한 값이어야 합니다: "
+                f"{self.cooldown_seconds}"
             )
 
     def reset(self) -> None:
@@ -128,28 +141,35 @@ class LineCrossingCounter:
         """상태를 들고 있는 track 수. 상태가 새는지 보는 용도다."""
         return len(self._states)
 
-    def _event_for(self, previous: Side, current: Side) -> CrossingEvent:
-        """어느 쪽에서 어느 쪽으로 갔는가를 입장/퇴장으로 번역한다."""
+    def _event_for(self, current: Side) -> CrossingEvent:
+        """어느 쪽으로 갔는가를 입장/퇴장으로 번역한다."""
         entering_side = (
             Side.POSITIVE
             if self.in_direction is InDirection.POSITIVE
             else Side.NEGATIVE
         )
-        if current is entering_side:
-            return CrossingEvent.ENTRY
-        return CrossingEvent.EXIT
+        return CrossingEvent.ENTRY if current is entering_side else CrossingEvent.EXIT
 
     def update(
         self,
         frame_index: int,
+        timestamp_seconds: float,
         positions: dict[int, NormalizedPoint],
     ) -> list[Crossing]:
         """한 프레임의 track별 위치를 넣고, 이번에 생긴 사건들을 받는다.
 
-        positions는 {track_id: 정규화된 대표점}이다. 이 프레임에 없는
-        track은 그냥 빠져 있으면 된다. 잠깐 가려진 사람이 다시 나타나면
-        확정된 쪽이 그대로 남아 있어서 이어서 판단한다.
+        positions는 {track_id: 정규화된 대표점}이다. 이 프레임에 없는 track은
+        그냥 빠져 있으면 된다. 잠깐 가려진 사람이 다시 나타나면 확정된 쪽이
+        그대로 남아 있어서 이어서 판단한다.
+
+        timestamp_seconds는 영상 안에서의 관측 시각이다. cooldown 판정이
+        여기에만 의존하므로, 같은 궤적을 몇 fps로 샘플링하든 결과가 같다.
         """
+        if math.isnan(timestamp_seconds) or math.isinf(timestamp_seconds):
+            raise CrossingError(
+                f"timestamp_seconds가 유한하지 않습니다: {timestamp_seconds}"
+            )
+
         events: list[Crossing] = []
 
         for track_id, point in sorted(positions.items()):
@@ -157,7 +177,6 @@ class LineCrossingCounter:
             if state is None:
                 state = _TrackCrossingState()
                 self._states[track_id] = state
-            state.last_seen_frame = frame_index
 
             distance = self.line.signed_distance_normalized(point)
             side = self.line.side_of(point, band=self.band)
@@ -181,19 +200,21 @@ class LineCrossingCounter:
             state.confirmed_side = side
 
             if (
-                state.last_event_frame is not None
-                and frame_index - state.last_event_frame < self.cooldown_frames
+                state.last_event_time is not None
+                and timestamp_seconds - state.last_event_time < self.cooldown_seconds
             ):
                 # 방금 셌다. 같은 왕복의 되돌아옴으로 본다.
                 continue
 
-            event = self._event_for(previous, side)
-            state.last_event_frame = frame_index
+            event = self._event_for(side)
+            state.last_event_time = timestamp_seconds
             if event is CrossingEvent.ENTRY:
                 self.entries += 1
             else:
                 self.exits += 1
-            events.append(Crossing(track_id, frame_index, event))
+            events.append(
+                Crossing(track_id, frame_index, timestamp_seconds, event)
+            )
 
         return events
 
@@ -214,12 +235,15 @@ def count_line_band_detections(
     points: list[NormalizedPoint],
     band: float,
 ) -> int:
-    """선 근처에 있는 점의 개수.
+    """선 근처에 있는 점의 개수. **입장 인원이 아니다.**
 
-    추적 없이 detection만으로 입장 인원을 세려는 순진한 대리 지표다. 같은
-    사람이 선을 지나는 동안 매 프레임 다시 세이므로 실제보다 크게 나온다.
-    쓰라고 두는 것이 아니라, 추적이 무엇을 해 주는지 숫자로 보여 주려고
-    둔다. baseline A의 비교 대상이다.
+    추적 없이 detection만으로 입장을 세려는 순진한 대리 지표(naive line-band
+    detection proxy)다. 같은 사람이 선을 지나는 동안 매 프레임 다시 세이므로
+    실제 입장 인원보다 훨씬 크게 나오고, 그 배율은 fps와 걷는 속도에 따라
+    달라진다.
+
+    쓰라고 두는 것이 아니라, 추적이 무엇을 해 주는지 숫자로 보여 주려고 둔다.
+    이 값을 "detection-only 입장 인원"이라고 부르면 안 된다.
     """
     if band < 0.0:
         raise CrossingError(f"band는 0 이상이어야 합니다: {band}")

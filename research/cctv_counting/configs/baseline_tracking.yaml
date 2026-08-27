@@ -43,11 +43,12 @@ line:
   anchor: BOTTOM_CENTER   # 바닥에 그은 선이므로 발 쪽으로 판정한다
   band: 0.01              # 이 안은 ON_LINE. 미세 떨림을 무시한다
   min_confirm_distance: 0.03
-  cooldown_frames: 15     # 한 번 센 뒤 이만큼은 다시 세지 않는다
+  # 한 번 센 뒤 이만큼은 다시 세지 않는다. 프레임이 아니라 초다.
+  # 영상 fps나 frame_stride가 달라져도 같은 정책이 유지되게 한다.
+  cooldown_seconds: 0.5
 
 reliability:
   min_mean_confidence: 0.45
-  crowded_track_count: null
 
 window:
   enabled: true

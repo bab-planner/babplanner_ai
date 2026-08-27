@@ -1,4 +1,6 @@
 .venv/
+# 연구용 환경. torch/CUDA가 들어가므로 서비스 환경과 분리한다.
+.venv-cctv/
 __pycache__/
 .pytest_cache/
 *.pyc

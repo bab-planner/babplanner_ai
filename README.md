@@ -65,9 +65,12 @@ AI-1은 영상에서 현재 인원(occupancy)과 입구 통과 인원(entry coun
 연결하지 않는다. `track_id`는 영상 한 세션 안에서만 유효한 임시 번호이며 파일로
 나가지 않는다. 이 경계는 테스트가 매 실행마다 확인한다.
 
-핵심 로직은 추가 설치 없이 `pytest`로 돌지만, 실제 영상을 처리하려면:
+핵심 로직은 추가 설치 없이 `pytest`로 돌지만, 실제 영상을 처리하려면 torch와
+opencv가 필요하다. **그것은 이 저장소의 `.venv`가 아니라 별도 환경에 깐다.**
+서비스 환경에 수 GB짜리 의존성을 섞지 않기 위해서다.
 
-    pip install -e ".[cctv]"
+    py -3.12 -m venv .venv-cctv
+    .venv-cctv\Scripts\python.exe -m pip install -e ".[cctv]"
 
 ## 실행
 

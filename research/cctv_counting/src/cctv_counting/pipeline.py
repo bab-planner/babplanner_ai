@@ -36,7 +36,7 @@ from cctv_counting.detection import (
 )
 from cctv_counting.observations import FrameObservation
 from cctv_counting.reliability import ReliabilityPolicy, evaluate_reliability
-from cctv_counting.tracking import ByteAssociationTracker, TrackedPerson
+from cctv_counting.tracking import ByteTrackInspiredTracker, TrackedPerson
 
 
 class PipelineError(ValueError):
@@ -66,7 +66,7 @@ class CountingPipeline:
     frame_width: int
     frame_height: int
 
-    _tracker: ByteAssociationTracker | None = field(default=None, init=False, repr=False)
+    _tracker: ByteTrackInspiredTracker | None = field(default=None, init=False, repr=False)
     _crossing: LineCrossingCounter | None = field(default=None, init=False, repr=False)
     _policy: ReliabilityPolicy = field(init=False, repr=False)
     _naive_line_hits: int = field(default=0, init=False, repr=False)
@@ -79,7 +79,7 @@ class CountingPipeline:
 
         tracker_config = self.config.tracker
         if tracker_config.enabled:
-            self._tracker = ByteAssociationTracker(
+            self._tracker = ByteTrackInspiredTracker(
                 high_threshold=tracker_config.high_threshold,
                 low_threshold=tracker_config.low_threshold,
                 iou_threshold=tracker_config.iou_threshold,
@@ -95,12 +95,11 @@ class CountingPipeline:
                 in_direction=self.config.line.in_direction,
                 band=self.config.line.band,
                 min_confirm_distance=self.config.line.min_confirm_distance,
-                cooldown_frames=self.config.line.cooldown_frames,
+                cooldown_seconds=self.config.line.cooldown_seconds,
             )
 
         self._policy = ReliabilityPolicy(
             min_mean_confidence=self.config.reliability.min_mean_confidence,
-            crowded_track_count=self.config.reliability.crowded_track_count,
         )
 
     @property
@@ -172,7 +171,9 @@ class CountingPipeline:
                     )
                     for person in tracked
                 }
-                crossings = self._crossing.update(frame_index, positions)
+                crossings = self._crossing.update(
+                    frame_index, timestamp_seconds, positions
+                )
                 self._crossing.forget(self._tracker.active_track_ids())
                 entries = self._crossing.entries
                 exits = self._crossing.exits

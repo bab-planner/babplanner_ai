@@ -10,6 +10,47 @@
 
 ---
 
+## 0. Methodological Notes
+
+이 보고서를 읽을 때 오해하기 쉬운 여섯 가지를 먼저 못박아 둔다. 아래 내용은
+본문에서 각각 다시 다룬다.
+
+**1. 여기 있는 tracker는 ByteTrack이 아니다.**
+ByteTrack의 high/low-confidence 2단계 연결 아이디어에서 영감을 받은 별도
+구현이고, 클래스 이름도 `ByteTrackInspiredTracker`다. 원 저자의 코드를 옮기지
+않았고 원 알고리즘을 재현하지도 않았다. Kalman filter 대신 등속 외삽,
+Hungarian 대신 IoU greedy를 쓴다. **이 tracker에서 나올 숫자를 ByteTrack의
+성능으로 옮겨 말할 수 없다.** 어느 쪽이 나은지도 아직 재지 않았다. (4절)
+
+**2. reliability signal은 보정된 불확실성 추정이 아니다.**
+heuristic이다. 평균 신뢰도가 임계값 아래인지만 본다. `LOW_CONFIDENCE`가 붙은
+프레임이 틀릴 확률이 몇 %인지 이 값은 말하지 않는다. 이 신호를 "uncertainty
+estimator"라고 부르지 않는다. (5절)
+
+**3. confidence는 누락을 원리적으로 잡지 못한다.**
+실제로 10명이 있는데 5명만 잡혔고 그 5개가 전부 0.95라면, 평균 신뢰도는 높고
+flag는 `OK`이며 계수는 절반이다. 못 잡은 것에는 confidence 자체가 없다.
+임계값 조정으로 해결되는 문제가 아니라 이 신호가 볼 수 없는 영역이다. (5절)
+
+**4. 재계수 금지 구간(cooldown)은 시간 단위다.**
+프레임 수가 아니라 초다. 프레임 수로 두면 같은 설정 파일이 10fps 영상과
+60fps 영상에서 서로 다른 정책이 되고, 두 실험을 비교할 수 없게 된다.
+`tests/test_cctv_fps_invariance.py`가 이것을 지킨다. (6절)
+
+**5. 라이선스는 코드/가중치/데이터 세 층을 따로 봤고, 전부 확인하지는
+못했다.**
+소프트웨어 라이선스가 허용적이라고 가중치와 학습 데이터의 조건이 따라오지
+않는다. torchvision 저장소 자신이 그렇게 밝히고 있다. 확인하지 못한 항목은
+UNVERIFIED로 표시했다. **이 보고서는 법률 자문이 아니며, 배포 자격을 여기서
+결론 내지 않는다.** (3절)
+
+**6. 벤치마크는 아직 실행하지 않았다.**
+정답 데이터가 없고 실제 추론도 한 번 돌리지 않았다. 7절의 수치는 전부
+NOT MEASURED다. 단위 테스트가 통과한다는 것은 "코드가 의도대로 동작한다"이지
+"실제 영상에서 맞다"가 아니다. (7절, 11절)
+
+---
+
 ## 1. Problem
 
 급식소 운영에 두 개의 숫자가 필요하다.
@@ -69,25 +110,43 @@ RQ3는 이번 단계에서 논문 수준의 uncertainty calibration까지 가지
 
 ### 후보 조사
 
-| 데이터셋 | 목적 | 라이선스 | 판단 |
-|---|---|---|---|
-| MOT17 | 추적 / 계수 | CC BY-NC-SA 3.0 (비상업) | **첫 벤치마크 후보.** 고정 카메라 시퀀스가 우리 조건에 가장 가깝고, track ID로 entry 정답을 유도할 수 있다 |
-| MOT20 | 밀집 계수 | CC BY-NC-SA 3.0 (비상업) | 밀집도가 급식소 피크에 가깝다. 2순위 |
-| CrowdHuman | 사람 검출 | 비상업 연구·교육. 재배포 금지 | 밀집·가림 검출 평가용. 정지 이미지라 추적 평가 불가 |
-| COCO person | 사람 검출 | annotation CC BY 4.0 / 이미지는 개별 | detector 자신의 학습 분포라 낙관적으로 나온다 |
-| PETS2009 | 흐름 계수 | **확인 못 함** | 확인 전까지 후보에서 제외 |
+| 데이터셋 | 목적 | 데이터 이용 조건 | 확인 상태 | 판단 |
+|---|---|---|---|---|
+| MOT17 | 추적 / 계수 | CC BY-NC-SA 3.0 (비상업)으로 알려짐 | **UNVERIFIED** | **첫 벤치마크 후보.** 고정 카메라 시퀀스가 우리 조건에 가장 가깝고, track ID로 entry 정답을 유도할 수 있다 |
+| MOT20 | 밀집 계수 | 위와 동일 | **UNVERIFIED** | 밀집도가 급식소 피크에 가깝다. 2순위 |
+| CrowdHuman | 사람 검출 | 비상업 연구·교육 전용, 재배포 금지 | **VERIFIED** (공식 다운로드 페이지 원문) | 밀집·가림 검출 평가용. 정지 이미지라 추적 평가 불가 |
+| COCO person | 사람 검출 | annotation CC BY 4.0 / 이미지는 Flickr 원저작자 조건으로 알려짐 | **PARTIALLY VERIFIED** | detector 자신의 학습 분포라 낙관적으로 나온다 |
+| PETS2009 | 흐름 계수 | 불명 | **UNVERIFIED** | 확인 전까지 후보에서 제외 |
 
 자세한 표는 `research/cctv_counting/datasets/README.md`.
 
-### 비상업 라이선스가 실질적 제약이다
+### 소프트웨어 라이선스와 데이터 조건은 다른 문서다
 
-MOT17, MOT20, CrowdHuman 모두 비상업 조건이다. **평가에는 쓸 수 있지만, 이
-데이터로 학습한 모델을 상용 서비스에 넣을 수는 없다.** 그래서 이 데이터들은
-평가 전용으로 쓰고, fine-tuning은 나중에 상용 가능한 데이터로 한다.
+이번 조사에서 그 함정을 하나 만났다.
 
-MOT의 라이선스는 검색 결과 기준이고, 조사 시점에 `motchallenge.net` 직접
-접속이 되지 않아 **공식 페이지 원문을 확인하지 못했다.** 받기 전에 사이트의
-Terms를 직접 읽는다.
+> CrowdHuman의 GitHub 저장소 LICENSE는 **MIT**다. 그런데 공식 다운로드
+> 페이지의 데이터 이용 조건은 **비상업 연구·교육 전용, 재배포 금지**다.
+> 저장소 라이선스를 데이터 라이선스로 읽으면 정반대 결론이 나온다.
+
+MIT인 것은 그 저장소의 도구 코드이지 이미지가 아니다. 위 표의 조건 열은
+**데이터 이용 조건**이다.
+
+### 확인하지 못한 것
+
+`motchallenge.net`은 조사 시점에 접속이 되지 않았다(`ECONNREFUSED`). MOT17/
+MOT20이 비상업 조건이라는 것은 여러 2차 출처에서 일관되게 나오지만 **공식
+원문을 읽지 못했으므로 확정으로 적지 않는다.** 받기 전에 직접 확인한다.
+
+COCO의 Terms of Use 페이지는 스크립트로 렌더링되어 조회에 실패했다. 참고로
+`cocodataset/cocoapi`의 license.txt는 BSD-2-Clause인데, 그것은 **API 코드**의
+라이선스이지 데이터셋 조건이 아니다.
+
+### 비상업 조건이 실질적 제약이다
+
+확인된 범위에서 CrowdHuman은 비상업 전용이고 MOT 계열도 그럴 가능성이 높다.
+**평가에는 쓸 수 있지만, 이 데이터로 학습한 모델을 상용 서비스에 넣을 수는
+없다.** 그래서 평가 전용으로 쓰고, fine-tuning은 나중에 상용 가능한 데이터로
+한다.
 
 ### 정답 파일
 
@@ -103,9 +162,13 @@ Terms를 직접 읽는다.
 같은 사람을 프레임 사이에서 잇지 못하면 "넘었다"는 사건 자체가 정의되지 않기
 때문이다. `entries_total`은 0이 아니라 빈 값으로 나간다.
 
-대신 **선 근처 상자 수 누적**(`naiveLineBandDetections`)을 기록한다. 한 사람이
-선을 지나는 동안 매 프레임 다시 세이므로 실제보다 크게 나온다. **그것이
-요점이다.** 이 값과 실제 입장 인원의 비율이 추적이 하는 일의 크기다.
+대신 **naive line-band detection proxy**(`naiveLineBandDetections`)를 기록한다.
+선 근처 불감대 안에 상자가 몇 번 보였는지의 누적이다. 한 사람이 선을 지나는
+동안 매 프레임 다시 세이고, 그 배율은 fps와 걷는 속도에 따라 달라진다.
+
+**이 값을 "detection-only 입장 인원"이라고 부르지 않는다.** 정규화된 값이
+아니며 입장 인원의 추정치도 아니다. 이 값이 실제 입장 인원보다 얼마나
+부풀려지는지를 보는 대조용이고, 그 배율이 곧 추적이 하는 일의 크기다.
 
 ### B. Detection + Tracking
 
@@ -118,8 +181,14 @@ Terms를 직접 읽는다.
 새로 나타난 사람을 늦게 잡고 `max_age` 때문에 나간 사람을 늦게 놓는다. 순간값
 정확도만 보면 A가 나을 수도 있다. **재 보기 전에는 모른다.**
 
-**entry counting에서 추적이 얼마나 필요한가?** A는 셀 수 없다. 이것은 측정
-결과가 아니라 정의상 그렇다. 크기는 위의 대리 지표로 잰다.
+**entry counting에서 추적이 얼마나 필요한가?** 해석에 주의가 필요하다. A는
+**완전한 entry-count baseline이 아니다.** 추적 없이는 "넘었다"는 사건 자체가
+정의되지 않으므로, A가 못 세는 것은 성능이 나빠서가 아니라 정의상 그렇다.
+따라서 이 비교를 "추적이 detection-only보다 정확하다"로 읽으면 안 된다.
+
+제대로 된 detection-only crossing heuristic(예: 선 양쪽의 상자 수 변화를 보는
+방식)을 나중에 붙이면 공정한 비교가 가능하다. 다만 그것은 벤치마크에서 실제
+필요가 확인된 뒤의 일이고, 지금 알고리즘을 늘리지 않는다.
 
 두 설정 파일의 detector / line / ROI 항목은 같다. 단위 테스트가 그것을
 고정한다. 그래야 차이를 추적 유무 탓으로 돌릴 수 있다.
@@ -128,13 +197,42 @@ Terms를 직접 읽는다.
 
 **torchvision `fasterrcnn_mobilenet_v3_large_fpn`, COCO pretrained.**
 
-라이선스가 결정적이었다. Ultralytics YOLO 계열은 코드와 weight 모두 AGPL-3.0이고
-상용에는 별도 Enterprise 라이선스를 요구한다(공식 저장소 명시). 밥플래너는
-서비스로 나갈 제품이므로, AGPL 모델로 만든 숫자는 제품의 근거로 쓸 수 없다.
-**나중에 버릴 결과는 처음부터 만들지 않는다.**
+라이선스가 결정적이었다. 다만 **세 층을 따로 봐야 한다.**
 
-torchvision은 BSD-3-Clause이고 COCO pretrained weight도 같은 저장소에서 나온다.
-AI-2에서 torch가 어차피 필요하다는 점도 맞는다.
+```
+  A. 라이브러리 코드     B. pretrained weight     C. 학습 데이터셋
+```
+
+**Ultralytics를 제외한 이유.** 공식 라이선스 페이지가 코드뿐 아니라 학습된
+모델까지 기본값으로 AGPL-3.0이라고 밝힌다("All Ultralytics YOLO trained models
+fall under the AGPL-3.0 License by default"). 프로젝트 전체를 공개하지 않으려면
+Enterprise 라이선스를 사야 한다. 밥플래너는 서비스로 나갈 제품이므로, 그
+모델로 만든 숫자는 제품의 근거로 쓸 수 없다. **나중에 버릴 결과는 처음부터
+만들지 않는다.**
+
+이 기술은 **Ultralytics의 구현과 배포본**에 대한 것이다. "YOLO 계열 전부가
+AGPL"이라는 뜻이 아니다. YOLO라는 이름은 여러 조직이 서로 다른 조건으로
+배포하고 있고, 여기서 확인한 것은 Ultralytics 한 곳이다.
+
+**torchvision을 고른 이유는 "제약이 없어서"가 아니다.** A층(코드)은
+BSD-3-Clause로 깨끗하다. B층에 대해서는 저장소가 이렇게 밝힌다.
+
+> "The pre-trained models provided in this library may have their own licenses
+> or terms and conditions derived from the dataset used for training. It is
+> your responsibility to determine whether you have permission to use the
+> models for your use case."
+
+즉 **가중치는 BSD로 자동 커버되지 않는다.** 같은 저장소 안에서도 SWAG 계열은
+CC-BY-NC 4.0으로 따로 명시되어 있다. torchvision을 고른 것은 확인해야 할
+것이 무엇인지 알 수 있기 때문이지, 확인이 끝났기 때문이 아니다.
+
+C층(COCO)은 부분 확인에 그쳤다(3절).
+
+> **배포 자격은 이 보고서에서 결론 내지 않는다.** 소프트웨어 라이선스와
+> 가중치·데이터 이용 조건을 각각 검토했으며, 실제 배포 자격은 상위 모델과
+> 데이터의 조건을 따라야 한다. 이 문서는 법률 자문이 아니다.
+
+AI-2에서 torch가 어차피 필요하다는 점도 부수적으로 맞는다.
 
 **성능은 양보했다.** torchvision 보고 기준 COCO box mAP 32.8. 최신 YOLO 계열보다
 낮다. detector 경계를 따로 둔 이유가 이것이고, Apache-2.0인 YOLOX나 RT-DETR로
@@ -142,17 +240,36 @@ AI-2에서 torch가 어차피 필요하다는 점도 맞는다.
 
 ### Tracker 선택
 
-**ByteTrack 방식 2단계 연결** (Zhang et al., ECCV 2022. 공식 구현 MIT).
+**ByteTrack에서 영감을 받은 2단계 IoU 연결.** 클래스 이름은
+`ByteTrackInspiredTracker`이고, 그 이름이 사실이다.
 
-외형 특징을 쓰지 않아 "사람을 식별하지 않는다"는 제약과 정확히 맞는다.
-DeepSORT 계열은 re-id embedding을 쓰는데 그것은 이 프로젝트가 하지 않기로 한
-바로 그것이다. 그리고 낮은 신뢰도 상자를 2단계로 구제하므로, 배식 줄에서
-사람이 서로를 가려 신뢰도가 잠깐 떨어져도 track이 끊기지 않는다.
+> **full ByteTrack reproduction이 아니다.** 원 저자의 코드(ifzhang/ByteTrack,
+> MIT)를 옮기거나 포팅하지 않았고, 원 알고리즘을 재현하지도 않았다. 원 논문은
+> Zhang et al., ECCV 2022.
 
-**원본과 다른 점:** Kalman filter 대신 등속 외삽, Hungarian 대신 IoU greedy.
-둘 다 numpy/scipy 없이 계수 로직을 그대로 단위 테스트하기 위한 선택이다.
-**여기 수치를 ByteTrack 논문 성능으로 읽으면 안 된다.** 이 단순화의 대가는
-아직 재지 않았다(12절).
+**빌려온 것은 하나다.** 신뢰도가 높은 상자로 먼저 잇고, 남은 track을 신뢰도가
+낮은 상자로 한 번 더 구제한다는 2단계 연결 전략.
+
+**나머지는 다르다.**
+
+| | ByteTrack 원본 | 여기 |
+|---|---|---|
+| 운동 모델 | Kalman filter | 직전 프레임 이동량 등속 외삽 |
+| 할당 | Hungarian 최적 할당 | IoU 내림차순 greedy |
+
+단순화한 이유는 이 baseline의 목적에서 나온다. 익명 계수가 목적이고, 가벼운
+시연이 필요하고, 단위 테스트가 결정적이어야 하고, re-identification은 하지
+않기로 했다. numpy/scipy 없이 표준 라이브러리만으로 돌면 계수 로직 전체를
+무거운 의존성 없이 그대로 검증할 수 있다.
+
+**단순화가 더 빠르다거나 원본과 같은 성능이라고 주장하지 않는다. 재 본 적이
+없다.** 두 방식을 나란히 돌려 비교하는 것은 벤치마크 단계의 일이고 12절에
+있다. 그때까지 이 tracker의 수치를 ByteTrack의 성능으로 옮겨 말할 수 없다.
+
+**왜 이 계열인가.** 외형 특징을 쓰지 않아 "사람을 식별하지 않는다"는 제약과
+정확히 맞는다. DeepSORT 계열은 re-id embedding을 쓰는데 그것은 이 프로젝트가
+하지 않기로 한 바로 그것이다. 그리고 낮은 신뢰도 상자를 2단계로 구제하므로,
+배식 줄에서 사람이 서로를 가려 신뢰도가 잠깐 떨어져도 track이 끊기지 않는다.
 
 ## 5. Metrics
 
@@ -189,6 +306,39 @@ counting의 수단이고, 제대로 재려면 track 단위 annotation과 `TrackE
 `processing_fps`. `metadata.json`에 장치·해상도·패키지 버전이 같이 남는다.
 **다른 환경의 일반 성능으로 옮겨 말하지 않는다.**
 
+### Reliability signal — 무엇이고 무엇이 아닌가
+
+관측마다 `mean/min_detection_confidence`, `active_track_count`,
+`reliability_flag`를 같이 낸다. flag는 세 값뿐이다.
+
+| | |
+|---|---|
+| `OK` | 상자가 있고 신뢰도가 낮다고 볼 이유가 없다 |
+| `LOW_CONFIDENCE` | 상자는 있는데 평균 신뢰도가 임계값 아래다 |
+| `NO_DETECTION` | detector가 유효한 사람 상자를 하나도 내지 않았다 |
+
+**`CROWDED`는 없다.** 한때 넣었다가 뺐다. ① 혼잡도와 신뢰도는 다른 개념이고,
+② 백엔드에 이미 `CROWDED`라는 업무 등급이 있어 섞이며, ③ 몇 명부터 붐비는지의
+임계값이 아직 없다(10절). 밀집·저조도·가림은 **scene condition**이고 평가
+metadata 쪽에서 다룬다. 런타임 신뢰 신호와 섞지 않는다.
+
+**`NO_DETECTION`이 뜻하는 것은 하나뿐이다.** detector가 이 프레임에서 유효한
+사람 상자를 내지 않았다는 것. "식당이 비었다"가 아니고 "모델이 실패했다"도
+아니다. 실제로 아무도 없었는지 전부 놓쳤는지는 런타임에서 구분할 수 없고,
+구분할 수 없다는 사실 자체를 값으로 남긴 것이다.
+
+**이것은 uncertainty estimator가 아니다.** heuristic signal이다.
+
+- 보정된 불확실성이 아니다. flag가 붙은 프레임이 틀릴 확률을 말하지 않는다.
+- 임계값 하나로 갈린다. 평균 0.499와 0.501은 사실상 같은 프레임인데 다르게
+  분류된다.
+- **누락은 원리적으로 잡지 못한다.** 10명 중 5명만 잡았고 그 5개가 전부
+  0.95면, 평균은 높고 flag는 `OK`이며 계수는 절반이다. 못 잡은 것에는
+  confidence 자체가 없다. 임계값 조정으로 해결되는 문제가 아니다.
+
+flag와 실제 계수 오차의 상관은 **미측정**이다(RQ3). 상관이 없다는 결과가
+나올 수도 있고, 그러면 다른 신호를 찾아야 한다.
+
 ## 6. Experimental Setup
 
 ### 하드웨어 (개발 환경)
@@ -219,7 +369,24 @@ counting의 수단이고, 제대로 재려면 track 단위 annotation과 `TrackE
 | `min_hits` | 3 | 1회성 오탐 차단 |
 | `band` | 0.01 | 선 위 미세 떨림 무시 |
 | `min_confirm_distance` | 0.03 | 얕은 진동 무시 |
-| `cooldown_frames` | 15 | 재계수 금지 구간 |
+| `cooldown_seconds` | 0.5 | 재계수 금지 구간. **프레임이 아니라 초** |
+
+### 왜 cooldown만 초 단위인가
+
+`cooldown_seconds`는 시간 기반이고 `max_age` / `min_hits`는 아직 프레임 수
+기반이다. 의도된 비대칭이다.
+
+cooldown은 "얼마나 지나야 다른 방문으로 보는가"라는 **물리적 시간**에 대한
+정책이다. 프레임 수로 두면 같은 설정이 10fps에서 1.5초, 60fps에서 0.25초가
+되어 같은 영상을 다른 카메라로 찍은 것만으로 입장 인원이 달라진다.
+
+`max_age`와 `min_hits`는 "몇 번 관측했는가"에 대한 값이라 시간으로 옮기면
+뜻이 달라진다. 다만 fps가 크게 다른 영상을 비교할 때는 함께 조정해야 하고,
+그 사실이 지금은 문서에만 있다. 한계로 기록한다(11절).
+
+`tests/test_cctv_fps_invariance.py`가 동일한 물리적 궤적을 10 / 30 / 60 fps로
+샘플링해 같은 계수가 나오는지 확인한다. 프레임 기반 정책으로 되돌리면 그
+파일이 즉시 빨개진다.
 
 ### 재현
 
@@ -248,8 +415,8 @@ counting의 수단이고, 제대로 재려면 track 단위 annotation과 `TrackE
 
 | | |
 |---|---|
-| 신규 테스트 | 208개 |
-| 전체 테스트 | 472개 (기존 264 + 신규 208) |
+| 신규 테스트 | 241개 |
+| 전체 테스트 | 505개 (기존 264 + 신규 241) |
 | 결과 | 전부 통과 |
 | 실행 조건 | torch, opencv 없이. 가짜 detector로 pipeline 전체를 관통 |
 
@@ -297,10 +464,10 @@ daylight / low-light / sparse / crowded / occlusion / far-distance / oblique-cam
 
 | 유형 | 예상 영향 | 대비한 것 |
 |---|---|---|
-| 밀집 시 상자 병합 | occupancy 과소 | `CROWDED` flag (기본 꺼짐) |
+| 밀집 시 상자 병합 | occupancy 과소 | **대비 없음.** 밀집은 scene condition이지 신뢰 신호가 아니라고 판단해 flag에서 제외했다(5절) |
 | 가림으로 track 끊김 | 입장 인원 과대 | BYTE 2단계 매칭, `max_age` |
 | ID switch | 입장 인원 오차 | IoU + 등속 외삽 |
-| 선 근처 떨림 | 입장 인원 과대 | band + 이력 + cooldown 3중 |
+| 선 근처 떨림 | 입장 인원 과대 | band + 이력 + cooldown(초 단위) 3중 |
 | 실제 재입장 | 과소 계수 가능 | cooldown 이후는 별도 방문으로 |
 | 오탐(의자, 포스터) | occupancy 과대 | 클래스 필터, `min_hits` |
 | ROI 경계 깜빡임 | occupancy 흔들림 | 경계 포함, 한 점 판정 |
@@ -322,15 +489,23 @@ daylight / low-light / sparse / crowded / occlusion / far-distance / oblique-cam
 
 시연 영상에서 나온 숫자는 성능이 아니다. 정답이 없기 때문이다.
 
-### 실행
+### 실행 — 연구 환경을 분리한다
 
-    .venv\Scripts\python.exe -m pip install -e ".[cctv]"
+`.venv`는 FastAPI 서비스 개발 환경이다. 수 GB짜리 torch/CUDA를 여기에 넣으면
+서비스가 깨졌을 때 원인이 연구 쪽인지 서비스 쪽인지 가리기 어려워진다.
+연구용 환경을 따로 만든다.
 
-    .venv\Scripts\python.exe ^
+    py -3.12 -m venv .venv-cctv
+    .venv-cctv\Scripts\python.exe -m pip install --upgrade pip
+    .venv-cctv\Scripts\python.exe -m pip install -e ".[cctv]"
+
+    .venv-cctv\Scripts\python.exe ^
       research\cctv_counting\scripts\run_video.py ^
       --input <영상 경로> ^
       --config research\cctv_counting\configs\demo.yaml ^
       --output-dir outputs\cctv_demo
+
+`.venv-cctv/`는 `.gitignore`에 있다. **아직 만들지 않았다.**
 
 **영상 경로는 반드시 직접 준다.** 이 도구는 로컬에 있는 영상을 찾아서 알아서
 쓰지 않는다. CCTV 영상에는 사람이 찍혀 있고, 어느 영상을 처리할지는 사람이
@@ -374,7 +549,19 @@ CUDA 빌드가 크고(수 GB), FastAPI 서비스가 도는 가상환경에 넣�
 경로는 코드로만 존재하고 실행으로 검증되지 않았다.
 
 **추적 단순화의 대가를 재지 않았다.** Kalman 대신 등속 외삽, Hungarian 대신
-greedy. 얼마나 손해인지 모른다.
+greedy. 얼마나 손해인지 모른다. 그리고 이 tracker는 ByteTrack이 아니므로,
+여기서 나올 숫자를 ByteTrack의 성능으로 옮겨 말할 수 없다.
+
+**`max_age`와 `min_hits`가 아직 프레임 수 단위다.** cooldown은 초 기반으로
+바꿨지만 이 둘은 남아 있다. fps가 크게 다른 영상을 비교할 때는 함께 조정해야
+하고, 그 사실이 지금은 문서에만 있다.
+
+**reliability는 heuristic이지 보정된 불확실성이 아니다.** 특히 누락은
+원리적으로 잡지 못한다(5절).
+
+**라이선스를 세 층으로 나눠 봤지만 전부 확인하지는 못했다.** COCO의 공식
+Terms 페이지와 MOT 계열은 조회에 실패했다(3절). 실제 배포 판단이 필요한
+시점에 다시 확인해야 하며, 이 보고서는 법률 자문이 아니다.
 
 **밀집이 가장 약할 것으로 보이나 확인되지 않았다.** 예상이지 관찰이 아니다.
 
@@ -412,9 +599,11 @@ MAE와 bias를 같이 본다. **bias의 부호가 뒤집히는 지점**이 있�
 `reliability_flag`가 켜진 프레임의 오차와 꺼진 프레임의 오차를 비교한다. 차이가
 없으면 이 신호는 쓸모없고, 다른 신호를 찾아야 한다. **없다는 결과도 결과다.**
 
-**6. 추적 단순화의 대가 측정.**
-greedy를 Hungarian으로 바꿔 같은 시퀀스를 다시 돌린다. 차이가 작으면 지금
-구현을 유지하고, 크면 scipy 의존성을 추가한다.
+**6. 단순화한 tracker와 제대로 된 tracker의 비교.**
+greedy를 Hungarian으로, 등속 외삽을 Kalman으로 바꿔 같은 시퀀스를 다시
+돌린다. 지금은 "단순화했다"만 알고 "얼마나 손해인지"는 모른다. 차이가 작으면
+지금 구현을 유지하고, 크면 scipy 의존성을 추가한다. **이 비교를 하기 전에는
+이 tracker의 수치를 ByteTrack 계열의 성능으로 소개할 수 없다.**
 
 **7. Domain condition 태그 부착.**
 MOT 시퀀스 단위로 실내/실외, 낮/밤, 밀집도를 붙인다. 8절의 표가 채워진다.
@@ -427,9 +616,9 @@ MOT 시퀀스 단위로 실내/실외, 낮/밤, 밀집도를 붙인다. 8절의 
 |---|---|
 | 위치 | `research/cctv_counting/` |
 | 핵심 로직 의존성 | 표준 라이브러리 + pydantic |
-| 추론 의존성 (선택) | `pip install -e ".[cctv]"` — pyyaml, opencv-python, numpy, torch, torchvision |
-| 신규 테스트 | 208개 |
-| 전체 테스트 | 472개 통과 |
+| 추론 의존성 (선택) | 별도 `.venv-cctv`에 `pip install -e ".[cctv]"` — pyyaml, opencv-python, numpy, torch, torchvision |
+| 신규 테스트 | 241개 |
+| 전체 테스트 | 505개 통과 |
 | 개인정보 검사 | 자동. 매 테스트 실행마다 |
 
 - 상세: `research/cctv_counting/README.md`

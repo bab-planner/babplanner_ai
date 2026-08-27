@@ -30,7 +30,7 @@ def _config(**overrides) -> CctvConfig:
             "in_direction": "NEGATIVE",
             "band": 0.01,
             "min_confirm_distance": 0.03,
-            "cooldown_frames": 5,
+            "cooldown_seconds": 0.2,
         },
     }
     for key, value in overrides.items():
