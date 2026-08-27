@@ -248,8 +248,8 @@ counting의 수단이고, 제대로 재려면 track 단위 annotation과 `TrackE
 
 | | |
 |---|---|
-| 신규 테스트 | 207개 |
-| 전체 테스트 | 471개 (기존 264 + 신규 207) |
+| 신규 테스트 | 208개 |
+| 전체 테스트 | 472개 (기존 264 + 신규 208) |
 | 결과 | 전부 통과 |
 | 실행 조건 | torch, opencv 없이. 가짜 detector로 pipeline 전체를 관통 |
 
@@ -428,8 +428,8 @@ MOT 시퀀스 단위로 실내/실외, 낮/밤, 밀집도를 붙인다. 8절의 
 | 위치 | `research/cctv_counting/` |
 | 핵심 로직 의존성 | 표준 라이브러리 + pydantic |
 | 추론 의존성 (선택) | `pip install -e ".[cctv]"` — pyyaml, opencv-python, numpy, torch, torchvision |
-| 신규 테스트 | 207개 |
-| 전체 테스트 | 471개 통과 |
+| 신규 테스트 | 208개 |
+| 전체 테스트 | 472개 통과 |
 | 개인정보 검사 | 자동. 매 테스트 실행마다 |
 
 - 상세: `research/cctv_counting/README.md`
