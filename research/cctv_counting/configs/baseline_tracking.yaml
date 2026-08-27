@@ -1,0 +1,63 @@
+# Baseline B: detection + tracking
+#
+# 이 저장소의 기준 설정이다. occupancy와 입장/퇴장 인원을 모두 낸다.
+# 여기 있는 숫자들은 정답 데이터로 검증한 값이 아니라 출발점이다.
+# 무엇이 좋은 값인지는 annotation이 붙은 뒤에 재서 정한다.
+
+name: baseline_tracking
+description: pretrained person detector + BYTE 방식 추적 + 선 통과 계수
+
+detector:
+  backend: torchvision
+  model: fasterrcnn_mobilenet_v3_large_fpn
+  confidence_threshold: 0.4
+  device: auto
+  person_class_id: null   # null이면 weight 메타데이터에서 찾는다
+  max_input_size: 960
+
+tracker:
+  enabled: true
+  high_threshold: 0.5     # 이 이상만 새 track을 만든다
+  low_threshold: 0.1      # 이 사이는 2단계 구제 매칭에만 쓴다
+  iou_threshold: 0.3
+  low_iou_threshold: 0.2
+  max_age: 30             # 30프레임(약 1초)까지 가려져도 같은 사람으로 본다
+  min_hits: 3
+
+roi:
+  enabled: false
+  x1: 0.0
+  y1: 0.0
+  x2: 1.0
+  y2: 1.0
+
+line:
+  enabled: true
+  # 0~1 정규화 좌표. 해상도가 달라져도 같은 자리를 가리킨다.
+  start: [0.10, 0.60]
+  end: [0.90, 0.60]
+  # 선을 start -> end 로 그었을 때, 어느 쪽으로 넘어가는 것이 입장인가.
+  # NEGATIVE = 화면 위쪽(y가 작아지는 쪽). 카메라를 반대로 달았으면 POSITIVE.
+  # 반드시 현장 영상을 보고 정한다.
+  in_direction: NEGATIVE
+  anchor: BOTTOM_CENTER   # 바닥에 그은 선이므로 발 쪽으로 판정한다
+  band: 0.01              # 이 안은 ON_LINE. 미세 떨림을 무시한다
+  min_confirm_distance: 0.03
+  cooldown_frames: 15     # 한 번 센 뒤 이만큼은 다시 세지 않는다
+
+reliability:
+  min_mean_confidence: 0.45
+  crowded_track_count: null
+
+window:
+  enabled: true
+  seconds: 3.0
+
+output:
+  annotated_video: true
+  observations_csv: true
+  summary_json: true
+  windows_csv: true
+
+seed: 0
+frame_stride: 1

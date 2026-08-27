@@ -43,6 +43,32 @@ feature 계약 확장은 그 source가 정해진 뒤 별도 version에서 한다
 발주 추천도 마찬가지다. 계획 발주량의 canonical source가 백엔드에 없어서,
 관리자가 요청 본문으로 명시하도록 계약을 정했다.
 
+## AI 연구 트랙
+
+서비스 계약(`src/`) 뒤에 들어갈 모델을 만드는 곳은 `research/`다. 이 폴더를
+통째로 지워도 FastAPI 서비스는 그대로 뜬다.
+
+| | 트랙 | 상태 |
+|---|---|---|
+| AI-1 | [CCTV 혼잡도·이용 인원](research/cctv_counting/) | **baseline 구현됨. 벤치마크 미측정** |
+| AI-2 | [잔반 분석](research/waste_estimation/) | 계획. 정의만 있고 모델 코드 없음 |
+| AI-3 | [식수 예측](research/demand_forecasting/) | 계획. 정의만 있고 모델 코드 없음 |
+
+AI-1은 영상에서 현재 인원(occupancy)과 입구 통과 인원(entry count)을 따로
+낸다. 두 값은 다르다. 점심에 300명이 다녀가도 한 순간의 인원은 40명일 수 있다.
+
+**성능 수치는 아직 없다.** 정답 데이터가 없어서 MAE도 오차도 측정하지 않았다.
+지금 있는 것은 끝까지 도는 pipeline이지 얼마나 맞는지 아는 pipeline이 아니다.
+자세한 것은 [reports/cctv_baseline.md](reports/cctv_baseline.md).
+
+**얼굴을 다루지 않는다.** 사람을 영상 밖에서 다시 알아보지 않고, 회원 정보와
+연결하지 않는다. `track_id`는 영상 한 세션 안에서만 유효한 임시 번호이며 파일로
+나가지 않는다. 이 경계는 테스트가 매 실행마다 확인한다.
+
+핵심 로직은 추가 설치 없이 `pytest`로 돌지만, 실제 영상을 처리하려면:
+
+    pip install -e ".[cctv]"
+
 ## 실행
 
 환경 변수는 셸에만 둔다. 파일로 남기지 않는다.

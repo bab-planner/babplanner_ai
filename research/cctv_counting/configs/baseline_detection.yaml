@@ -1,0 +1,57 @@
+# Baseline A: detection only
+#
+# 추적을 끈다. 프레임마다 상자를 세는 것이 곧 occupancy다.
+#
+# 이 설정으로는 입장 인원을 셀 수 없다. 같은 사람을 프레임 사이에서 이어
+# 붙이지 못하면 "넘었다"는 사건이 정의되지 않기 때문이다. entries/exits는
+# 0이 아니라 빈 칸으로 나간다.
+#
+# 선은 그대로 켜 둔다. 통과를 세기 위해서가 아니라, 선 근처 상자 수라는
+# 순진한 대리 지표를 같이 기록하기 위해서다. 그 값이 실제 입장 인원보다
+# 얼마나 크게 나오는지가 추적이 하는 일의 크기다.
+#
+# detector 설정은 baseline_tracking.yaml과 같아야 한다. 그래야 두 결과의
+# 차이를 추적 유무 탓으로 돌릴 수 있다.
+
+name: baseline_detection
+description: pretrained person detector만. 추적 없음.
+
+detector:
+  backend: torchvision
+  model: fasterrcnn_mobilenet_v3_large_fpn
+  confidence_threshold: 0.4
+  device: auto
+  person_class_id: null
+  max_input_size: 960
+
+tracker:
+  enabled: false
+
+roi:
+  enabled: false
+
+line:
+  enabled: true
+  start: [0.10, 0.60]
+  end: [0.90, 0.60]
+  in_direction: NEGATIVE
+  anchor: BOTTOM_CENTER
+  band: 0.01
+  min_confirm_distance: 0.03
+  cooldown_frames: 15
+
+reliability:
+  min_mean_confidence: 0.45
+
+window:
+  enabled: true
+  seconds: 3.0
+
+output:
+  annotated_video: true
+  observations_csv: true
+  summary_json: true
+  windows_csv: true
+
+seed: 0
+frame_stride: 1

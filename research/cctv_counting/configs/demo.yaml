@@ -1,0 +1,63 @@
+# 시연용.
+#
+# baseline_tracking과 같은 구조이되 화면에서 보기 좋게 조정했다.
+# **여기 숫자로 성능을 논하지 않는다.** 시연은 "돌아간다"를 보여주는 것이고,
+# 성능은 정답이 붙은 데이터에서 따로 잰다.
+#
+# 처음 자기 영상으로 돌릴 때 반드시 확인할 것:
+#
+#   1. line.start / line.end 가 실제 입구를 지나는가
+#      -> annotated.mp4를 열어 선이 어디 그려졌는지 본다
+#   2. line.in_direction 이 맞는가
+#      -> 사람이 들어오는데 EXITED가 오르면 뒤집힌 것이다
+#   3. roi 를 켤 것인가
+#      -> 창밖 지나가는 사람이 잡히면 켠다
+
+name: demo
+description: 사용자가 제공한 영상으로 도는 것을 보여주기 위한 설정
+
+detector:
+  backend: torchvision
+  model: fasterrcnn_mobilenet_v3_large_fpn
+  confidence_threshold: 0.4
+  device: auto
+  person_class_id: null
+  max_input_size: 720   # 시연에서는 속도를 우선한다
+
+tracker:
+  enabled: true
+  high_threshold: 0.5
+  low_threshold: 0.1
+  iou_threshold: 0.3
+  low_iou_threshold: 0.2
+  max_age: 30
+  min_hits: 3
+
+roi:
+  enabled: false
+
+line:
+  enabled: true
+  start: [0.10, 0.60]
+  end: [0.90, 0.60]
+  in_direction: NEGATIVE
+  anchor: BOTTOM_CENTER
+  band: 0.01
+  min_confirm_distance: 0.03
+  cooldown_frames: 15
+
+reliability:
+  min_mean_confidence: 0.45
+
+window:
+  enabled: false
+  seconds: 3.0
+
+output:
+  annotated_video: true
+  observations_csv: true
+  summary_json: true
+  windows_csv: false
+
+seed: 0
+frame_stride: 2   # 시연은 두 프레임에 한 장만 봐도 충분하다

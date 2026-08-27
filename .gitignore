@@ -13,3 +13,25 @@ dist/
 # 실제 수집 데이터. 급식 사진에는 사람이 찍혀 있을 수 있다.
 data/*
 !data/README.md
+
+# --- CCTV 연구 트랙 ---
+# 영상 원본과 결과물. CCTV 영상에는 사람이 찍혀 있고, annotated 영상도
+# 마찬가지다. 저장소에 들어가면 되돌릴 수 없다.
+outputs/
+research/cctv_counting/datasets/raw/
+research/cctv_counting/experiments/*
+!research/cctv_counting/experiments/README.md
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# 모델 weight. 라이브러리 캐시에 두고 받아 쓴다.
+*.pt
+*.pth
+*.onnx
+*.engine
+*.trt
+
+# annotations/ 의 CSV 템플릿은 tracked다(위 규칙에 걸리지 않는다).
+# 실제 annotation을 채운 파일은 개인정보 판단 후 별도로 결정한다.

@@ -17,6 +17,17 @@ dev = [
     "pytest>=8.3",
     "httpx>=0.27",
 ]
+# CCTV counting 연구 트랙 전용. FastAPI 서비스는 이것 없이 그대로 뜬다.
+# research/cctv_counting/src 의 core 로직(기하, 추적, 계수, 지표)은 표준
+# 라이브러리만 쓰므로 이 extra 없이도 import 되고 테스트된다. 여기 있는
+# 것들은 영상 입출력과 pretrained detector 추론에만 필요하다.
+cctv = [
+    "pyyaml>=6.0",          # 실험 config 파일 파싱
+    "opencv-python>=4.10",  # 영상 디코딩과 annotated.mp4 인코딩
+    "numpy>=1.26",          # detector 입출력 프레임 배열
+    "torch>=2.4",           # torchvision detector backend
+    "torchvision>=0.19",    # COCO pretrained person detector (BSD-3-Clause)
+]
 
 [build-system]
 requires = ["setuptools>=68"]
@@ -26,5 +37,7 @@ build-backend = "setuptools.build_meta"
 where = ["src"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
-pythonpath = ["src"]
+# 서비스 테스트와 연구 트랙 테스트를 같은 `pytest` 한 번으로 돌린다.
+# 연구 코드가 서비스를 깨뜨리면 그 자리에서 보이게 하려는 것이다.
+testpaths = ["tests", "research/cctv_counting/tests"]
+pythonpath = ["src", "research/cctv_counting/src"]
