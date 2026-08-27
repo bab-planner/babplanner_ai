@@ -21,6 +21,10 @@ TEST_SERVICE_TOKEN = "test-only-service-token-not-a-real-secret-0123456789"
 TEST_ENV = {
     "APP_ENV": "local",
     "WASTE_MODEL_MODE": "fixture",
+    # 수요/발주는 기본이 disabled다. 경계를 확인하려면 켜 둬야 한다. 꺼진
+    # 상태는 설정을 갈아 끼우는 테스트에서 따로 확인한다.
+    "DEMAND_MODEL_MODE": "fixture",
+    "PROCUREMENT_MODEL_MODE": "fixture",
     "AI_SERVICE_TOKEN": TEST_SERVICE_TOKEN,
 }
 

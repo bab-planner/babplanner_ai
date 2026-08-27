@@ -281,4 +281,12 @@ def test_no_outbound_network_clients_in_sources() -> None:
 def test_no_user_endpoints_are_exposed(client: TestClient) -> None:
     paths = list(client.app.openapi()["paths"])
 
-    assert paths == [PATH]
+    # 사용자 앱이 부를 수 있는 경로가 하나도 없어야 한다. 경로가 늘어나는 것
+    # 자체는 괜찮지만, /api/v1 이 생기면 이 서비스가 공개 API가 된다.
+    for path in paths:
+        assert path.startswith("/internal/v1/ai/"), path
+    assert sorted(paths) == [
+        "/internal/v1/ai/demand/predict",
+        "/internal/v1/ai/procurement/recommend",
+        "/internal/v1/ai/waste/analyze",
+    ]

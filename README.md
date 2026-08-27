@@ -1,17 +1,47 @@
 # babplanner-ai
 
-밥플래너 잔반 이미지 분석 서비스.
+밥플래너 AI 서비스. 잔반 분석, 수요 예측, 발주 추천의 내부 경계다.
 
 서비스 백엔드(Spring)만 호출한다. 사용자 앱이 직접 호출하는 endpoint는 없다.
 
 ## 현재 상태
 
-실제 비전 모델은 아직 없다. `FixtureWasteEstimator`는 이미지를 판독하지 않고
-디코딩 가능 여부만 확인한 뒤 고정값을 돌려주는 **개발 fixture**다. 이 값을
-분석 결과로 읽으면 안 된다.
+**세 기능 모두 실제 모델이 없다.** 지금 있는 것은 프로세스 경계와 계약뿐이다.
 
-교체 지점은 `WasteEstimator` 하나다. HTTP 계층과 인증은 그대로 두고 구현만
-바꾸면 된다.
+| 기능 | 구현 | 돌려주는 값 |
+|---|---|---|
+| 잔반 분석 | `FixtureWasteEstimator` | 이미지를 판독하지 않고 고정값 |
+| 수요 예측 | `FixtureDemandEstimator` | 입력과 무관하게 고정된 인원 수 |
+| 발주 추천 | `FixtureProcurementRecommender` | 계획 수량 그대로, 조정률 0 |
+
+이 값들을 분석 결과나 예측으로 읽으면 안 된다. `modelVersion`이
+`fastapi-fixture-*`로 시작하면 fixture가 낸 값이다.
+
+교체 지점은 `WasteEstimator` / `DemandEstimator` / `ProcurementRecommender`
+셋이다. HTTP 계층과 인증은 그대로 두고 구현만 바꾸면 된다.
+
+### 수요 예측: 정답 데이터가 없다
+
+이건 모델을 아직 안 만들었다는 것과는 다른 문제다.
+
+수요 예측이 맞히려는 값은 **실제 급식 이용 인원**이다. 그런데 지금 시스템
+어디에도 그 값이 정답으로 쌓이는 곳이 없다.
+
+- `congestion_observations.peopleCount`는 특정 시점에 관측된 혼잡도 지표다.
+  한 끼를 실제로 먹은 사람 수가 아니다. 이 값을 정답으로 쓰면 관측 시각과
+  관측 방식에 따라 정답이 흔들린다.
+- 잔반 제출 건수는 인증에 참여한 사람 수다. 이용자 전체가 아니다.
+- 식권/입장 기록 같은 canonical source는 아직 없다.
+
+그래서 `AIDemandRequest`는 과거 관측치 배열을 받지 않는다. 어느 기간의
+무엇을 집계한 값인지 정의된 적이 없는 배열을 계약에 두면, 보내는 쪽은 모델이
+그것을 쓰고 있다고 믿고 받는 쪽은 무시하게 된다.
+
+**실제 식수 ground truth source가 생기기 전까지 수요 모델 학습은 불가능하다.**
+feature 계약 확장은 그 source가 정해진 뒤 별도 version에서 한다.
+
+발주 추천도 마찬가지다. 계획 발주량의 canonical source가 백엔드에 없어서,
+관리자가 요청 본문으로 명시하도록 계약을 정했다.
 
 ## 실행
 
@@ -19,12 +49,27 @@
 
     APP_ENV=local
     WASTE_MODEL_MODE=fixture
+    DEMAND_MODEL_MODE=fixture
+    PROCUREMENT_MODEL_MODE=fixture
     AI_SERVICE_TOKEN=<secret>
 
     uvicorn babplanner_ai.main:app --host 127.0.0.1 --port 8001
 
 `WASTE_MODEL_MODE`에 기본값은 없다. 운영에서 `fixture`를 고르면 기동에
 실패한다. 실제 모델 어댑터가 없는 동안에는 그것이 정상이다.
+
+`DEMAND_MODEL_MODE`와 `PROCUREMENT_MODEL_MODE`의 기본값은 `disabled`다.
+`disabled`는 fixture가 아니라 "꺼짐"이며, 호출하면 503이 나간다. 끈 기능이
+fixture로 대신 답하면 예측이 없는 배포가 예측을 하고 있는 것처럼 보인다.
+
+## 내부 API
+
+    POST /internal/v1/ai/waste/analyze
+    POST /internal/v1/ai/demand/predict
+    POST /internal/v1/ai/procurement/recommend
+
+셋 다 `X-Service-Token` 헤더를 요구한다. 없거나 틀리면 똑같이 401이다.
+이 서비스는 DB도 파일도 외부 네트워크도 쓰지 않는다. 보관은 백엔드가 한다.
 
 ## 테스트
 
