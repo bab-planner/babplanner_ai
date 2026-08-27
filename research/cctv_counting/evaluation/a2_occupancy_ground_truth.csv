@@ -1,0 +1,31 @@
+video_id,frame_index,timestamp_seconds,actual_count,condition,annotator,notes
+a2-demo-vtest,0,0.0,3,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,10,1.0,3,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)","우측 프레임 경계에 잘린 사람 1명, 발 x가 ROI 밖이라 제외"
+a2-demo-vtest,20,2.0,4,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,30,3.0,4,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,40,4.0,6,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,50,5.0,6,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,60,6.0,5,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,70,7.0,6,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,80,8.0,6,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,90,9.0,6,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,100,10.0,5,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,110,11.0,5,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,120,12.0,7,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,130,13.0,7,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,140,14.0,8,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,150,15.0,6,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",좌측 상단 보행로의 원거리 인물 제외(발 y가 ROI 경계 부근)
+a2-demo-vtest,160,16.0,6,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",동일 사유로 좌측 상단 인물 제외
+a2-demo-vtest,170,17.0,7,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,180,18.0,7,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,190,19.0,7,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,200,20.0,7,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,210,21.0,6,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,220,22.0,5,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)","우측 경계 인물 제외(발 x가 ROI 밖), 좌측 경계 인물 제외"
+a2-demo-vtest,230,23.0,7,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,240,24.0,7,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,250,25.0,7,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,260,26.0,7,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,270,27.0,7,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",
+a2-demo-vtest,280,28.0,6,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",좌측 경계 인물 제외(발 x가 ROI 밖)
+a2-demo-vtest,290,29.0,6,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",

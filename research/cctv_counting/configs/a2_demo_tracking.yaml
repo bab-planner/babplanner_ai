@@ -1,0 +1,76 @@
+# Stage A2 — 첫 실제 추론. Baseline B (detection + tracking).
+#
+# 대상 영상: opencv/opencv samples/data/vtest.avi
+#   768x576, 10 fps, 795 frames, 79.5초
+#   보행자 통로를 내려다보는 고정 카메라
+#
+# **급식소 영상이 아니다.** 사람이 선을 넘는 것을 세는 기계가 실제로 도는지
+# 보기 위한 대리 장면이다. 여기서 나온 숫자를 급식소 성능으로 옮겨 말하지
+# 않는다.
+#
+# ROI와 선은 정답을 보기 전에 화면을 눈으로 확인하고 정했다. 성능을 높이려고
+# 나중에 옮기지 않는다. 정답도 같은 선과 같은 ROI 기준으로 센다.
+
+name: a2_demo_tracking
+description: Stage A2 첫 실제 추론. pretrained detector + 추적 + 선 통과 계수.
+
+detector:
+  backend: torchvision
+  model: fasterrcnn_mobilenet_v3_large_fpn
+  confidence_threshold: 0.5
+  device: auto
+  person_class_id: null
+  max_input_size: null   # 768x576은 이미 작다. 줄이면 원거리 사람을 더 놓친다.
+
+tracker:
+  enabled: true
+  high_threshold: 0.5
+  low_threshold: 0.1
+  iou_threshold: 0.3
+  low_iou_threshold: 0.2
+  # 아래 둘은 프레임 수 단위다. 저장소 기본값은 30fps를 가정하고 정했으므로
+  # 이 10fps 영상에서는 max_age 30 = 3.0초, min_hits 3 = 0.3초가 된다.
+  # 의도했던 1.0초 / 0.1초와 다르다. 이번에는 기본값 그대로 돌리고 그 결과를
+  # 관찰한다. 미리 고치면 이 문제가 실제로 무엇을 하는지 볼 수 없다.
+  max_age: 30
+  min_hits: 3
+
+roi:
+  # 포장된 통로만 본다. 위쪽 먼 건물과 아래쪽 잔디 앞마당은 뺀다.
+  # 정답 annotation도 이 사각형 기준으로 센다.
+  enabled: true
+  x1: 0.02
+  y1: 0.22
+  x2: 0.98
+  y2: 0.78
+
+line:
+  enabled: true
+  # 세로선. 이 장면에서 사람은 좌우로 지나가므로 가로선은 거의 넘지 않는다.
+  start: [0.72, 0.22]
+  end: [0.72, 0.78]
+  # start -> end 가 아래 방향이므로, 선 왼쪽이 POSITIVE다.
+  # IN = 왼쪽으로 넘어가는 것(통로 안쪽 방향)으로 정한다.
+  # 이 장면에 "입구"라는 것이 실제로 있는 것은 아니고, 정답과 예측이 같은
+  # 규칙을 쓰기만 하면 된다.
+  in_direction: POSITIVE
+  anchor: BOTTOM_CENTER
+  band: 0.01
+  min_confirm_distance: 0.03
+  cooldown_seconds: 0.5   # 10fps에서 5프레임
+
+reliability:
+  min_mean_confidence: 0.45
+
+window:
+  enabled: true
+  seconds: 3.0
+
+output:
+  annotated_video: true
+  observations_csv: true
+  summary_json: true
+  windows_csv: true
+
+seed: 0
+frame_stride: 1

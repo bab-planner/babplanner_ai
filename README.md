@@ -50,16 +50,21 @@ feature 계약 확장은 그 source가 정해진 뒤 별도 version에서 한다
 
 | | 트랙 | 상태 |
 |---|---|---|
-| AI-1 | [CCTV 혼잡도·이용 인원](research/cctv_counting/) | **baseline 구현됨. 벤치마크 미측정** |
+| AI-1 | [CCTV 혼잡도·이용 인원](research/cctv_counting/) | **첫 실제 추론과 소규모 정량 평가 완료. 공개 벤치마크 미실행** |
 | AI-2 | [잔반 분석](research/waste_estimation/) | 계획. 정의만 있고 모델 코드 없음 |
 | AI-3 | [식수 예측](research/demand_forecasting/) | 계획. 정의만 있고 모델 코드 없음 |
 
 AI-1은 영상에서 현재 인원(occupancy)과 입구 통과 인원(entry count)을 따로
 낸다. 두 값은 다르다. 점심에 300명이 다녀가도 한 순간의 인원은 40명일 수 있다.
 
-**성능 수치는 아직 없다.** 정답 데이터가 없어서 MAE도 오차도 측정하지 않았다.
-지금 있는 것은 끝까지 도는 pipeline이지 얼마나 맞는지 아는 pipeline이 아니다.
-자세한 것은 [reports/cctv_baseline.md](reports/cctv_baseline.md).
+**첫 성능 수치가 나왔다. 다만 매우 작은 표본이다.** 공개 보행자 영상 한 편
+(79.5초)에 실제 pretrained detector를 돌리고, 사람이 직접 센 정답 30시점으로
+채점했다. Occupancy MAE 0.70~4.47(검출 임계값에 따라), 입장 인원 절대 오차 2,
+처리 속도 3.5 fps(CPU).
+
+**이것은 급식소 성능이 아니고 공개 벤치마크 결과도 아니다.** 영상 한 편,
+정답 30시점, 주간 단일 조건이다. 어떤 조건에서 나온 값이고 무엇이 관찰된
+실패였는지는 [reports/cctv_baseline.md](reports/cctv_baseline.md)에 있다.
 
 **얼굴을 다루지 않는다.** 사람을 영상 밖에서 다시 알아보지 않고, 회원 정보와
 연결하지 않는다. `track_id`는 영상 한 세션 안에서만 유효한 임시 번호이며 파일로

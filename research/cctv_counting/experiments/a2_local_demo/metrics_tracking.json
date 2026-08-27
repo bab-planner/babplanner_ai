@@ -1,0 +1,34 @@
+{
+  "label": "B: detection + tracking",
+  "windowEndSeconds": 29.0,
+  "samples": 30,
+  "occupancy": {
+    "mae": 1.7,
+    "rmse": 2.041241452319315,
+    "bias": 1.1666666666666667,
+    "actualMean": 5.966666666666667,
+    "predictedMean": 7.133333333333334
+  },
+  "reliabilityStratification": {
+    "OK": {
+      "samples": 29,
+      "meanAbsError": 1.6551724137931034
+    },
+    "LOW_CONFIDENCE": {
+      "samples": 0,
+      "meanAbsError": null
+    },
+    "NO_DETECTION": {
+      "samples": 1,
+      "meanAbsError": 3.0
+    }
+  },
+  "entry": {
+    "actualIn": 7,
+    "predictedIn": 9,
+    "absoluteErrorIn": 2,
+    "actualOut": 4,
+    "predictedOut": 5,
+    "absoluteErrorOut": 1
+  }
+}

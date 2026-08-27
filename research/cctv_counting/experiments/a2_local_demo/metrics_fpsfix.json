@@ -1,0 +1,34 @@
+{
+  "label": "a2_fpsfix",
+  "windowEndSeconds": 29.0,
+  "samples": 30,
+  "occupancy": {
+    "mae": 2.1333333333333333,
+    "rmse": 2.556038601690775,
+    "bias": 2.066666666666667,
+    "actualMean": 5.966666666666667,
+    "predictedMean": 8.033333333333333
+  },
+  "reliabilityStratification": {
+    "OK": {
+      "samples": 30,
+      "meanAbsError": 2.1333333333333333
+    },
+    "LOW_CONFIDENCE": {
+      "samples": 0,
+      "meanAbsError": null
+    },
+    "NO_DETECTION": {
+      "samples": 0,
+      "meanAbsError": null
+    }
+  },
+  "entry": {
+    "actualIn": 7,
+    "predictedIn": 9,
+    "absoluteErrorIn": 2,
+    "actualOut": 4,
+    "predictedOut": 5,
+    "absoluteErrorOut": 1
+  }
+}

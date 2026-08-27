@@ -224,3 +224,37 @@ def test_non_person_detections_never_reach_counting():
     chairs = [person(100, 400, 160, 700, class_id=62)]
     _, results = _run([chairs, chairs], _config())
     assert results[-1].observation.occupancy_count == 0
+
+
+def test_warmup_frames_do_not_count_detections_yet():
+    """min_hits를 채우기 전에는 상자가 보여도 occupancy는 0이다.
+
+    실제 영상 첫 프레임에서 관찰한 동작이다. 겹쳐 그리기가 이때 원시 상자를
+    굵게 그리면 "상자 4개 + CURRENT 0"이 되어 계수가 고장 난 것처럼 보인다.
+    """
+    frame = [person(100, 400, 160, 700)]
+    config = _config(tracker={"min_hits": 3})
+    _, results = _run([frame, frame, frame], config)
+
+    assert results[0].observation.occupancy_count == 0
+    assert results[0].detections, "detector는 상자를 냈다"
+    assert results[0].tracked == [], "아직 확정된 track은 없다"
+    assert results[0].observation.reliability_flag is ReliabilityFlag.NO_DETECTION
+    # 세 번째 프레임에서 확정된다.
+    assert results[2].observation.occupancy_count == 1
+
+
+def test_pending_detections_are_distinguishable_from_counted_ones():
+    """겹쳐 그리기가 둘을 구분할 수 있도록 결과가 분리되어 있어야 한다."""
+    frame = [person(100, 400, 160, 700)]
+    _, results = _run([frame, frame, frame], _config(tracker={"min_hits": 3}))
+
+    warmup = results[0]
+    pending = [d.bbox for d in warmup.detections if d.bbox not in [p.bbox for p in warmup.tracked]]
+    assert len(pending) == 1
+
+    settled = results[2]
+    still_pending = [
+        d.bbox for d in settled.detections if d.bbox not in [p.bbox for p in settled.tracked]
+    ]
+    assert still_pending == [], "확정된 뒤에는 대기 중인 상자가 없어야 한다"

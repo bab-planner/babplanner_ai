@@ -23,6 +23,12 @@ outputs/
 research/cctv_counting/datasets/raw/
 research/cctv_counting/experiments/*
 !research/cctv_counting/experiments/README.md
+# 실험 결과 중 작은 기록 파일만 예외로 남긴다. 영상은 위/아래 규칙이 막는다.
+!research/cctv_counting/experiments/*/
+research/cctv_counting/experiments/*/*
+!research/cctv_counting/experiments/*/*.json
+!research/cctv_counting/experiments/*/*.yaml
+!research/cctv_counting/experiments/*/*.csv
 *.mp4
 *.avi
 *.mov
