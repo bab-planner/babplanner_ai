@@ -97,9 +97,24 @@ class TorchvisionPersonDetector:
     score_floor: float = 0.05
     max_input_size: int | None = None
 
+    #: torchvision detection 모델은 **내부에서 이미 크기를 바꾼다.**
+    #: 기본값은 짧은 변 800, 긴 변 최대 1333이다. 그래서 384x288 프레임은
+    #: 아무것도 하지 않아도 800x1066으로 확대되어 들어간다.
+    #:
+    #: 바깥에서 cv2.resize로 2배를 해도 결국 같은 800으로 다시 줄어들므로
+    #: **실효 해상도가 올라가지 않는다.** 해상도를 실제로 올리려면 여기를
+    #: 바꿔야 한다.
+    #:
+    #: min_size만 올리고 max_size를 그대로 두면 긴 변이 max_size에 걸려
+    #: 의도한 해상도가 나오지 않는다. 둘을 함께 올린다.
+    min_size: int | None = None
+    max_size: int | None = None
+
     person_class_id: int = field(init=False, default=1)
     resolved_device: str = field(init=False, default="cpu")
     weights_name: str = field(init=False, default="")
+    effective_min_size: int = field(init=False, default=0)
+    effective_max_size: int = field(init=False, default=0)
 
     _model: Any = field(init=False, default=None, repr=False)
     _transform: Any = field(init=False, default=None, repr=False)
@@ -109,6 +124,18 @@ class TorchvisionPersonDetector:
             raise DetectorLoadError(
                 f"확인되지 않은 모델입니다: {self.model_name}. "
                 f"쓸 수 있는 것: {', '.join(sorted(SUPPORTED_MODELS))}"
+            )
+        # 설정 검증은 torch를 부르기 전에 끝낸다. 잘못된 조합이 무거운
+        # import와 weight 내려받기를 지난 뒤에야 터지면 진단이 느려진다.
+        if self.min_size is not None and self.max_size is None:
+            raise DetectorLoadError(
+                "min_size를 바꾸면 max_size도 함께 지정해야 합니다. "
+                "긴 변이 max_size에 걸려 의도한 해상도가 나오지 않습니다."
+            )
+        if self.min_size is not None and self.max_size < self.min_size:
+            raise DetectorLoadError(
+                f"max_size는 min_size 이상이어야 합니다: "
+                f"{self.max_size} < {self.min_size}"
             )
         try:
             import torch  # noqa: F401
@@ -133,8 +160,13 @@ class TorchvisionPersonDetector:
 
         builder = getattr(tv_detection, self.model_name)
         model = builder(weights=weights, box_score_thresh=self.score_floor)
+        if self.min_size is not None:
+            model.transform.min_size = (self.min_size,)
+            model.transform.max_size = self.max_size
         model.eval()
         model.to(self.resolved_device)
+        self.effective_min_size = int(model.transform.min_size[0])
+        self.effective_max_size = int(model.transform.max_size)
         self._model = model
         self._transform = weights.transforms()
 
@@ -147,7 +179,21 @@ class TorchvisionPersonDetector:
             "device": self.resolved_device,
             "personClassId": self.person_class_id,
             "maxInputSize": self.max_input_size,
+            "minSize": self.effective_min_size,
+            "maxSize": self.effective_max_size,
         }
+
+    def transformed_shape(self, height: int, width: int) -> tuple[int, int]:
+        """이 크기의 프레임이 실제로 몇으로 변형되어 들어가는지.
+
+        추측하지 않고 모델의 transform에 직접 물어본다. 실험 기록에 남긴다.
+        """
+        import torch
+
+        dummy = torch.zeros(3, height, width)
+        with torch.inference_mode():
+            images, _ = self._model.transform([dummy])
+        return tuple(images.image_sizes[0])
 
     def detect(self, frame: Any) -> list[Detection]:
         """BGR 배열 한 장에서 상자들을 뽑는다."""

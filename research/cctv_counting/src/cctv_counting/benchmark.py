@@ -33,9 +33,27 @@ class BenchmarkError(ValueError):
 #: 판단해야 한다.
 PERSON_ROLES = frozenset({"walker", "browser"})
 
-#: 상자가 실제로 그려져 있는 상태들. 세 값 모두 사람이 화면에 보인다.
-#: appear는 등장 프레임, disappear는 퇴장 프레임이다.
-VISIBLE_APPEARANCES = frozenset({"appear", "visible", "disappear"})
+#: 사람이 아니라고 데이터셋이 명시한 role. 세지 않는다.
+#:
+#: INRIA 로비 세트에는 가방과 상자를 추적하는 시퀀스가 있다(LeftBag, LeftBox).
+#: 그 객체의 role이 "leaving object"다. 사람으로 세면 정답이 그만큼 부풀려진다.
+#: "none"은 role을 주장하지 않는 객체다. 사람이라고 볼 근거가 없으므로 세지
+#: 않는다.
+#:
+#: **모르는 role은 여전히 예외를 던진다.** 여기 없고 PERSON_ROLES에도 없으면
+#: 사람이 판단해야 한다. 조용히 빼면 정답이 조용히 줄어든다.
+NON_PERSON_ROLES = frozenset({"leaving object", "none"})
+
+#: 상자가 그려져 있는 상태들.
+#:
+#: appear는 등장, disappear는 퇴장 프레임이다. occluded는 가려진 상태인데,
+#: 그 사람은 여전히 그 공간에 있으므로 occupancy 정답에는 넣는다. 다만
+#: **검출 recall의 분모로는 쓰지 않는다**. 보이지 않는 사람을 찾지 못한 것을
+#: detector의 실패로 세면 안 되기 때문이다. 그 구분은 호출하는 쪽이 한다.
+VISIBLE_APPEARANCES = frozenset({"appear", "visible", "disappear", "occluded"})
+
+#: 가려져 있어 검출을 기대할 수 없는 상태.
+OCCLUDED_APPEARANCE = "occluded"
 
 
 @dataclass(frozen=True)
@@ -45,6 +63,8 @@ class GroundTruthBox:
     track_id: int
     bbox: BoundingBox
     role: str
+    #: 데이터셋이 가려짐으로 표시한 프레임인가. 검출 recall 분모에서 뺀다.
+    occluded: bool = False
 
 
 def parse_cvml(path: Path) -> dict[int, list[GroundTruthBox]]:
@@ -72,13 +92,14 @@ def parse_cvml(path: Path) -> dict[int, list[GroundTruthBox]]:
                     (h.findtext("role") or "").strip() for h in obj.iter("hypothesis")
                 }
                 roles.discard("")
-                unknown = roles - PERSON_ROLES
+                unknown = roles - PERSON_ROLES - NON_PERSON_ROLES
                 if unknown:
                     raise BenchmarkError(
                         f"{path.name} frame {number}: 처음 보는 role {sorted(unknown)}. "
                         "사람인지 사람이 판단해야 합니다."
                     )
-                if not roles:
+                if not roles & PERSON_ROLES:
+                    # 가방/상자 같은 비사람 객체. 세지 않는다.
                     continue
 
                 box = obj.find("box")
@@ -94,7 +115,8 @@ def parse_cvml(path: Path) -> dict[int, list[GroundTruthBox]]:
                     GroundTruthBox(
                         track_id=int(obj.get("id", "-1")),
                         bbox=BoundingBox(xc - w / 2, yc - h / 2, xc + w / 2, yc + h / 2),
-                        role=sorted(roles)[0],
+                        role=sorted(roles & PERSON_ROLES)[0],
+                        occluded=appearance == OCCLUDED_APPEARANCE,
                     )
                 )
         frames[number] = boxes
@@ -135,6 +157,12 @@ class GroundTruthCrossing:
     frame_index: int
     direction: CrossingDirection
     track_id: int
+    #: 통과가 확정된 프레임에서 그 사람의 정규화 높이(h / 프레임 높이).
+    #:
+    #: 놓친 통과가 작은 사람에 몰려 있는지 보려면 사건마다 크기가 필요하다.
+    #: 사건을 만든 뒤에 다시 찾으면 track_id와 프레임을 재조회해야 하므로
+    #: 여기서 함께 기록한다.
+    normalized_height: float
 
 
 def crossing_ground_truth(
@@ -168,18 +196,20 @@ def crossing_ground_truth(
         raise BenchmarkError(f"프레임 크기가 올바르지 않습니다: {frame_width}x{frame_height}")
 
     # 1) 궤적을 통째로 모은다. 예측 쪽은 이렇게 하지 못한다.
-    trajectories: dict[int, list[tuple[int, float]]] = defaultdict(list)
+    trajectories: dict[int, list[tuple[int, float, float]]] = defaultdict(list)
     for number, boxes in frames.items():
         for box in boxes:
             foot = box.bbox.bottom_center
-            trajectories[box.track_id].append((number, foot.x / frame_width))
+            trajectories[box.track_id].append(
+                (number, foot.x / frame_width, box.bbox.height / frame_height)
+            )
 
     # 2) track마다 확정된 쪽의 변화를 센다.
     events: list[GroundTruthCrossing] = []
     for track_id, samples in trajectories.items():
         samples.sort()
         confirmed: str | None = None
-        for number, x in samples:
+        for number, x, height in samples:
             offset = x - line_x_normalized
             if abs(offset) < min_confirm_distance:
                 continue  # 선에 너무 가깝다. 판정하지 않는다.
@@ -192,7 +222,9 @@ def crossing_ground_truth(
             direction = (
                 CrossingDirection.IN if side == "left" else CrossingDirection.OUT
             )
-            events.append(GroundTruthCrossing(number, direction, track_id))
+            events.append(
+                GroundTruthCrossing(number, direction, track_id, height)
+            )
             confirmed = side
 
     events.sort(key=lambda e: (e.frame_index, e.track_id))

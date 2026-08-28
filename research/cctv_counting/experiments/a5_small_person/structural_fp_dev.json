@@ -1,0 +1,1378 @@
+{
+  "split": "DEV",
+  "grid": [
+    16,
+    12
+  ],
+  "persistentRatio": 0.2,
+  "threshold": 0.7,
+  "note": "구조적 오탐 = 한 격자 칸에서 전체 프레임의 20% 이상 나타난 오탐. 총 오탐 수만 비교하면 한 자리에 머무는 오탐과 산발적 오탐을 구분할 수 없다.",
+  "candidates": {
+    "E0_mobilenet_R0": {
+      "model": "fasterrcnn_mobilenet_v3_large_fpn",
+      "minSize": null,
+      "sequences": 5,
+      "falsePositives": 2319,
+      "fpPerFrame": 0.5878326996197719,
+      "persistentFalsePositives": 897,
+      "persistentShare": 0.3868046571798189,
+      "transientFalsePositives": 1422,
+      "fpBySize": {
+        "MEDIUM": 2141,
+        "LARGE": 176,
+        "SMALL": 2
+      },
+      "perSequence": [
+        {
+          "sequence": "EnterExitCrossingPaths1front",
+          "scoredFrames": 383,
+          "falsePositives": 229,
+          "fpPerFrame": 0.597911227154047,
+          "occupiedCells": 10,
+          "persistentCells": 1,
+          "persistentFalsePositives": 91,
+          "persistentShare": 0.39737991266375544,
+          "fpBySize": {
+            "MEDIUM": 214,
+            "LARGE": 15
+          },
+          "topCells": [
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 91
+            },
+            {
+              "cell": [
+                11,
+                4
+              ],
+              "frames": 71
+            },
+            {
+              "cell": [
+                9,
+                5
+              ],
+              "frames": 32
+            },
+            {
+              "cell": [
+                10,
+                4
+              ],
+              "frames": 11
+            },
+            {
+              "cell": [
+                10,
+                5
+              ],
+              "frames": 11
+            }
+          ]
+        },
+        {
+          "sequence": "OneLeaveShop1front",
+          "scoredFrames": 295,
+          "falsePositives": 207,
+          "fpPerFrame": 0.7016949152542373,
+          "occupiedCells": 8,
+          "persistentCells": 1,
+          "persistentFalsePositives": 81,
+          "persistentShare": 0.391304347826087,
+          "fpBySize": {
+            "MEDIUM": 204,
+            "LARGE": 3
+          },
+          "topCells": [
+            {
+              "cell": [
+                11,
+                4
+              ],
+              "frames": 81
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 47
+            },
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 36
+            },
+            {
+              "cell": [
+                12,
+                4
+              ],
+              "frames": 22
+            },
+            {
+              "cell": [
+                10,
+                4
+              ],
+              "frames": 11
+            }
+          ]
+        },
+        {
+          "sequence": "OneLeaveShopReenter1front",
+          "scoredFrames": 390,
+          "falsePositives": 190,
+          "fpPerFrame": 0.48717948717948717,
+          "occupiedCells": 9,
+          "persistentCells": 0,
+          "persistentFalsePositives": 0,
+          "persistentShare": 0.0,
+          "fpBySize": {
+            "MEDIUM": 173,
+            "LARGE": 17
+          },
+          "topCells": [
+            {
+              "cell": [
+                11,
+                4
+              ],
+              "frames": 62
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 54
+            },
+            {
+              "cell": [
+                9,
+                5
+              ],
+              "frames": 34
+            },
+            {
+              "cell": [
+                10,
+                4
+              ],
+              "frames": 15
+            },
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 14
+            }
+          ]
+        },
+        {
+          "sequence": "OneShopOneWait1front",
+          "scoredFrames": 1377,
+          "falsePositives": 794,
+          "fpPerFrame": 0.5766158315177923,
+          "occupiedCells": 18,
+          "persistentCells": 1,
+          "persistentFalsePositives": 373,
+          "persistentShare": 0.46977329974811083,
+          "fpBySize": {
+            "MEDIUM": 749,
+            "LARGE": 44,
+            "SMALL": 1
+          },
+          "topCells": [
+            {
+              "cell": [
+                11,
+                4
+              ],
+              "frames": 373
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 215
+            },
+            {
+              "cell": [
+                10,
+                4
+              ],
+              "frames": 81
+            },
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 52
+            },
+            {
+              "cell": [
+                9,
+                5
+              ],
+              "frames": 36
+            }
+          ]
+        },
+        {
+          "sequence": "OneStopEnter1front",
+          "scoredFrames": 1500,
+          "falsePositives": 899,
+          "fpPerFrame": 0.5993333333333334,
+          "occupiedCells": 20,
+          "persistentCells": 1,
+          "persistentFalsePositives": 352,
+          "persistentShare": 0.39154616240266965,
+          "fpBySize": {
+            "MEDIUM": 801,
+            "LARGE": 97,
+            "SMALL": 1
+          },
+          "topCells": [
+            {
+              "cell": [
+                11,
+                4
+              ],
+              "frames": 352
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 244
+            },
+            {
+              "cell": [
+                9,
+                5
+              ],
+              "frames": 92
+            },
+            {
+              "cell": [
+                10,
+                4
+              ],
+              "frames": 90
+            },
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 75
+            }
+          ]
+        }
+      ]
+    },
+    "E1_mobilenet_R1": {
+      "model": "fasterrcnn_mobilenet_v3_large_fpn",
+      "minSize": 1200,
+      "sequences": 5,
+      "falsePositives": 2130,
+      "fpPerFrame": 0.5399239543726235,
+      "persistentFalsePositives": 1540,
+      "persistentShare": 0.7230046948356808,
+      "transientFalsePositives": 590,
+      "fpBySize": {
+        "MEDIUM": 1971,
+        "LARGE": 127,
+        "SMALL": 32
+      },
+      "perSequence": [
+        {
+          "sequence": "EnterExitCrossingPaths1front",
+          "scoredFrames": 383,
+          "falsePositives": 179,
+          "fpPerFrame": 0.46736292428198434,
+          "occupiedCells": 7,
+          "persistentCells": 1,
+          "persistentFalsePositives": 78,
+          "persistentShare": 0.43575418994413406,
+          "fpBySize": {
+            "MEDIUM": 167,
+            "LARGE": 9,
+            "SMALL": 3
+          },
+          "topCells": [
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 78
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 72
+            },
+            {
+              "cell": [
+                9,
+                5
+              ],
+              "frames": 14
+            },
+            {
+              "cell": [
+                10,
+                5
+              ],
+              "frames": 8
+            },
+            {
+              "cell": [
+                9,
+                6
+              ],
+              "frames": 4
+            }
+          ]
+        },
+        {
+          "sequence": "OneLeaveShop1front",
+          "scoredFrames": 295,
+          "falsePositives": 123,
+          "fpPerFrame": 0.41694915254237286,
+          "occupiedCells": 4,
+          "persistentCells": 1,
+          "persistentFalsePositives": 91,
+          "persistentShare": 0.7398373983739838,
+          "fpBySize": {
+            "MEDIUM": 111,
+            "LARGE": 12
+          },
+          "topCells": [
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 91
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 17
+            },
+            {
+              "cell": [
+                12,
+                4
+              ],
+              "frames": 12
+            },
+            {
+              "cell": [
+                13,
+                6
+              ],
+              "frames": 3
+            }
+          ]
+        },
+        {
+          "sequence": "OneLeaveShopReenter1front",
+          "scoredFrames": 390,
+          "falsePositives": 214,
+          "fpPerFrame": 0.5487179487179488,
+          "occupiedCells": 6,
+          "persistentCells": 2,
+          "persistentFalsePositives": 194,
+          "persistentShare": 0.9065420560747663,
+          "fpBySize": {
+            "MEDIUM": 198,
+            "LARGE": 15,
+            "SMALL": 1
+          },
+          "topCells": [
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 108
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 86
+            },
+            {
+              "cell": [
+                9,
+                5
+              ],
+              "frames": 8
+            },
+            {
+              "cell": [
+                9,
+                6
+              ],
+              "frames": 8
+            },
+            {
+              "cell": [
+                11,
+                4
+              ],
+              "frames": 2
+            }
+          ]
+        },
+        {
+          "sequence": "OneShopOneWait1front",
+          "scoredFrames": 1377,
+          "falsePositives": 857,
+          "fpPerFrame": 0.6223674655047204,
+          "occupiedCells": 15,
+          "persistentCells": 2,
+          "persistentFalsePositives": 806,
+          "persistentShare": 0.94049008168028,
+          "fpBySize": {
+            "MEDIUM": 802,
+            "LARGE": 38,
+            "SMALL": 17
+          },
+          "topCells": [
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 489
+            },
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 317
+            },
+            {
+              "cell": [
+                9,
+                6
+              ],
+              "frames": 11
+            },
+            {
+              "cell": [
+                12,
+                4
+              ],
+              "frames": 9
+            },
+            {
+              "cell": [
+                8,
+                6
+              ],
+              "frames": 7
+            }
+          ]
+        },
+        {
+          "sequence": "OneStopEnter1front",
+          "scoredFrames": 1500,
+          "falsePositives": 757,
+          "fpPerFrame": 0.5046666666666667,
+          "occupiedCells": 15,
+          "persistentCells": 1,
+          "persistentFalsePositives": 371,
+          "persistentShare": 0.4900924702774108,
+          "fpBySize": {
+            "MEDIUM": 693,
+            "LARGE": 53,
+            "SMALL": 11
+          },
+          "topCells": [
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 371
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 298
+            },
+            {
+              "cell": [
+                9,
+                5
+              ],
+              "frames": 43
+            },
+            {
+              "cell": [
+                13,
+                6
+              ],
+              "frames": 16
+            },
+            {
+              "cell": [
+                12,
+                4
+              ],
+              "frames": 12
+            }
+          ]
+        }
+      ]
+    },
+    "E2_mobilenet_R2": {
+      "model": "fasterrcnn_mobilenet_v3_large_fpn",
+      "minSize": 1600,
+      "sequences": 5,
+      "falsePositives": 2495,
+      "fpPerFrame": 0.632446134347275,
+      "persistentFalsePositives": 2327,
+      "persistentShare": 0.9326653306613226,
+      "transientFalsePositives": 168,
+      "fpBySize": {
+        "MEDIUM": 2378,
+        "SMALL": 31,
+        "LARGE": 86
+      },
+      "perSequence": [
+        {
+          "sequence": "EnterExitCrossingPaths1front",
+          "scoredFrames": 383,
+          "falsePositives": 273,
+          "fpPerFrame": 0.7127937336814621,
+          "occupiedCells": 6,
+          "persistentCells": 1,
+          "persistentFalsePositives": 247,
+          "persistentShare": 0.9047619047619048,
+          "fpBySize": {
+            "MEDIUM": 262,
+            "SMALL": 3,
+            "LARGE": 8
+          },
+          "topCells": [
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 247
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 16
+            },
+            {
+              "cell": [
+                9,
+                6
+              ],
+              "frames": 6
+            },
+            {
+              "cell": [
+                9,
+                5
+              ],
+              "frames": 2
+            },
+            {
+              "cell": [
+                13,
+                6
+              ],
+              "frames": 1
+            }
+          ]
+        },
+        {
+          "sequence": "OneLeaveShop1front",
+          "scoredFrames": 295,
+          "falsePositives": 162,
+          "fpPerFrame": 0.5491525423728814,
+          "occupiedCells": 4,
+          "persistentCells": 1,
+          "persistentFalsePositives": 151,
+          "persistentShare": 0.9320987654320988,
+          "fpBySize": {
+            "MEDIUM": 150,
+            "LARGE": 12
+          },
+          "topCells": [
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 151
+            },
+            {
+              "cell": [
+                12,
+                4
+              ],
+              "frames": 9
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 1
+            },
+            {
+              "cell": [
+                12,
+                6
+              ],
+              "frames": 1
+            }
+          ]
+        },
+        {
+          "sequence": "OneLeaveShopReenter1front",
+          "scoredFrames": 390,
+          "falsePositives": 239,
+          "fpPerFrame": 0.6128205128205129,
+          "occupiedCells": 5,
+          "persistentCells": 1,
+          "persistentFalsePositives": 225,
+          "persistentShare": 0.9414225941422594,
+          "fpBySize": {
+            "MEDIUM": 227,
+            "LARGE": 7,
+            "SMALL": 5
+          },
+          "topCells": [
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 225
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 9
+            },
+            {
+              "cell": [
+                9,
+                5
+              ],
+              "frames": 2
+            },
+            {
+              "cell": [
+                9,
+                6
+              ],
+              "frames": 2
+            },
+            {
+              "cell": [
+                9,
+                7
+              ],
+              "frames": 1
+            }
+          ]
+        },
+        {
+          "sequence": "OneShopOneWait1front",
+          "scoredFrames": 1377,
+          "falsePositives": 811,
+          "fpPerFrame": 0.588961510530138,
+          "occupiedCells": 16,
+          "persistentCells": 1,
+          "persistentFalsePositives": 751,
+          "persistentShare": 0.9260172626387176,
+          "fpBySize": {
+            "MEDIUM": 768,
+            "LARGE": 26,
+            "SMALL": 17
+          },
+          "topCells": [
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 751
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 28
+            },
+            {
+              "cell": [
+                9,
+                6
+              ],
+              "frames": 11
+            },
+            {
+              "cell": [
+                9,
+                7
+              ],
+              "frames": 4
+            },
+            {
+              "cell": [
+                12,
+                4
+              ],
+              "frames": 3
+            }
+          ]
+        },
+        {
+          "sequence": "OneStopEnter1front",
+          "scoredFrames": 1500,
+          "falsePositives": 1010,
+          "fpPerFrame": 0.6733333333333333,
+          "occupiedCells": 12,
+          "persistentCells": 1,
+          "persistentFalsePositives": 953,
+          "persistentShare": 0.9435643564356435,
+          "fpBySize": {
+            "MEDIUM": 971,
+            "LARGE": 33,
+            "SMALL": 6
+          },
+          "topCells": [
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 953
+            },
+            {
+              "cell": [
+                9,
+                5
+              ],
+              "frames": 22
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 12
+            },
+            {
+              "cell": [
+                13,
+                6
+              ],
+              "frames": 8
+            },
+            {
+              "cell": [
+                12,
+                6
+              ],
+              "frames": 3
+            }
+          ]
+        }
+      ]
+    },
+    "E3_resnet50_R0": {
+      "model": "fasterrcnn_resnet50_fpn_v2",
+      "minSize": null,
+      "sequences": 5,
+      "falsePositives": 5528,
+      "fpPerFrame": 1.4012674271229404,
+      "persistentFalsePositives": 5205,
+      "persistentShare": 0.9415701881331404,
+      "transientFalsePositives": 323,
+      "fpBySize": {
+        "MEDIUM": 5359,
+        "SMALL": 146,
+        "LARGE": 23
+      },
+      "perSequence": [
+        {
+          "sequence": "EnterExitCrossingPaths1front",
+          "scoredFrames": 383,
+          "falsePositives": 541,
+          "fpPerFrame": 1.412532637075718,
+          "occupiedCells": 12,
+          "persistentCells": 2,
+          "persistentFalsePositives": 497,
+          "persistentShare": 0.9186691312384473,
+          "fpBySize": {
+            "MEDIUM": 521,
+            "SMALL": 17,
+            "LARGE": 3
+          },
+          "topCells": [
+            {
+              "cell": [
+                13,
+                4
+              ],
+              "frames": 321
+            },
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 176
+            },
+            {
+              "cell": [
+                9,
+                3
+              ],
+              "frames": 16
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 15
+            },
+            {
+              "cell": [
+                8,
+                4
+              ],
+              "frames": 6
+            }
+          ]
+        },
+        {
+          "sequence": "OneLeaveShop1front",
+          "scoredFrames": 295,
+          "falsePositives": 400,
+          "fpPerFrame": 1.3559322033898304,
+          "occupiedCells": 5,
+          "persistentCells": 2,
+          "persistentFalsePositives": 369,
+          "persistentShare": 0.9225,
+          "fpBySize": {
+            "MEDIUM": 380,
+            "SMALL": 15,
+            "LARGE": 5
+          },
+          "topCells": [
+            {
+              "cell": [
+                13,
+                4
+              ],
+              "frames": 215
+            },
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 154
+            },
+            {
+              "cell": [
+                8,
+                4
+              ],
+              "frames": 16
+            },
+            {
+              "cell": [
+                9,
+                3
+              ],
+              "frames": 12
+            },
+            {
+              "cell": [
+                12,
+                4
+              ],
+              "frames": 3
+            }
+          ]
+        },
+        {
+          "sequence": "OneLeaveShopReenter1front",
+          "scoredFrames": 390,
+          "falsePositives": 513,
+          "fpPerFrame": 1.3153846153846154,
+          "occupiedCells": 6,
+          "persistentCells": 2,
+          "persistentFalsePositives": 498,
+          "persistentShare": 0.9707602339181286,
+          "fpBySize": {
+            "MEDIUM": 507,
+            "LARGE": 4,
+            "SMALL": 2
+          },
+          "topCells": [
+            {
+              "cell": [
+                13,
+                4
+              ],
+              "frames": 302
+            },
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 196
+            },
+            {
+              "cell": [
+                8,
+                4
+              ],
+              "frames": 6
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 6
+            },
+            {
+              "cell": [
+                12,
+                4
+              ],
+              "frames": 2
+            }
+          ]
+        },
+        {
+          "sequence": "OneShopOneWait1front",
+          "scoredFrames": 1377,
+          "falsePositives": 2002,
+          "fpPerFrame": 1.4538852578068264,
+          "occupiedCells": 14,
+          "persistentCells": 2,
+          "persistentFalsePositives": 1920,
+          "persistentShare": 0.9590409590409591,
+          "fpBySize": {
+            "MEDIUM": 1957,
+            "SMALL": 39,
+            "LARGE": 6
+          },
+          "topCells": [
+            {
+              "cell": [
+                13,
+                4
+              ],
+              "frames": 1322
+            },
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 598
+            },
+            {
+              "cell": [
+                9,
+                3
+              ],
+              "frames": 37
+            },
+            {
+              "cell": [
+                8,
+                4
+              ],
+              "frames": 17
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 17
+            }
+          ]
+        },
+        {
+          "sequence": "OneStopEnter1front",
+          "scoredFrames": 1500,
+          "falsePositives": 2072,
+          "fpPerFrame": 1.3813333333333333,
+          "occupiedCells": 11,
+          "persistentCells": 2,
+          "persistentFalsePositives": 1921,
+          "persistentShare": 0.9271235521235521,
+          "fpBySize": {
+            "MEDIUM": 1994,
+            "SMALL": 73,
+            "LARGE": 5
+          },
+          "topCells": [
+            {
+              "cell": [
+                13,
+                4
+              ],
+              "frames": 1185
+            },
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 736
+            },
+            {
+              "cell": [
+                8,
+                4
+              ],
+              "frames": 66
+            },
+            {
+              "cell": [
+                9,
+                3
+              ],
+              "frames": 58
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 16
+            }
+          ]
+        }
+      ]
+    },
+    "E4_resnet50_R1": {
+      "model": "fasterrcnn_resnet50_fpn_v2",
+      "minSize": 1200,
+      "sequences": 5,
+      "falsePositives": 4380,
+      "fpPerFrame": 1.1102661596958174,
+      "persistentFalsePositives": 3328,
+      "persistentShare": 0.7598173515981735,
+      "transientFalsePositives": 1052,
+      "fpBySize": {
+        "MEDIUM": 3665,
+        "SMALL": 623,
+        "LARGE": 92
+      },
+      "perSequence": [
+        {
+          "sequence": "EnterExitCrossingPaths1front",
+          "scoredFrames": 383,
+          "falsePositives": 345,
+          "fpPerFrame": 0.9007832898172323,
+          "occupiedCells": 14,
+          "persistentCells": 2,
+          "persistentFalsePositives": 262,
+          "persistentShare": 0.7594202898550725,
+          "fpBySize": {
+            "MEDIUM": 287,
+            "SMALL": 47,
+            "LARGE": 11
+          },
+          "topCells": [
+            {
+              "cell": [
+                13,
+                4
+              ],
+              "frames": 159
+            },
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 103
+            },
+            {
+              "cell": [
+                9,
+                3
+              ],
+              "frames": 46
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 21
+            },
+            {
+              "cell": [
+                13,
+                6
+              ],
+              "frames": 4
+            }
+          ]
+        },
+        {
+          "sequence": "OneLeaveShop1front",
+          "scoredFrames": 295,
+          "falsePositives": 320,
+          "fpPerFrame": 1.0847457627118644,
+          "occupiedCells": 10,
+          "persistentCells": 2,
+          "persistentFalsePositives": 282,
+          "persistentShare": 0.88125,
+          "fpBySize": {
+            "MEDIUM": 274,
+            "LARGE": 24,
+            "SMALL": 22
+          },
+          "topCells": [
+            {
+              "cell": [
+                13,
+                4
+              ],
+              "frames": 157
+            },
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 125
+            },
+            {
+              "cell": [
+                9,
+                3
+              ],
+              "frames": 21
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 6
+            },
+            {
+              "cell": [
+                12,
+                4
+              ],
+              "frames": 4
+            }
+          ]
+        },
+        {
+          "sequence": "OneLeaveShopReenter1front",
+          "scoredFrames": 390,
+          "falsePositives": 424,
+          "fpPerFrame": 1.087179487179487,
+          "occupiedCells": 8,
+          "persistentCells": 2,
+          "persistentFalsePositives": 349,
+          "persistentShare": 0.8231132075471698,
+          "fpBySize": {
+            "MEDIUM": 363,
+            "SMALL": 44,
+            "LARGE": 17
+          },
+          "topCells": [
+            {
+              "cell": [
+                13,
+                4
+              ],
+              "frames": 181
+            },
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 168
+            },
+            {
+              "cell": [
+                9,
+                3
+              ],
+              "frames": 43
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 25
+            },
+            {
+              "cell": [
+                12,
+                4
+              ],
+              "frames": 4
+            }
+          ]
+        },
+        {
+          "sequence": "OneShopOneWait1front",
+          "scoredFrames": 1377,
+          "falsePositives": 1757,
+          "fpPerFrame": 1.2759622367465504,
+          "occupiedCells": 23,
+          "persistentCells": 2,
+          "persistentFalsePositives": 1329,
+          "persistentShare": 0.7564029595902105,
+          "fpBySize": {
+            "SMALL": 251,
+            "MEDIUM": 1480,
+            "LARGE": 26
+          },
+          "topCells": [
+            {
+              "cell": [
+                13,
+                4
+              ],
+              "frames": 932
+            },
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 397
+            },
+            {
+              "cell": [
+                9,
+                3
+              ],
+              "frames": 246
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 140
+            },
+            {
+              "cell": [
+                12,
+                4
+              ],
+              "frames": 8
+            }
+          ]
+        },
+        {
+          "sequence": "OneStopEnter1front",
+          "scoredFrames": 1500,
+          "falsePositives": 1534,
+          "fpPerFrame": 1.0226666666666666,
+          "occupiedCells": 12,
+          "persistentCells": 2,
+          "persistentFalsePositives": 1106,
+          "persistentShare": 0.7209908735332464,
+          "fpBySize": {
+            "LARGE": 14,
+            "MEDIUM": 1261,
+            "SMALL": 259
+          },
+          "topCells": [
+            {
+              "cell": [
+                13,
+                4
+              ],
+              "frames": 602
+            },
+            {
+              "cell": [
+                12,
+                5
+              ],
+              "frames": 504
+            },
+            {
+              "cell": [
+                9,
+                3
+              ],
+              "frames": 260
+            },
+            {
+              "cell": [
+                9,
+                4
+              ],
+              "frames": 147
+            },
+            {
+              "cell": [
+                9,
+                5
+              ],
+              "frames": 7
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

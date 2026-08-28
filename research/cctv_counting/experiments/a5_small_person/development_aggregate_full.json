@@ -1,0 +1,345 @@
+{
+  "split": "DEV",
+  "candidates": {
+    "E0_mobilenet_R0": {
+      "model": "fasterrcnn_mobilenet_v3_large_fpn",
+      "shape": "800x1066",
+      "detectFps": 40.66090813367778,
+      "peakVramMb": 269.8,
+      "threshold": 0.7,
+      "sequences": 5,
+      "scoredFrames": 3945,
+      "detection": {
+        "gtTotal": 5417,
+        "microRecall": 0.5778105962709987,
+        "macroRecall": 0.5666868147998871,
+        "microFpPerFrame": 0.5878326996197719,
+        "bySize": {
+          "SMALL": {
+            "gtTotal": 933,
+            "matched": 0,
+            "microRecall": 0.0,
+            "macroRecall": 0.0,
+            "sequencesWithSamples": 5
+          },
+          "MEDIUM": {
+            "gtTotal": 3226,
+            "matched": 2157,
+            "microRecall": 0.6686298822070675,
+            "macroRecall": 0.7019413622812019,
+            "sequencesWithSamples": 5
+          },
+          "LARGE": {
+            "gtTotal": 1258,
+            "matched": 973,
+            "microRecall": 0.7734499205087441,
+            "macroRecall": 0.7427436010747559,
+            "sequencesWithSamples": 5
+          }
+        },
+        "medianMissedHeight": 0.122,
+        "medianMatchedHeight": 0.194,
+        "missedBelowSmallMax": 0.4079580236117184,
+        "minMatchedHeight": 0.115
+      },
+      "occupancy": {
+        "macroMae": 0.6440476190476191,
+        "macroBias": -0.08166666666666667,
+        "microMae": 0.63125,
+        "worstSequenceMae": 0.8333333333333334,
+        "bestSequenceMae": 0.5,
+        "maeStdevAcrossSequences": 0.12431786666762391
+      },
+      "crossing": {
+        "IN": {
+          "actual": 3,
+          "predicted": 1,
+          "matched": 1,
+          "microPrecision": 1.0,
+          "microRecall": 0.3333333333333333,
+          "microF1": 0.5
+        },
+        "OUT": {
+          "actual": 6,
+          "predicted": 5,
+          "matched": 5,
+          "microPrecision": 1.0,
+          "microRecall": 0.8333333333333334,
+          "microF1": 0.9090909090909091
+        }
+      }
+    },
+    "E1_mobilenet_R1": {
+      "model": "fasterrcnn_mobilenet_v3_large_fpn",
+      "shape": "1200x1600",
+      "detectFps": 32.084165797369536,
+      "peakVramMb": 493.1,
+      "threshold": 0.7,
+      "sequences": 5,
+      "scoredFrames": 3945,
+      "detection": {
+        "gtTotal": 5417,
+        "microRecall": 0.5451356839579102,
+        "macroRecall": 0.5445721924498614,
+        "microFpPerFrame": 0.5399239543726235,
+        "bySize": {
+          "SMALL": {
+            "gtTotal": 933,
+            "matched": 4,
+            "microRecall": 0.004287245444801715,
+            "macroRecall": 0.0034188034188034192,
+            "sequencesWithSamples": 5
+          },
+          "MEDIUM": {
+            "gtTotal": 3226,
+            "matched": 2109,
+            "microRecall": 0.6537507749535028,
+            "macroRecall": 0.6978201835774985,
+            "sequencesWithSamples": 5
+          },
+          "LARGE": {
+            "gtTotal": 1258,
+            "matched": 840,
+            "microRecall": 0.6677265500794912,
+            "macroRecall": 0.6410211480436201,
+            "sequencesWithSamples": 5
+          }
+        },
+        "medianMissedHeight": 0.132,
+        "medianMatchedHeight": 0.191,
+        "missedBelowSmallMax": 0.3770292207792208,
+        "minMatchedHeight": 0.066
+      },
+      "occupancy": {
+        "macroMae": 0.7482142857142857,
+        "macroBias": -0.17178571428571426,
+        "microMae": 0.74375,
+        "worstSequenceMae": 0.9285714285714286,
+        "bestSequenceMae": 0.5833333333333334,
+        "maeStdevAcrossSequences": 0.16352264123053828
+      },
+      "crossing": {
+        "IN": {
+          "actual": 3,
+          "predicted": 0,
+          "matched": 0,
+          "microPrecision": null,
+          "microRecall": 0.0,
+          "microF1": null
+        },
+        "OUT": {
+          "actual": 6,
+          "predicted": 2,
+          "matched": 2,
+          "microPrecision": 1.0,
+          "microRecall": 0.3333333333333333,
+          "microF1": 0.5
+        }
+      }
+    },
+    "E2_mobilenet_R2": {
+      "model": "fasterrcnn_mobilenet_v3_large_fpn",
+      "shape": "1600x2133",
+      "detectFps": 21.053521514803702,
+      "peakVramMb": 806.3,
+      "threshold": 0.7,
+      "sequences": 5,
+      "scoredFrames": 3945,
+      "detection": {
+        "gtTotal": 5417,
+        "microRecall": 0.4628022890899022,
+        "macroRecall": 0.4675359289066461,
+        "microFpPerFrame": 0.632446134347275,
+        "bySize": {
+          "SMALL": {
+            "gtTotal": 933,
+            "matched": 0,
+            "microRecall": 0.0,
+            "macroRecall": 0.0,
+            "sequencesWithSamples": 5
+          },
+          "MEDIUM": {
+            "gtTotal": 3226,
+            "matched": 1866,
+            "microRecall": 0.578425294482331,
+            "macroRecall": 0.6266787274463878,
+            "sequencesWithSamples": 5
+          },
+          "LARGE": {
+            "gtTotal": 1258,
+            "matched": 641,
+            "microRecall": 0.5095389507154213,
+            "macroRecall": 0.4720026750348105,
+            "sequencesWithSamples": 5
+          }
+        },
+        "medianMissedHeight": 0.156,
+        "medianMatchedHeight": 0.191,
+        "missedBelowSmallMax": 0.32061855670103095,
+        "minMatchedHeight": 0.111
+      },
+      "occupancy": {
+        "macroMae": 0.7505952380952381,
+        "macroBias": -0.16416666666666666,
+        "microMae": 0.70625,
+        "worstSequenceMae": 0.875,
+        "bestSequenceMae": 0.5,
+        "maeStdevAcrossSequences": 0.1584720123075594
+      },
+      "crossing": {
+        "IN": {
+          "actual": 3,
+          "predicted": 0,
+          "matched": 0,
+          "microPrecision": null,
+          "microRecall": 0.0,
+          "microF1": null
+        },
+        "OUT": {
+          "actual": 6,
+          "predicted": 1,
+          "matched": 1,
+          "microPrecision": 1.0,
+          "microRecall": 0.16666666666666666,
+          "microF1": 0.2857142857142857
+        }
+      }
+    },
+    "E3_resnet50_R0": {
+      "model": "fasterrcnn_resnet50_fpn_v2",
+      "shape": "800x1066",
+      "detectFps": 14.289100711979922,
+      "peakVramMb": 577.4,
+      "threshold": 0.7,
+      "sequences": 5,
+      "scoredFrames": 3945,
+      "detection": {
+        "gtTotal": 5417,
+        "microRecall": 0.6902344471109471,
+        "macroRecall": 0.6619266606037466,
+        "microFpPerFrame": 1.4012674271229404,
+        "bySize": {
+          "SMALL": {
+            "gtTotal": 933,
+            "matched": 14,
+            "microRecall": 0.015005359056806002,
+            "macroRecall": 0.013718369062631358,
+            "sequencesWithSamples": 5
+          },
+          "MEDIUM": {
+            "gtTotal": 3226,
+            "matched": 2563,
+            "microRecall": 0.7944823310601364,
+            "macroRecall": 0.8063345970288329,
+            "sequencesWithSamples": 5
+          },
+          "LARGE": {
+            "gtTotal": 1258,
+            "matched": 1162,
+            "microRecall": 0.9236883942766295,
+            "macroRecall": 0.8833583529298803,
+            "sequencesWithSamples": 5
+          }
+        },
+        "medianMissedHeight": 0.09,
+        "medianMatchedHeight": 0.194,
+        "missedBelowSmallMax": 0.5476758045292014,
+        "minMatchedHeight": 0.066
+      },
+      "occupancy": {
+        "macroMae": 1.155952380952381,
+        "macroBias": 0.9476190476190476,
+        "microMae": 1.175,
+        "worstSequenceMae": 1.3125,
+        "bestSequenceMae": 0.9166666666666666,
+        "maeStdevAcrossSequences": 0.14535575347411334
+      },
+      "crossing": {
+        "IN": {
+          "actual": 3,
+          "predicted": 1,
+          "matched": 1,
+          "microPrecision": 1.0,
+          "microRecall": 0.3333333333333333,
+          "microF1": 0.5
+        },
+        "OUT": {
+          "actual": 6,
+          "predicted": 5,
+          "matched": 5,
+          "microPrecision": 1.0,
+          "microRecall": 0.8333333333333334,
+          "microF1": 0.9090909090909091
+        }
+      }
+    },
+    "E4_resnet50_R1": {
+      "model": "fasterrcnn_resnet50_fpn_v2",
+      "shape": "1200x1600",
+      "detectFps": 7.800090769025846,
+      "peakVramMb": 1058.9,
+      "threshold": 0.7,
+      "sequences": 5,
+      "scoredFrames": 3945,
+      "detection": {
+        "gtTotal": 5417,
+        "microRecall": 0.680635037843825,
+        "macroRecall": 0.6523961806635313,
+        "microFpPerFrame": 1.108998732572877,
+        "bySize": {
+          "SMALL": {
+            "gtTotal": 933,
+            "matched": 30,
+            "microRecall": 0.03215434083601286,
+            "macroRecall": 0.0352377749754799,
+            "sequencesWithSamples": 5
+          },
+          "MEDIUM": {
+            "gtTotal": 3226,
+            "matched": 2534,
+            "microRecall": 0.7854928704277744,
+            "macroRecall": 0.7980777927613903,
+            "sequencesWithSamples": 5
+          },
+          "LARGE": {
+            "gtTotal": 1258,
+            "matched": 1123,
+            "microRecall": 0.8926868044515104,
+            "macroRecall": 0.8404765813801737,
+            "sequencesWithSamples": 5
+          }
+        },
+        "medianMissedHeight": 0.094,
+        "medianMatchedHeight": 0.194,
+        "missedBelowSmallMax": 0.5219653179190752,
+        "minMatchedHeight": 0.062
+      },
+      "occupancy": {
+        "macroMae": 1.0476190476190477,
+        "macroBias": 0.615,
+        "microMae": 1.04375,
+        "worstSequenceMae": 1.25,
+        "bestSequenceMae": 0.6875,
+        "maeStdevAcrossSequences": 0.23953249238735244
+      },
+      "crossing": {
+        "IN": {
+          "actual": 3,
+          "predicted": 3,
+          "matched": 3,
+          "microPrecision": 1.0,
+          "microRecall": 1.0,
+          "microF1": 1.0
+        },
+        "OUT": {
+          "actual": 6,
+          "predicted": 4,
+          "matched": 4,
+          "microPrecision": 1.0,
+          "microRecall": 0.6666666666666666,
+          "microF1": 0.8
+        }
+      }
+    }
+  }
+}

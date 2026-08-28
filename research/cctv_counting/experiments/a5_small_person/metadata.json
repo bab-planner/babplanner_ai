@@ -1,0 +1,17 @@
+{
+  "note": "A5 실험을 다시 돌릴 때 필요한 환경. 숫자가 달라지면 여기부터 비교한다.",
+  "python": "3.12.1",
+  "platform": "Windows 11",
+  "torch": "2.13.0+cu130",
+  "torchvision": "0.28.0+cu130",
+  "cudaAvailable": true,
+  "cudaVersion": "13.0",
+  "cudnn": 92000,
+  "gpu": "NVIDIA GeForce RTX 4060 Ti",
+  "gpuTotalMemoryMb": 16379.5,
+  "weights": {
+    "fasterrcnn_mobilenet_v3_large_fpn": "COCO_V1 (torchvision 배포)",
+    "fasterrcnn_resnet50_fpn_v2": "COCO_V1 (torchvision 배포)"
+  },
+  "weightTermsStatus": "UNRESOLVED. torchvision 라이브러리 코드는 BSD-3-Clause이지만, COCO pretrained weight의 상업 배포 조건은 별도이며 아직 확인되지 않았다. 이번 결과는 research/demo 평가다."
+}

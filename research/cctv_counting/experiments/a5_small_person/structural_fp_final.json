@@ -1,0 +1,1813 @@
+{
+  "split": "FINAL",
+  "grid": [
+    16,
+    12
+  ],
+  "persistentRatio": 0.2,
+  "threshold": 0.7,
+  "note": "구조적 오탐 = 한 격자 칸에서 전체 프레임의 20% 이상 나타난 오탐. 총 오탐 수만 비교하면 한 자리에 머무는 오탐과 산발적 오탐을 구분할 수 없다.",
+  "candidates": {
+    "E0_mobilenet_R0": {
+      "model": "fasterrcnn_mobilenet_v3_large_fpn",
+      "minSize": null,
+      "sequences": 17,
+      "falsePositives": 15378,
+      "fpPerFrame": 0.9799273561460524,
+      "persistentFalsePositives": 13267,
+      "persistentShare": 0.8627259721680323,
+      "transientFalsePositives": 2111,
+      "fpBySize": {
+        "MEDIUM": 685,
+        "LARGE": 14244,
+        "SMALL": 449
+      },
+      "perSequence": [
+        {
+          "sequence": "Browse1",
+          "scoredFrames": 1043,
+          "falsePositives": 1140,
+          "fpPerFrame": 1.093000958772771,
+          "occupiedCells": 15,
+          "persistentCells": 2,
+          "persistentFalsePositives": 993,
+          "persistentShare": 0.8710526315789474,
+          "fpBySize": {
+            "MEDIUM": 43,
+            "LARGE": 1011,
+            "SMALL": 86
+          },
+          "topCells": [
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 760
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 233
+            },
+            {
+              "cell": [
+                3,
+                9
+              ],
+              "frames": 48
+            },
+            {
+              "cell": [
+                7,
+                11
+              ],
+              "frames": 40
+            },
+            {
+              "cell": [
+                4,
+                9
+              ],
+              "frames": 16
+            }
+          ]
+        },
+        {
+          "sequence": "Browse_WhileWaiting1",
+          "scoredFrames": 791,
+          "falsePositives": 830,
+          "fpPerFrame": 1.0493046776232617,
+          "occupiedCells": 13,
+          "persistentCells": 2,
+          "persistentFalsePositives": 777,
+          "persistentShare": 0.936144578313253,
+          "fpBySize": {
+            "LARGE": 811,
+            "MEDIUM": 17,
+            "SMALL": 2
+          },
+          "topCells": [
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 496
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 281
+            },
+            {
+              "cell": [
+                7,
+                11
+              ],
+              "frames": 23
+            },
+            {
+              "cell": [
+                8,
+                11
+              ],
+              "frames": 11
+            },
+            {
+              "cell": [
+                6,
+                11
+              ],
+              "frames": 8
+            }
+          ]
+        },
+        {
+          "sequence": "Fight_RunAway1",
+          "scoredFrames": 551,
+          "falsePositives": 742,
+          "fpPerFrame": 1.3466424682395643,
+          "occupiedCells": 17,
+          "persistentCells": 3,
+          "persistentFalsePositives": 641,
+          "persistentShare": 0.8638814016172507,
+          "fpBySize": {
+            "LARGE": 552,
+            "SMALL": 168,
+            "MEDIUM": 22
+          },
+          "topCells": [
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 400
+            },
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 122
+            },
+            {
+              "cell": [
+                3,
+                7
+              ],
+              "frames": 119
+            },
+            {
+              "cell": [
+                5,
+                2
+              ],
+              "frames": 17
+            },
+            {
+              "cell": [
+                7,
+                11
+              ],
+              "frames": 16
+            }
+          ]
+        },
+        {
+          "sequence": "LeftBag",
+          "scoredFrames": 1439,
+          "falsePositives": 1096,
+          "fpPerFrame": 0.7616400277970813,
+          "occupiedCells": 14,
+          "persistentCells": 1,
+          "persistentFalsePositives": 944,
+          "persistentShare": 0.8613138686131386,
+          "fpBySize": {
+            "LARGE": 1068,
+            "MEDIUM": 20,
+            "SMALL": 8
+          },
+          "topCells": [
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 944
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 102
+            },
+            {
+              "cell": [
+                7,
+                7
+              ],
+              "frames": 19
+            },
+            {
+              "cell": [
+                8,
+                11
+              ],
+              "frames": 8
+            },
+            {
+              "cell": [
+                6,
+                2
+              ],
+              "frames": 5
+            }
+          ]
+        },
+        {
+          "sequence": "LeftBag_AtChair",
+          "scoredFrames": 1115,
+          "falsePositives": 1124,
+          "fpPerFrame": 1.0080717488789237,
+          "occupiedCells": 13,
+          "persistentCells": 2,
+          "persistentFalsePositives": 1042,
+          "persistentShare": 0.9270462633451957,
+          "fpBySize": {
+            "LARGE": 1046,
+            "MEDIUM": 72,
+            "SMALL": 6
+          },
+          "topCells": [
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 754
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 288
+            },
+            {
+              "cell": [
+                3,
+                11
+              ],
+              "frames": 59
+            },
+            {
+              "cell": [
+                7,
+                8
+              ],
+              "frames": 5
+            },
+            {
+              "cell": [
+                7,
+                11
+              ],
+              "frames": 4
+            }
+          ]
+        },
+        {
+          "sequence": "LeftBag_BehindChair",
+          "scoredFrames": 1067,
+          "falsePositives": 899,
+          "fpPerFrame": 0.8425492033739457,
+          "occupiedCells": 12,
+          "persistentCells": 1,
+          "persistentFalsePositives": 683,
+          "persistentShare": 0.7597330367074527,
+          "fpBySize": {
+            "LARGE": 863,
+            "MEDIUM": 34,
+            "SMALL": 2
+          },
+          "topCells": [
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 683
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 174
+            },
+            {
+              "cell": [
+                3,
+                11
+              ],
+              "frames": 21
+            },
+            {
+              "cell": [
+                7,
+                11
+              ],
+              "frames": 6
+            },
+            {
+              "cell": [
+                7,
+                8
+              ],
+              "frames": 5
+            }
+          ]
+        },
+        {
+          "sequence": "LeftBag_PickedUp",
+          "scoredFrames": 1355,
+          "falsePositives": 1105,
+          "fpPerFrame": 0.8154981549815498,
+          "occupiedCells": 14,
+          "persistentCells": 1,
+          "persistentFalsePositives": 980,
+          "persistentShare": 0.8868778280542986,
+          "fpBySize": {
+            "LARGE": 1025,
+            "SMALL": 44,
+            "MEDIUM": 36
+          },
+          "topCells": [
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 980
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 42
+            },
+            {
+              "cell": [
+                8,
+                2
+              ],
+              "frames": 17
+            },
+            {
+              "cell": [
+                7,
+                2
+              ],
+              "frames": 15
+            },
+            {
+              "cell": [
+                3,
+                10
+              ],
+              "frames": 14
+            }
+          ]
+        },
+        {
+          "sequence": "LeftBox",
+          "scoredFrames": 863,
+          "falsePositives": 669,
+          "fpPerFrame": 0.7752027809965237,
+          "occupiedCells": 12,
+          "persistentCells": 2,
+          "persistentFalsePositives": 567,
+          "persistentShare": 0.8475336322869955,
+          "fpBySize": {
+            "LARGE": 580,
+            "MEDIUM": 86,
+            "SMALL": 3
+          },
+          "topCells": [
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 393
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 174
+            },
+            {
+              "cell": [
+                5,
+                7
+              ],
+              "frames": 72
+            },
+            {
+              "cell": [
+                5,
+                8
+              ],
+              "frames": 6
+            },
+            {
+              "cell": [
+                7,
+                7
+              ],
+              "frames": 5
+            }
+          ]
+        },
+        {
+          "sequence": "Meet_Crowd",
+          "scoredFrames": 491,
+          "falsePositives": 556,
+          "fpPerFrame": 1.1323828920570265,
+          "occupiedCells": 22,
+          "persistentCells": 2,
+          "persistentFalsePositives": 454,
+          "persistentShare": 0.8165467625899281,
+          "fpBySize": {
+            "LARGE": 483,
+            "MEDIUM": 69,
+            "SMALL": 4
+          },
+          "topCells": [
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 278
+            },
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 176
+            },
+            {
+              "cell": [
+                5,
+                4
+              ],
+              "frames": 17
+            },
+            {
+              "cell": [
+                7,
+                8
+              ],
+              "frames": 12
+            },
+            {
+              "cell": [
+                8,
+                11
+              ],
+              "frames": 12
+            }
+          ]
+        },
+        {
+          "sequence": "Meet_Split_3rdGuy",
+          "scoredFrames": 923,
+          "falsePositives": 983,
+          "fpPerFrame": 1.0650054171180932,
+          "occupiedCells": 23,
+          "persistentCells": 2,
+          "persistentFalsePositives": 857,
+          "persistentShare": 0.8718209562563581,
+          "fpBySize": {
+            "LARGE": 912,
+            "SMALL": 19,
+            "MEDIUM": 52
+          },
+          "topCells": [
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 493
+            },
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 364
+            },
+            {
+              "cell": [
+                5,
+                7
+              ],
+              "frames": 39
+            },
+            {
+              "cell": [
+                7,
+                11
+              ],
+              "frames": 29
+            },
+            {
+              "cell": [
+                5,
+                2
+              ],
+              "frames": 8
+            }
+          ]
+        },
+        {
+          "sequence": "Meet_WalkSplit",
+          "scoredFrames": 623,
+          "falsePositives": 630,
+          "fpPerFrame": 1.0112359550561798,
+          "occupiedCells": 11,
+          "persistentCells": 2,
+          "persistentFalsePositives": 592,
+          "persistentShare": 0.9396825396825397,
+          "fpBySize": {
+            "LARGE": 601,
+            "SMALL": 11,
+            "MEDIUM": 18
+          },
+          "topCells": [
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 308
+            },
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 284
+            },
+            {
+              "cell": [
+                6,
+                7
+              ],
+              "frames": 16
+            },
+            {
+              "cell": [
+                2,
+                8
+              ],
+              "frames": 8
+            },
+            {
+              "cell": [
+                2,
+                6
+              ],
+              "frames": 6
+            }
+          ]
+        },
+        {
+          "sequence": "Meet_WalkTogether1",
+          "scoredFrames": 707,
+          "falsePositives": 689,
+          "fpPerFrame": 0.9745403111739745,
+          "occupiedCells": 7,
+          "persistentCells": 2,
+          "persistentFalsePositives": 676,
+          "persistentShare": 0.9811320754716981,
+          "fpBySize": {
+            "LARGE": 681,
+            "SMALL": 1,
+            "MEDIUM": 7
+          },
+          "topCells": [
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 385
+            },
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 291
+            },
+            {
+              "cell": [
+                5,
+                6
+              ],
+              "frames": 7
+            },
+            {
+              "cell": [
+                5,
+                7
+              ],
+              "frames": 3
+            },
+            {
+              "cell": [
+                1,
+                8
+              ],
+              "frames": 1
+            }
+          ]
+        },
+        {
+          "sequence": "Rest_FallOnFloor",
+          "scoredFrames": 1007,
+          "falsePositives": 1063,
+          "fpPerFrame": 1.0556107249255213,
+          "occupiedCells": 7,
+          "persistentCells": 1,
+          "persistentFalsePositives": 869,
+          "persistentShare": 0.8174976481655691,
+          "fpBySize": {
+            "LARGE": 978,
+            "MEDIUM": 72,
+            "SMALL": 13
+          },
+          "topCells": [
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 869
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 106
+            },
+            {
+              "cell": [
+                7,
+                11
+              ],
+              "frames": 57
+            },
+            {
+              "cell": [
+                5,
+                2
+              ],
+              "frames": 18
+            },
+            {
+              "cell": [
+                6,
+                11
+              ],
+              "frames": 8
+            }
+          ]
+        },
+        {
+          "sequence": "Rest_InChair",
+          "scoredFrames": 1007,
+          "falsePositives": 1083,
+          "fpPerFrame": 1.0754716981132075,
+          "occupiedCells": 8,
+          "persistentCells": 1,
+          "persistentFalsePositives": 800,
+          "persistentShare": 0.7386888273314867,
+          "fpBySize": {
+            "LARGE": 987,
+            "MEDIUM": 95,
+            "SMALL": 1
+          },
+          "topCells": [
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 800
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 174
+            },
+            {
+              "cell": [
+                7,
+                11
+              ],
+              "frames": 96
+            },
+            {
+              "cell": [
+                8,
+                11
+              ],
+              "frames": 7
+            },
+            {
+              "cell": [
+                7,
+                8
+              ],
+              "frames": 3
+            }
+          ]
+        },
+        {
+          "sequence": "Rest_SlumpOnFloor",
+          "scoredFrames": 911,
+          "falsePositives": 916,
+          "fpPerFrame": 1.0054884742041712,
+          "occupiedCells": 14,
+          "persistentCells": 2,
+          "persistentFalsePositives": 867,
+          "persistentShare": 0.9465065502183406,
+          "fpBySize": {
+            "LARGE": 879,
+            "SMALL": 17,
+            "MEDIUM": 20
+          },
+          "topCells": [
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 664
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 203
+            },
+            {
+              "cell": [
+                7,
+                11
+              ],
+              "frames": 12
+            },
+            {
+              "cell": [
+                3,
+                11
+              ],
+              "frames": 10
+            },
+            {
+              "cell": [
+                6,
+                9
+              ],
+              "frames": 9
+            }
+          ]
+        },
+        {
+          "sequence": "Rest_WiggleOnFloor",
+          "scoredFrames": 1189,
+          "falsePositives": 1230,
+          "fpPerFrame": 1.0344827586206897,
+          "occupiedCells": 14,
+          "persistentCells": 1,
+          "persistentFalsePositives": 1067,
+          "persistentShare": 0.8674796747967479,
+          "fpBySize": {
+            "LARGE": 1205,
+            "SMALL": 17,
+            "MEDIUM": 8
+          },
+          "topCells": [
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 1067
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 104
+            },
+            {
+              "cell": [
+                7,
+                7
+              ],
+              "frames": 16
+            },
+            {
+              "cell": [
+                5,
+                2
+              ],
+              "frames": 14
+            },
+            {
+              "cell": [
+                7,
+                6
+              ],
+              "frames": 9
+            }
+          ]
+        },
+        {
+          "sequence": "Walk1",
+          "scoredFrames": 611,
+          "falsePositives": 623,
+          "fpPerFrame": 1.0196399345335516,
+          "occupiedCells": 9,
+          "persistentCells": 1,
+          "persistentFalsePositives": 458,
+          "persistentShare": 0.7351524879614767,
+          "fpBySize": {
+            "LARGE": 562,
+            "SMALL": 47,
+            "MEDIUM": 14
+          },
+          "topCells": [
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 458
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 101
+            },
+            {
+              "cell": [
+                3,
+                10
+              ],
+              "frames": 44
+            },
+            {
+              "cell": [
+                7,
+                8
+              ],
+              "frames": 10
+            },
+            {
+              "cell": [
+                7,
+                11
+              ],
+              "frames": 3
+            }
+          ]
+        }
+      ]
+    },
+    "E3_resnet50_R0": {
+      "model": "fasterrcnn_resnet50_fpn_v2",
+      "minSize": null,
+      "sequences": 17,
+      "falsePositives": 1568,
+      "fpPerFrame": 0.09991716051742815,
+      "persistentFalsePositives": 400,
+      "persistentShare": 0.25510204081632654,
+      "transientFalsePositives": 1168,
+      "fpBySize": {
+        "LARGE": 421,
+        "MEDIUM": 610,
+        "SMALL": 537
+      },
+      "perSequence": [
+        {
+          "sequence": "Browse1",
+          "scoredFrames": 1043,
+          "falsePositives": 45,
+          "fpPerFrame": 0.04314477468839885,
+          "occupiedCells": 15,
+          "persistentCells": 0,
+          "persistentFalsePositives": 0,
+          "persistentShare": 0.0,
+          "fpBySize": {
+            "LARGE": 16,
+            "MEDIUM": 12,
+            "SMALL": 17
+          },
+          "topCells": [
+            {
+              "cell": [
+                7,
+                1
+              ],
+              "frames": 9
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 9
+            },
+            {
+              "cell": [
+                3,
+                8
+              ],
+              "frames": 6
+            },
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 5
+            },
+            {
+              "cell": [
+                4,
+                8
+              ],
+              "frames": 3
+            }
+          ]
+        },
+        {
+          "sequence": "Browse_WhileWaiting1",
+          "scoredFrames": 791,
+          "falsePositives": 47,
+          "fpPerFrame": 0.05941845764854614,
+          "occupiedCells": 10,
+          "persistentCells": 0,
+          "persistentFalsePositives": 0,
+          "persistentShare": 0.0,
+          "fpBySize": {
+            "LARGE": 35,
+            "SMALL": 3,
+            "MEDIUM": 9
+          },
+          "topCells": [
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 14
+            },
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 10
+            },
+            {
+              "cell": [
+                7,
+                11
+              ],
+              "frames": 10
+            },
+            {
+              "cell": [
+                7,
+                10
+              ],
+              "frames": 4
+            },
+            {
+              "cell": [
+                7,
+                8
+              ],
+              "frames": 3
+            }
+          ]
+        },
+        {
+          "sequence": "Fight_RunAway1",
+          "scoredFrames": 551,
+          "falsePositives": 456,
+          "fpPerFrame": 0.8275862068965517,
+          "occupiedCells": 20,
+          "persistentCells": 1,
+          "persistentFalsePositives": 400,
+          "persistentShare": 0.8771929824561403,
+          "fpBySize": {
+            "SMALL": 411,
+            "MEDIUM": 13,
+            "LARGE": 32
+          },
+          "topCells": [
+            {
+              "cell": [
+                3,
+                7
+              ],
+              "frames": 400
+            },
+            {
+              "cell": [
+                10,
+                11
+              ],
+              "frames": 21
+            },
+            {
+              "cell": [
+                2,
+                6
+              ],
+              "frames": 7
+            },
+            {
+              "cell": [
+                6,
+                3
+              ],
+              "frames": 4
+            },
+            {
+              "cell": [
+                7,
+                1
+              ],
+              "frames": 3
+            }
+          ]
+        },
+        {
+          "sequence": "LeftBag",
+          "scoredFrames": 1439,
+          "falsePositives": 43,
+          "fpPerFrame": 0.029881862404447533,
+          "occupiedCells": 9,
+          "persistentCells": 0,
+          "persistentFalsePositives": 0,
+          "persistentShare": 0.0,
+          "fpBySize": {
+            "MEDIUM": 35,
+            "LARGE": 5,
+            "SMALL": 3
+          },
+          "topCells": [
+            {
+              "cell": [
+                7,
+                11
+              ],
+              "frames": 12
+            },
+            {
+              "cell": [
+                7,
+                1
+              ],
+              "frames": 10
+            },
+            {
+              "cell": [
+                6,
+                11
+              ],
+              "frames": 8
+            },
+            {
+              "cell": [
+                7,
+                2
+              ],
+              "frames": 7
+            },
+            {
+              "cell": [
+                2,
+                6
+              ],
+              "frames": 2
+            }
+          ]
+        },
+        {
+          "sequence": "LeftBag_AtChair",
+          "scoredFrames": 1115,
+          "falsePositives": 122,
+          "fpPerFrame": 0.10941704035874439,
+          "occupiedCells": 11,
+          "persistentCells": 0,
+          "persistentFalsePositives": 0,
+          "persistentShare": 0.0,
+          "fpBySize": {
+            "MEDIUM": 77,
+            "SMALL": 9,
+            "LARGE": 36
+          },
+          "topCells": [
+            {
+              "cell": [
+                6,
+                11
+              ],
+              "frames": 56
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 23
+            },
+            {
+              "cell": [
+                2,
+                6
+              ],
+              "frames": 23
+            },
+            {
+              "cell": [
+                3,
+                10
+              ],
+              "frames": 5
+            },
+            {
+              "cell": [
+                3,
+                11
+              ],
+              "frames": 3
+            }
+          ]
+        },
+        {
+          "sequence": "LeftBag_BehindChair",
+          "scoredFrames": 1067,
+          "falsePositives": 23,
+          "fpPerFrame": 0.02155576382380506,
+          "occupiedCells": 9,
+          "persistentCells": 0,
+          "persistentFalsePositives": 0,
+          "persistentShare": 0.0,
+          "fpBySize": {
+            "SMALL": 12,
+            "MEDIUM": 11
+          },
+          "topCells": [
+            {
+              "cell": [
+                3,
+                11
+              ],
+              "frames": 8
+            },
+            {
+              "cell": [
+                6,
+                11
+              ],
+              "frames": 5
+            },
+            {
+              "cell": [
+                7,
+                1
+              ],
+              "frames": 3
+            },
+            {
+              "cell": [
+                7,
+                2
+              ],
+              "frames": 2
+            },
+            {
+              "cell": [
+                9,
+                10
+              ],
+              "frames": 1
+            }
+          ]
+        },
+        {
+          "sequence": "LeftBag_PickedUp",
+          "scoredFrames": 1355,
+          "falsePositives": 283,
+          "fpPerFrame": 0.2088560885608856,
+          "occupiedCells": 15,
+          "persistentCells": 0,
+          "persistentFalsePositives": 0,
+          "persistentShare": 0.0,
+          "fpBySize": {
+            "MEDIUM": 244,
+            "SMALL": 38,
+            "LARGE": 1
+          },
+          "topCells": [
+            {
+              "cell": [
+                6,
+                11
+              ],
+              "frames": 73
+            },
+            {
+              "cell": [
+                7,
+                11
+              ],
+              "frames": 71
+            },
+            {
+              "cell": [
+                7,
+                2
+              ],
+              "frames": 64
+            },
+            {
+              "cell": [
+                7,
+                1
+              ],
+              "frames": 37
+            },
+            {
+              "cell": [
+                8,
+                2
+              ],
+              "frames": 18
+            }
+          ]
+        },
+        {
+          "sequence": "LeftBox",
+          "scoredFrames": 863,
+          "falsePositives": 28,
+          "fpPerFrame": 0.03244495944380069,
+          "occupiedCells": 10,
+          "persistentCells": 0,
+          "persistentFalsePositives": 0,
+          "persistentShare": 0.0,
+          "fpBySize": {
+            "MEDIUM": 19,
+            "SMALL": 3,
+            "LARGE": 6
+          },
+          "topCells": [
+            {
+              "cell": [
+                5,
+                7
+              ],
+              "frames": 15
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 2
+            },
+            {
+              "cell": [
+                9,
+                11
+              ],
+              "frames": 2
+            },
+            {
+              "cell": [
+                7,
+                11
+              ],
+              "frames": 2
+            },
+            {
+              "cell": [
+                2,
+                6
+              ],
+              "frames": 2
+            }
+          ]
+        },
+        {
+          "sequence": "Meet_Crowd",
+          "scoredFrames": 491,
+          "falsePositives": 62,
+          "fpPerFrame": 0.12627291242362526,
+          "occupiedCells": 18,
+          "persistentCells": 0,
+          "persistentFalsePositives": 0,
+          "persistentShare": 0.0,
+          "fpBySize": {
+            "LARGE": 30,
+            "MEDIUM": 31,
+            "SMALL": 1
+          },
+          "topCells": [
+            {
+              "cell": [
+                5,
+                4
+              ],
+              "frames": 8
+            },
+            {
+              "cell": [
+                8,
+                11
+              ],
+              "frames": 8
+            },
+            {
+              "cell": [
+                7,
+                8
+              ],
+              "frames": 7
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 6
+            },
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 4
+            }
+          ]
+        },
+        {
+          "sequence": "Meet_Split_3rdGuy",
+          "scoredFrames": 923,
+          "falsePositives": 102,
+          "fpPerFrame": 0.1105092091007584,
+          "occupiedCells": 14,
+          "persistentCells": 0,
+          "persistentFalsePositives": 0,
+          "persistentShare": 0.0,
+          "fpBySize": {
+            "LARGE": 61,
+            "MEDIUM": 35,
+            "SMALL": 6
+          },
+          "topCells": [
+            {
+              "cell": [
+                2,
+                6
+              ],
+              "frames": 23
+            },
+            {
+              "cell": [
+                5,
+                7
+              ],
+              "frames": 23
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 22
+            },
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 9
+            },
+            {
+              "cell": [
+                6,
+                7
+              ],
+              "frames": 5
+            }
+          ]
+        },
+        {
+          "sequence": "Meet_WalkSplit",
+          "scoredFrames": 623,
+          "falsePositives": 64,
+          "fpPerFrame": 0.10272873194221509,
+          "occupiedCells": 15,
+          "persistentCells": 0,
+          "persistentFalsePositives": 0,
+          "persistentShare": 0.0,
+          "fpBySize": {
+            "LARGE": 39,
+            "SMALL": 3,
+            "MEDIUM": 22
+          },
+          "topCells": [
+            {
+              "cell": [
+                2,
+                6
+              ],
+              "frames": 23
+            },
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 9
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 7
+            },
+            {
+              "cell": [
+                5,
+                7
+              ],
+              "frames": 6
+            },
+            {
+              "cell": [
+                6,
+                7
+              ],
+              "frames": 6
+            }
+          ]
+        },
+        {
+          "sequence": "Meet_WalkTogether1",
+          "scoredFrames": 707,
+          "falsePositives": 42,
+          "fpPerFrame": 0.0594059405940594,
+          "occupiedCells": 10,
+          "persistentCells": 0,
+          "persistentFalsePositives": 0,
+          "persistentShare": 0.0,
+          "fpBySize": {
+            "LARGE": 38,
+            "SMALL": 2,
+            "MEDIUM": 2
+          },
+          "topCells": [
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 15
+            },
+            {
+              "cell": [
+                2,
+                6
+              ],
+              "frames": 9
+            },
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 5
+            },
+            {
+              "cell": [
+                3,
+                6
+              ],
+              "frames": 4
+            },
+            {
+              "cell": [
+                11,
+                1
+              ],
+              "frames": 3
+            }
+          ]
+        },
+        {
+          "sequence": "Rest_FallOnFloor",
+          "scoredFrames": 1007,
+          "falsePositives": 88,
+          "fpPerFrame": 0.08738828202581926,
+          "occupiedCells": 9,
+          "persistentCells": 0,
+          "persistentFalsePositives": 0,
+          "persistentShare": 0.0,
+          "fpBySize": {
+            "MEDIUM": 50,
+            "LARGE": 34,
+            "SMALL": 4
+          },
+          "topCells": [
+            {
+              "cell": [
+                6,
+                11
+              ],
+              "frames": 28
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 16
+            },
+            {
+              "cell": [
+                7,
+                11
+              ],
+              "frames": 15
+            },
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 11
+            },
+            {
+              "cell": [
+                10,
+                11
+              ],
+              "frames": 7
+            }
+          ]
+        },
+        {
+          "sequence": "Rest_InChair",
+          "scoredFrames": 1007,
+          "falsePositives": 48,
+          "fpPerFrame": 0.047666335650446874,
+          "occupiedCells": 12,
+          "persistentCells": 0,
+          "persistentFalsePositives": 0,
+          "persistentShare": 0.0,
+          "fpBySize": {
+            "MEDIUM": 16,
+            "SMALL": 2,
+            "LARGE": 30
+          },
+          "topCells": [
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 20
+            },
+            {
+              "cell": [
+                6,
+                11
+              ],
+              "frames": 7
+            },
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 7
+            },
+            {
+              "cell": [
+                11,
+                11
+              ],
+              "frames": 2
+            },
+            {
+              "cell": [
+                2,
+                6
+              ],
+              "frames": 2
+            }
+          ]
+        },
+        {
+          "sequence": "Rest_SlumpOnFloor",
+          "scoredFrames": 911,
+          "falsePositives": 61,
+          "fpPerFrame": 0.06695938529088913,
+          "occupiedCells": 13,
+          "persistentCells": 0,
+          "persistentFalsePositives": 0,
+          "persistentShare": 0.0,
+          "fpBySize": {
+            "SMALL": 9,
+            "LARGE": 47,
+            "MEDIUM": 5
+          },
+          "topCells": [
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 28
+            },
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 13
+            },
+            {
+              "cell": [
+                2,
+                6
+              ],
+              "frames": 5
+            },
+            {
+              "cell": [
+                6,
+                9
+              ],
+              "frames": 3
+            },
+            {
+              "cell": [
+                5,
+                9
+              ],
+              "frames": 2
+            }
+          ]
+        },
+        {
+          "sequence": "Rest_WiggleOnFloor",
+          "scoredFrames": 1189,
+          "falsePositives": 30,
+          "fpPerFrame": 0.025231286795626577,
+          "occupiedCells": 10,
+          "persistentCells": 0,
+          "persistentFalsePositives": 0,
+          "persistentShare": 0.0,
+          "fpBySize": {
+            "SMALL": 4,
+            "MEDIUM": 16,
+            "LARGE": 10
+          },
+          "topCells": [
+            {
+              "cell": [
+                6,
+                11
+              ],
+              "frames": 6
+            },
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 5
+            },
+            {
+              "cell": [
+                7,
+                1
+              ],
+              "frames": 4
+            },
+            {
+              "cell": [
+                2,
+                7
+              ],
+              "frames": 4
+            },
+            {
+              "cell": [
+                7,
+                11
+              ],
+              "frames": 4
+            }
+          ]
+        },
+        {
+          "sequence": "Walk1",
+          "scoredFrames": 611,
+          "falsePositives": 24,
+          "fpPerFrame": 0.03927986906710311,
+          "occupiedCells": 7,
+          "persistentCells": 0,
+          "persistentFalsePositives": 0,
+          "persistentShare": 0.0,
+          "fpBySize": {
+            "SMALL": 10,
+            "MEDIUM": 13,
+            "LARGE": 1
+          },
+          "topCells": [
+            {
+              "cell": [
+                7,
+                8
+              ],
+              "frames": 7
+            },
+            {
+              "cell": [
+                6,
+                11
+              ],
+              "frames": 6
+            },
+            {
+              "cell": [
+                3,
+                11
+              ],
+              "frames": 5
+            },
+            {
+              "cell": [
+                3,
+                10
+              ],
+              "frames": 3
+            },
+            {
+              "cell": [
+                1,
+                7
+              ],
+              "frames": 1
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

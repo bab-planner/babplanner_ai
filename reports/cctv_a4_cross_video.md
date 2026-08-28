@@ -158,7 +158,31 @@ CAVIAR CVML에서 사람으로 세는 것을 명시했다.
 | 0.7 | tracking min_hits=3 | 0.657 | 0.637 | −0.180 |
 
 **detection only와 tracking(min_hits=1)이 모든 조건에서 소수점까지 같다.**
-A3에서 한 영상에 대해 관찰한 항등이 5편 전체에서 재현됐다.
+
+> **A5 정정 — 이것은 관찰이 아니라 항등이다.**
+>
+> A5에서 코드를 다시 읽고 원인을 찾았다. 세 가지가 겹쳐 **구조적으로**
+> 같아진다.
+>
+> 1. `ByteTrackInspiredTracker.update()`는 `CONFIRMED`이면서
+>    `time_since_update == 0`인 track만 돌려준다. 즉 **이번 프레임에
+>    검출과 매칭된 track만** occupancy에 들어간다. 살아 있지만 매칭되지
+>    않은(LOST) track은 세지 않는다.
+> 2. `min_hits=1`이면 이번 프레임에 갱신된 track은 즉시 CONFIRMED다.
+> 3. 이 실험의 detector 임계값(0.7)이 tracker의 `high_threshold`(0.5)보다
+>    높다. 그래서 남은 검출은 전부 "high"이고, 각각 기존 track에 매칭되거나
+>    새 track을 만든다. 매칭은 1:1이다.
+>
+> 따라서 `occupancy = 검출 개수`가 **정의상** 성립한다. 임계값을 0.3으로
+> 낮춰 low 구간 검출을 섞으면 둘은 곧바로 달라진다(A5에서 확인).
+>
+> **그러므로 이 표는 "연결이 occupancy에 도움이 안 된다"는 증거가 아니다.**
+> 정확한 진술은 이렇다. **현재의 occupancy 읽기 방식에서는 `min_hits=1`
+> 추적이 detection-only와 같은 현재 프레임 계수로 붕괴하므로, 매칭되지 않은
+> track을 유지하는 규칙이나 다른 시간적 규칙을 도입하지 않는 한 연결이
+> occupancy를 개선할 수 없다.**
+>
+> A4 결과를 폐기하지 않는다. 오히려 아키텍처의 의미가 분명해졌다.
 
 **임계값이 낮을 때는 확인이 도움이 된다.** conf=0.5에서 confirm N=3이
 detection only보다 크게 낫다(1.024 vs 1.612). conf=0.7에서는 그 이득이
@@ -170,6 +194,11 @@ detection only와 tracking(min_hits=1)이 1·2에서 완전 동률이고, 3에 �
 **occupancy는 detection only @ conf=0.7**이다.
 
 ### TEST — 1회 평가 (8편)
+
+> **A5 이후 이 8편은 ANALYSIS SET이다.** 아래 숫자는 당시 one-shot TEST로
+> 얻은 것이고 그 사실은 그대로다. 다만 A5부터는 결과를 이미 본 집합이므로
+> **"손대지 않은 test set"이라고 부르지 않는다.** A5의 최종 평가는 처음 보는
+> 시퀀스로 따로 했다.
 
 | 시퀀스 | GT 평균 | det MAE | trk MAE | det Bias |
 |---|---:|---:|---:|---:|
@@ -189,7 +218,8 @@ detection only와 tracking(min_hits=1)이 1·2에서 완전 동률이고, 3에 �
 | tracking min_hits=3 | 0.887 | 0.951 | 1.199 | −0.065 |
 
 **동등 판정.** detection only − tracking(min_hits=3) = **−0.008명**.
-사전에 정한 마진 0.25명 안이다. → **occupancy에서 추적은 이득을 주지 않는다.**
+사전에 정한 마진 0.25명 안이다. → **확인 문턱을 올리는 것은 occupancy를 개선하지 않았다.**
+(min_hits=1 열은 위에서 설명한 구조적 항등이므로 비교 대상이 아니다.)
 
 ### 집계 bias가 거의 0인 것을 정확도로 읽으면 안 된다
 
@@ -330,11 +360,18 @@ detector를 두 번 돌릴 이유가 없다. 한 번 돌린 검출을 두 경로
 
 ### RQ-A4-1 — occupancy에 추적이 필요한가
 
-**아니다. cross-video로 확인됐다.**
+**현재 읽기 방식에서는 연결이 occupancy를 개선할 수 없다.** 표현을 A5에서
+좁혔다.
 
-- 13편 전부에서 detection only와 tracking(min_hits=1)의 계수가 **완전히 같다.**
-- TEST macro MAE 차이 **0.008명**, 사전 마진 0.25명 안.
-- 계산 비용도 근거가 아니다. 추적은 detector의 0.1%다.
+- 13편 전부에서 detection only와 tracking(min_hits=1)의 계수가 같은 것은
+  **구조적 항등이다**(위 정정). 증거가 아니라 정의다.
+- 실제 비교 대상은 `min_hits=3`이다. TEST macro MAE 차이 **0.008명**으로
+  사전 마진 0.25명 안이다. **확인 문턱을 올리는 것은 도움이 되지 않았다.**
+- 계산 비용은 근거가 아니다. 추적은 detector의 0.1%다.
+
+**아직 시험하지 않은 것이 있다.** 매칭되지 않은 track을 일정 시간 유지해
+검출 누락을 메우는 방식(unmatched-track persistence)은 여기서 다루지 않았다.
+그것은 별개 가설이고, A4/A5의 어떤 결과도 그것을 반증하지 않는다.
 
 근거는 "추적이 나쁘다"가 아니라 **"occupancy에 대해 아무것도 더 해 주지
 않는다"** 이다. 그러면서 파라미터 두 개(`min_hits`, `max_age`)와 실패 유형

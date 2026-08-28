@@ -1,0 +1,869 @@
+{
+  "split": "ANALYSIS",
+  "threshold": 0.7,
+  "eventToleranceSeconds": 1.5,
+  "baseline": "E0_mobilenet_R0",
+  "contrast": "E3_resnet50_R0",
+  "note": "H4는 세 단계가 모두 이어질 때만 성립한다. 1) 놓친 사건이 작은 사람에 몰림 2) 대조 detector가 그 사람 검출을 회복 3) 회복된 검출이 통과 사건까지 회복",
+  "sequences": [
+    {
+      "sequence": "OneStopMoveEnter1front",
+      "gtEvents": 14,
+      "candidates": {
+        "E0_mobilenet_R0": {
+          "gtEvents": 14,
+          "predictedEvents": 5,
+          "matched": 5,
+          "recall": 0.35714285714285715,
+          "medianMatchedHeight": 0.19791666666666666,
+          "medianMissedHeight": 0.19444444444444445,
+          "matchedHeights": [
+            0.184,
+            0.1806,
+            0.1979,
+            0.2014,
+            0.2049
+          ],
+          "missedHeights": [
+            0.1771,
+            0.1979,
+            0.1944,
+            0.1354,
+            0.1736,
+            0.1979,
+            0.1979,
+            0.0556,
+            0.2153
+          ],
+          "bySize": {
+            "SMALL": {
+              "total": 1,
+              "matched": 0,
+              "recall": 0.0
+            },
+            "MEDIUM": {
+              "total": 10,
+              "matched": 3,
+              "recall": 0.3
+            },
+            "LARGE": {
+              "total": 3,
+              "matched": 2,
+              "recall": 0.6666666666666666
+            }
+          }
+        },
+        "E3_resnet50_R0": {
+          "gtEvents": 14,
+          "predictedEvents": 6,
+          "matched": 6,
+          "recall": 0.42857142857142855,
+          "medianMatchedHeight": 0.19791666666666666,
+          "medianMissedHeight": 0.1857638888888889,
+          "matchedHeights": [
+            0.184,
+            0.1806,
+            0.1979,
+            0.2014,
+            0.1979,
+            0.2049
+          ],
+          "missedHeights": [
+            0.1771,
+            0.1979,
+            0.1944,
+            0.1354,
+            0.1736,
+            0.1979,
+            0.0556,
+            0.2153
+          ],
+          "bySize": {
+            "SMALL": {
+              "total": 1,
+              "matched": 0,
+              "recall": 0.0
+            },
+            "MEDIUM": {
+              "total": 10,
+              "matched": 4,
+              "recall": 0.4
+            },
+            "LARGE": {
+              "total": 3,
+              "matched": 2,
+              "recall": 0.6666666666666666
+            }
+          }
+        }
+      },
+      "chain": {
+        "baseline": "E0_mobilenet_R0",
+        "contrast": "E3_resnet50_R0",
+        "missedByBaseline": 9,
+        "eventsRecoveredByContrast": 1,
+        "rows": [
+          {
+            "trackId": 0,
+            "frame": 106,
+            "direction": "IN",
+            "normalizedHeight": 0.1771,
+            "baseTrackRecall": 0.3813559322033898,
+            "contrastTrackRecall": 0.5211864406779662,
+            "eventRecovered": false
+          },
+          {
+            "trackId": 4,
+            "frame": 532,
+            "direction": "OUT",
+            "normalizedHeight": 0.1979,
+            "baseTrackRecall": 0.5501730103806228,
+            "contrastTrackRecall": 0.6089965397923875,
+            "eventRecovered": false
+          },
+          {
+            "trackId": 6,
+            "frame": 627,
+            "direction": "OUT",
+            "normalizedHeight": 0.1944,
+            "baseTrackRecall": 0.5522388059701493,
+            "contrastTrackRecall": 0.7263681592039801,
+            "eventRecovered": false
+          },
+          {
+            "trackId": 8,
+            "frame": 979,
+            "direction": "IN",
+            "normalizedHeight": 0.1354,
+            "baseTrackRecall": 0.6628352490421456,
+            "contrastTrackRecall": 0.8582375478927203,
+            "eventRecovered": false
+          },
+          {
+            "trackId": 9,
+            "frame": 984,
+            "direction": "OUT",
+            "normalizedHeight": 0.1736,
+            "baseTrackRecall": 0.30303030303030304,
+            "contrastTrackRecall": 0.4772727272727273,
+            "eventRecovered": false
+          },
+          {
+            "trackId": 7,
+            "frame": 989,
+            "direction": "IN",
+            "normalizedHeight": 0.1979,
+            "baseTrackRecall": 0.5850340136054422,
+            "contrastTrackRecall": 0.7585034013605442,
+            "eventRecovered": false
+          },
+          {
+            "trackId": 10,
+            "frame": 993,
+            "direction": "OUT",
+            "normalizedHeight": 0.1979,
+            "baseTrackRecall": 0.45622119815668205,
+            "contrastTrackRecall": 0.6221198156682027,
+            "eventRecovered": true
+          },
+          {
+            "trackId": 12,
+            "frame": 995,
+            "direction": "OUT",
+            "normalizedHeight": 0.0556,
+            "baseTrackRecall": 0.15126050420168066,
+            "contrastTrackRecall": 0.40756302521008403,
+            "eventRecovered": false
+          },
+          {
+            "trackId": 11,
+            "frame": 1000,
+            "direction": "OUT",
+            "normalizedHeight": 0.2153,
+            "baseTrackRecall": 0.29333333333333333,
+            "contrastTrackRecall": 0.6044444444444445,
+            "eventRecovered": false
+          }
+        ]
+      }
+    },
+    {
+      "sequence": "OneStopMoveNoEnter1front",
+      "gtEvents": 1,
+      "candidates": {
+        "E0_mobilenet_R0": {
+          "gtEvents": 1,
+          "predictedEvents": 0,
+          "matched": 0,
+          "recall": 0.0,
+          "medianMatchedHeight": null,
+          "medianMissedHeight": 0.20833333333333334,
+          "matchedHeights": [],
+          "missedHeights": [
+            0.2083
+          ],
+          "bySize": {
+            "SMALL": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            },
+            "MEDIUM": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            },
+            "LARGE": {
+              "total": 1,
+              "matched": 0,
+              "recall": 0.0
+            }
+          }
+        },
+        "E3_resnet50_R0": {
+          "gtEvents": 1,
+          "predictedEvents": 1,
+          "matched": 1,
+          "recall": 1.0,
+          "medianMatchedHeight": 0.20833333333333334,
+          "medianMissedHeight": null,
+          "matchedHeights": [
+            0.2083
+          ],
+          "missedHeights": [],
+          "bySize": {
+            "SMALL": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            },
+            "MEDIUM": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            },
+            "LARGE": {
+              "total": 1,
+              "matched": 1,
+              "recall": 1.0
+            }
+          }
+        }
+      },
+      "chain": {
+        "baseline": "E0_mobilenet_R0",
+        "contrast": "E3_resnet50_R0",
+        "missedByBaseline": 1,
+        "eventsRecoveredByContrast": 1,
+        "rows": [
+          {
+            "trackId": 1,
+            "frame": 508,
+            "direction": "OUT",
+            "normalizedHeight": 0.2083,
+            "baseTrackRecall": 0.7043740573152338,
+            "contrastTrackRecall": 0.9125188536953243,
+            "eventRecovered": true
+          }
+        ]
+      }
+    },
+    {
+      "sequence": "OneStopNoEnter1front",
+      "gtEvents": 1,
+      "candidates": {
+        "E0_mobilenet_R0": {
+          "gtEvents": 1,
+          "predictedEvents": 0,
+          "matched": 0,
+          "recall": 0.0,
+          "medianMatchedHeight": null,
+          "medianMissedHeight": 0.2013888888888889,
+          "matchedHeights": [],
+          "missedHeights": [
+            0.2014
+          ],
+          "bySize": {
+            "SMALL": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            },
+            "MEDIUM": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            },
+            "LARGE": {
+              "total": 1,
+              "matched": 0,
+              "recall": 0.0
+            }
+          }
+        },
+        "E3_resnet50_R0": {
+          "gtEvents": 1,
+          "predictedEvents": 1,
+          "matched": 1,
+          "recall": 1.0,
+          "medianMatchedHeight": 0.2013888888888889,
+          "medianMissedHeight": null,
+          "matchedHeights": [
+            0.2014
+          ],
+          "missedHeights": [],
+          "bySize": {
+            "SMALL": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            },
+            "MEDIUM": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            },
+            "LARGE": {
+              "total": 1,
+              "matched": 1,
+              "recall": 1.0
+            }
+          }
+        }
+      },
+      "chain": {
+        "baseline": "E0_mobilenet_R0",
+        "contrast": "E3_resnet50_R0",
+        "missedByBaseline": 1,
+        "eventsRecoveredByContrast": 1,
+        "rows": [
+          {
+            "trackId": 0,
+            "frame": 527,
+            "direction": "OUT",
+            "normalizedHeight": 0.2014,
+            "baseTrackRecall": 0.64,
+            "contrastTrackRecall": 0.8246153846153846,
+            "eventRecovered": true
+          }
+        ]
+      }
+    },
+    {
+      "sequence": "ShopAssistant1front",
+      "gtEvents": 6,
+      "candidates": {
+        "E0_mobilenet_R0": {
+          "gtEvents": 6,
+          "predictedEvents": 2,
+          "matched": 2,
+          "recall": 0.3333333333333333,
+          "medianMatchedHeight": 0.2013888888888889,
+          "medianMissedHeight": 0.19270833333333334,
+          "matchedHeights": [
+            0.2118,
+            0.191
+          ],
+          "missedHeights": [
+            0.1771,
+            0.184,
+            0.2188,
+            0.2014
+          ],
+          "bySize": {
+            "SMALL": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            },
+            "MEDIUM": {
+              "total": 3,
+              "matched": 1,
+              "recall": 0.3333333333333333
+            },
+            "LARGE": {
+              "total": 3,
+              "matched": 1,
+              "recall": 0.3333333333333333
+            }
+          }
+        },
+        "E3_resnet50_R0": {
+          "gtEvents": 6,
+          "predictedEvents": 4,
+          "matched": 4,
+          "recall": 0.6666666666666666,
+          "medianMatchedHeight": 0.19618055555555555,
+          "medianMissedHeight": 0.19791666666666669,
+          "matchedHeights": [
+            0.2118,
+            0.191,
+            0.184,
+            0.2014
+          ],
+          "missedHeights": [
+            0.1771,
+            0.2188
+          ],
+          "bySize": {
+            "SMALL": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            },
+            "MEDIUM": {
+              "total": 3,
+              "matched": 2,
+              "recall": 0.6666666666666666
+            },
+            "LARGE": {
+              "total": 3,
+              "matched": 2,
+              "recall": 0.6666666666666666
+            }
+          }
+        }
+      },
+      "chain": {
+        "baseline": "E0_mobilenet_R0",
+        "contrast": "E3_resnet50_R0",
+        "missedByBaseline": 4,
+        "eventsRecoveredByContrast": 2,
+        "rows": [
+          {
+            "trackId": 1,
+            "frame": 232,
+            "direction": "IN",
+            "normalizedHeight": 0.1771,
+            "baseTrackRecall": 0.2918149466192171,
+            "contrastTrackRecall": 0.4697508896797153,
+            "eventRecovered": false
+          },
+          {
+            "trackId": 3,
+            "frame": 1461,
+            "direction": "IN",
+            "normalizedHeight": 0.184,
+            "baseTrackRecall": 0.31386861313868614,
+            "contrastTrackRecall": 0.5109489051094891,
+            "eventRecovered": true
+          },
+          {
+            "trackId": 2,
+            "frame": 1486,
+            "direction": "IN",
+            "normalizedHeight": 0.2188,
+            "baseTrackRecall": 0.7018867924528301,
+            "contrastTrackRecall": 0.9184905660377358,
+            "eventRecovered": false
+          },
+          {
+            "trackId": 0,
+            "frame": 1495,
+            "direction": "IN",
+            "normalizedHeight": 0.2014,
+            "baseTrackRecall": 0.1858573216520651,
+            "contrastTrackRecall": 0.376720901126408,
+            "eventRecovered": true
+          }
+        ]
+      }
+    },
+    {
+      "sequence": "ThreePastShop1front",
+      "gtEvents": 5,
+      "candidates": {
+        "E0_mobilenet_R0": {
+          "gtEvents": 5,
+          "predictedEvents": 2,
+          "matched": 2,
+          "recall": 0.4,
+          "medianMatchedHeight": 0.2204861111111111,
+          "medianMissedHeight": 0.20833333333333334,
+          "matchedHeights": [
+            0.2222,
+            0.2188
+          ],
+          "missedHeights": [
+            0.2188,
+            0.1979,
+            0.2083
+          ],
+          "bySize": {
+            "SMALL": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            },
+            "MEDIUM": {
+              "total": 1,
+              "matched": 0,
+              "recall": 0.0
+            },
+            "LARGE": {
+              "total": 4,
+              "matched": 2,
+              "recall": 0.5
+            }
+          }
+        },
+        "E3_resnet50_R0": {
+          "gtEvents": 5,
+          "predictedEvents": 2,
+          "matched": 2,
+          "recall": 0.4,
+          "medianMatchedHeight": 0.21354166666666669,
+          "medianMissedHeight": 0.21875,
+          "matchedHeights": [
+            0.2083,
+            0.2188
+          ],
+          "missedHeights": [
+            0.2188,
+            0.1979,
+            0.2222
+          ],
+          "bySize": {
+            "SMALL": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            },
+            "MEDIUM": {
+              "total": 1,
+              "matched": 0,
+              "recall": 0.0
+            },
+            "LARGE": {
+              "total": 4,
+              "matched": 2,
+              "recall": 0.5
+            }
+          }
+        }
+      },
+      "chain": {
+        "baseline": "E0_mobilenet_R0",
+        "contrast": "E3_resnet50_R0",
+        "missedByBaseline": 3,
+        "eventsRecoveredByContrast": 1,
+        "rows": [
+          {
+            "trackId": 2,
+            "frame": 1147,
+            "direction": "IN",
+            "normalizedHeight": 0.2188,
+            "baseTrackRecall": 0.3440366972477064,
+            "contrastTrackRecall": 0.6972477064220184,
+            "eventRecovered": false
+          },
+          {
+            "trackId": 3,
+            "frame": 1147,
+            "direction": "IN",
+            "normalizedHeight": 0.1979,
+            "baseTrackRecall": 0.2850877192982456,
+            "contrastTrackRecall": 0.4956140350877193,
+            "eventRecovered": false
+          },
+          {
+            "trackId": 5,
+            "frame": 1374,
+            "direction": "OUT",
+            "normalizedHeight": 0.2083,
+            "baseTrackRecall": 0.7115384615384616,
+            "contrastTrackRecall": 0.7884615384615384,
+            "eventRecovered": true
+          }
+        ]
+      }
+    },
+    {
+      "sequence": "TwoEnterShop1front",
+      "gtEvents": 7,
+      "candidates": {
+        "E0_mobilenet_R0": {
+          "gtEvents": 7,
+          "predictedEvents": 4,
+          "matched": 4,
+          "recall": 0.5714285714285714,
+          "medianMatchedHeight": 0.21006944444444445,
+          "medianMissedHeight": 0.19444444444444445,
+          "matchedHeights": [
+            0.1875,
+            0.2118,
+            0.2083,
+            0.2118
+          ],
+          "missedHeights": [
+            0.0694,
+            0.2014,
+            0.1944
+          ],
+          "bySize": {
+            "SMALL": {
+              "total": 1,
+              "matched": 0,
+              "recall": 0.0
+            },
+            "MEDIUM": {
+              "total": 2,
+              "matched": 1,
+              "recall": 0.5
+            },
+            "LARGE": {
+              "total": 4,
+              "matched": 3,
+              "recall": 0.75
+            }
+          }
+        },
+        "E3_resnet50_R0": {
+          "gtEvents": 7,
+          "predictedEvents": 5,
+          "matched": 5,
+          "recall": 0.7142857142857143,
+          "medianMatchedHeight": 0.2013888888888889,
+          "medianMissedHeight": 0.140625,
+          "matchedHeights": [
+            0.1875,
+            0.2014,
+            0.2083,
+            0.1944,
+            0.2118
+          ],
+          "missedHeights": [
+            0.0694,
+            0.2118
+          ],
+          "bySize": {
+            "SMALL": {
+              "total": 1,
+              "matched": 0,
+              "recall": 0.0
+            },
+            "MEDIUM": {
+              "total": 2,
+              "matched": 2,
+              "recall": 1.0
+            },
+            "LARGE": {
+              "total": 4,
+              "matched": 3,
+              "recall": 0.75
+            }
+          }
+        }
+      },
+      "chain": {
+        "baseline": "E0_mobilenet_R0",
+        "contrast": "E3_resnet50_R0",
+        "missedByBaseline": 3,
+        "eventsRecoveredByContrast": 2,
+        "rows": [
+          {
+            "trackId": 9,
+            "frame": 250,
+            "direction": "OUT",
+            "normalizedHeight": 0.0694,
+            "baseTrackRecall": 0.0035587188612099642,
+            "contrastTrackRecall": 0.046263345195729534,
+            "eventRecovered": false
+          },
+          {
+            "trackId": 2,
+            "frame": 468,
+            "direction": "OUT",
+            "normalizedHeight": 0.2014,
+            "baseTrackRecall": 0.3652007648183556,
+            "contrastTrackRecall": 0.47418738049713194,
+            "eventRecovered": true
+          },
+          {
+            "trackId": 5,
+            "frame": 1354,
+            "direction": "IN",
+            "normalizedHeight": 0.1944,
+            "baseTrackRecall": 0.19113573407202217,
+            "contrastTrackRecall": 0.45706371191135736,
+            "eventRecovered": true
+          }
+        ]
+      }
+    },
+    {
+      "sequence": "TwoLeaveShop1front",
+      "gtEvents": 2,
+      "candidates": {
+        "E0_mobilenet_R0": {
+          "gtEvents": 2,
+          "predictedEvents": 1,
+          "matched": 1,
+          "recall": 0.5,
+          "medianMatchedHeight": 0.19444444444444445,
+          "medianMissedHeight": 0.19444444444444445,
+          "matchedHeights": [
+            0.1944
+          ],
+          "missedHeights": [
+            0.1944
+          ],
+          "bySize": {
+            "SMALL": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            },
+            "MEDIUM": {
+              "total": 2,
+              "matched": 1,
+              "recall": 0.5
+            },
+            "LARGE": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            }
+          }
+        },
+        "E3_resnet50_R0": {
+          "gtEvents": 2,
+          "predictedEvents": 2,
+          "matched": 2,
+          "recall": 1.0,
+          "medianMatchedHeight": 0.19444444444444445,
+          "medianMissedHeight": null,
+          "matchedHeights": [
+            0.1944,
+            0.1944
+          ],
+          "missedHeights": [],
+          "bySize": {
+            "SMALL": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            },
+            "MEDIUM": {
+              "total": 2,
+              "matched": 2,
+              "recall": 1.0
+            },
+            "LARGE": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            }
+          }
+        }
+      },
+      "chain": {
+        "baseline": "E0_mobilenet_R0",
+        "contrast": "E3_resnet50_R0",
+        "missedByBaseline": 1,
+        "eventsRecoveredByContrast": 1,
+        "rows": [
+          {
+            "trackId": 3,
+            "frame": 1176,
+            "direction": "IN",
+            "normalizedHeight": 0.1944,
+            "baseTrackRecall": 0.4926829268292683,
+            "contrastTrackRecall": 0.7073170731707317,
+            "eventRecovered": true
+          }
+        ]
+      }
+    },
+    {
+      "sequence": "WalkByShop1front",
+      "gtEvents": 5,
+      "candidates": {
+        "E0_mobilenet_R0": {
+          "gtEvents": 5,
+          "predictedEvents": 4,
+          "matched": 4,
+          "recall": 0.8,
+          "medianMatchedHeight": 0.4253472222222222,
+          "medianMissedHeight": 0.4236111111111111,
+          "matchedHeights": [
+            0.4201,
+            0.4306,
+            0.4444,
+            0.4201
+          ],
+          "missedHeights": [
+            0.4236
+          ],
+          "bySize": {
+            "SMALL": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            },
+            "MEDIUM": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            },
+            "LARGE": {
+              "total": 5,
+              "matched": 4,
+              "recall": 0.8
+            }
+          }
+        },
+        "E3_resnet50_R0": {
+          "gtEvents": 5,
+          "predictedEvents": 5,
+          "matched": 5,
+          "recall": 1.0,
+          "medianMatchedHeight": 0.4236111111111111,
+          "medianMissedHeight": null,
+          "matchedHeights": [
+            0.4201,
+            0.4306,
+            0.4444,
+            0.4236,
+            0.4201
+          ],
+          "missedHeights": [],
+          "bySize": {
+            "SMALL": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            },
+            "MEDIUM": {
+              "total": 0,
+              "matched": 0,
+              "recall": null
+            },
+            "LARGE": {
+              "total": 5,
+              "matched": 5,
+              "recall": 1.0
+            }
+          }
+        }
+      },
+      "chain": {
+        "baseline": "E0_mobilenet_R0",
+        "contrast": "E3_resnet50_R0",
+        "missedByBaseline": 1,
+        "eventsRecoveredByContrast": 1,
+        "rows": [
+          {
+            "trackId": 2,
+            "frame": 1926,
+            "direction": "IN",
+            "normalizedHeight": 0.4236,
+            "baseTrackRecall": 0.7857142857142857,
+            "contrastTrackRecall": 0.8690476190476191,
+            "eventRecovered": true
+          }
+        ]
+      }
+    }
+  ]
+}

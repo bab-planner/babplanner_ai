@@ -92,10 +92,14 @@ flowchart TD
   entry       추적 + 선 통과                 추적이 있어야 정의된다
 ```
 
-occupancy에 추적을 태워도 계수가 달라지지 않는다는 것을 13편 전부에서
-확인했다(detection-only와 `min_hits=1` 추적의 결과가 소수점까지 동일).
-TEST 8편의 macro MAE 차이는 0.008명으로, 사전에 정한 동등 마진 0.25명 안이다.
-자세한 것은 [A4 보고서](../../reports/cctv_a4_cross_video.md).
+**현재 occupancy 읽기 방식에서는 추적이 기여할 자리가 없다.** `update()`가
+"이번 프레임에 검출과 매칭된 track"만 돌려주므로, `min_hits=1`이면
+detection-only와 계수가 **구조적으로 같아진다**. 실제 비교 대상인
+`min_hits=3`도 TEST 8편 macro MAE 차이가 0.008명으로 사전 마진 0.25명 안이었다.
+
+매칭되지 않은 track을 유지해 검출 누락을 메우는 방식은 아직 시험하지 않았다.
+자세한 것은 [A4 보고서](../../reports/cctv_a4_cross_video.md)와
+[A5 보고서](../../reports/cctv_a5_small_person.md).
 
 **detector는 한 번만 돌린다.** 비용의 99.9%가 detector이고 추적은 그
 0.1% 수준이라, 두 경로가 같은 검출 결과를 나눠 쓰면 된다.

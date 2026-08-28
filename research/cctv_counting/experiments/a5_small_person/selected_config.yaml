@@ -1,0 +1,42 @@
+# A5에서 고른 조건. FINAL 결과를 보기 전에 정했고, 본 뒤에 바꾸지 않았다.
+# 이 파일은 사람이 읽으라고 두는 것이다. 실행에 쓰이는 값의 출처는
+# final_test_freeze.json 이고 그 해시로 무결성을 확인한다.
+
+selected_candidate: E0_mobilenet_R0
+detector:
+  name: fasterrcnn_mobilenet_v3_large_fpn
+  weights: COCO_V1 (torchvision)
+  min_size: null      # torchvision 기본값 사용
+  max_size: null
+  transformed_shape: 800x1066   # 384x288 입력이 내부에서 이렇게 커진다
+  score_threshold: 0.7
+
+occupancy:
+  method: detection_only
+  note: 추적을 쓰지 않는다. A5에서 확인했듯 min_hits=1이면 항등이다.
+
+crossing:
+  line_x_normalized: 0.5
+  in_direction: POSITIVE (right->left)
+  anchor: BOTTOM_CENTER
+  tracker_min_hits: 1
+  tracker_max_age: 30
+  band: 0.01
+  min_confirm_distance: 0.03
+  cooldown_seconds: 0.5
+
+evaluation:
+  match_iou: 0.5
+  matching: greedy IoU descending, one-to-one
+  size_variable: normalized_bbox_height = bbox_height / image_height
+  size_bins: {SMALL: '< 0.10', MEDIUM: '0.10 ~ 0.20', LARGE: '>= 0.20'}
+  event_tolerance_seconds: 1.5
+  sample_every_frames: 25
+  occluded_gt_excluded_from_detection_recall: true
+
+status:
+  fine_tuned: false
+  weight_commercial_terms: UNRESOLVED
+  scope: research/demo evaluation. 급식소 검증이 아니다.
+
+freeze_sha256: fa32b378dd68f4d2cee0214535861aa928e74f971640c7dba51b8bb83038647f

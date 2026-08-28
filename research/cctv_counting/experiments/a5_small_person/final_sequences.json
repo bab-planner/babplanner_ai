@@ -1,0 +1,162 @@
+{
+  "note": "CAVIAR INRIA 로비 세트. A4까지 한 번도 추론하지 않은 시퀀스다. 쇼핑센터와 다른 장소, 다른 카메라.",
+  "source": "https://homepages.inf.ed.ac.uk/rbf/CAVIARDATA1/",
+  "license": "Creative Commons BY-SA",
+  "acknowledgement": "EC Funded CAVIAR project/IST 2001 37540",
+  "selectionRule": "A4와 같은 계열 규칙(이름 끝 숫자를 떼고 계열, 계열당 알파벳 첫 번째). 자격 있는 계열 전부. 고르지 않는다.",
+  "sequences": [
+    {
+      "sequence": "Browse1",
+      "video": "Browse1.mpg",
+      "gt": "br1gt.xml",
+      "frames": 1044,
+      "width": 384,
+      "height": 288,
+      "fps": 25.0
+    },
+    {
+      "sequence": "Browse_WhileWaiting1",
+      "video": "Browse_WhileWaiting1.mpg",
+      "gt": "bww1gt.xml",
+      "frames": 792,
+      "width": 384,
+      "height": 288,
+      "fps": 25.0
+    },
+    {
+      "sequence": "Fight_RunAway1",
+      "video": "Fight_RunAway1.mpg",
+      "gt": "fra1gt.xml",
+      "frames": 552,
+      "width": 384,
+      "height": 288,
+      "fps": 25.0
+    },
+    {
+      "sequence": "LeftBag",
+      "video": "LeftBag.mpg",
+      "gt": "lb1gt.xml",
+      "frames": 1440,
+      "width": 384,
+      "height": 288,
+      "fps": 25.0
+    },
+    {
+      "sequence": "LeftBag_AtChair",
+      "video": "LeftBag_AtChair.mpg",
+      "gt": "lb2gt.xml",
+      "frames": 1116,
+      "width": 384,
+      "height": 288,
+      "fps": 25.0
+    },
+    {
+      "sequence": "LeftBag_BehindChair",
+      "video": "LeftBag_BehindChair.mpg",
+      "gt": "lbbcgt.xml",
+      "frames": 1068,
+      "width": 384,
+      "height": 288,
+      "fps": 25.0
+    },
+    {
+      "sequence": "LeftBag_PickedUp",
+      "video": "LeftBag_PickedUp.mpg",
+      "gt": "lbpugt.xml",
+      "frames": 1356,
+      "width": 384,
+      "height": 288,
+      "fps": 25.0
+    },
+    {
+      "sequence": "LeftBox",
+      "video": "LeftBox.mpg",
+      "gt": "lbgt.xml",
+      "frames": 864,
+      "width": 384,
+      "height": 288,
+      "fps": 25.0
+    },
+    {
+      "sequence": "Meet_Crowd",
+      "video": "Meet_Crowd.mpg",
+      "gt": "mc1gt.xml",
+      "frames": 492,
+      "width": 384,
+      "height": 288,
+      "fps": 25.0
+    },
+    {
+      "sequence": "Meet_Split_3rdGuy",
+      "video": "Meet_Split_3rdGuy.mpg",
+      "gt": "ms3ggt.xml",
+      "frames": 924,
+      "width": 384,
+      "height": 288,
+      "fps": 25.0
+    },
+    {
+      "sequence": "Meet_WalkSplit",
+      "video": "Meet_WalkSplit.mpg",
+      "gt": "mws1gt.xml",
+      "frames": 624,
+      "width": 384,
+      "height": 288,
+      "fps": 25.0
+    },
+    {
+      "sequence": "Meet_WalkTogether1",
+      "video": "Meet_WalkTogether1.mpg",
+      "gt": "mwt1gt.xml",
+      "frames": 708,
+      "width": 384,
+      "height": 288,
+      "fps": 25.0
+    },
+    {
+      "sequence": "Rest_FallOnFloor",
+      "video": "Rest_FallOnFloor.mpg",
+      "gt": "rffgt.xml",
+      "frames": 1008,
+      "width": 384,
+      "height": 288,
+      "fps": 25.0
+    },
+    {
+      "sequence": "Rest_InChair",
+      "video": "Rest_InChair.mpg",
+      "gt": "ricgt.xml",
+      "frames": 1008,
+      "width": 384,
+      "height": 288,
+      "fps": 25.0
+    },
+    {
+      "sequence": "Rest_SlumpOnFloor",
+      "video": "Rest_SlumpOnFloor.mpg",
+      "gt": "rsfgt.xml",
+      "frames": 912,
+      "width": 384,
+      "height": 288,
+      "fps": 25.0
+    },
+    {
+      "sequence": "Rest_WiggleOnFloor",
+      "video": "Rest_WiggleOnFloor.mpg",
+      "gt": "rwgt.xml",
+      "frames": 1296,
+      "width": 384,
+      "height": 288,
+      "fps": 25.0
+    },
+    {
+      "sequence": "Walk1",
+      "video": "Walk1.mpg",
+      "gt": "wk1gt.xml",
+      "frames": 612,
+      "width": 384,
+      "height": 288,
+      "fps": 25.0
+    }
+  ]
+}

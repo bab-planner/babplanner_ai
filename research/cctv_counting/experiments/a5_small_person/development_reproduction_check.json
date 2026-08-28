@@ -1,0 +1,44 @@
+{
+  "why": "DEV 집계는 프레임 정렬 수정(채점 프레임 = detection 프레임 ∩ GT 프레임) 이전 코드로 만들어졌다. FINAL은 수정 이후 코드로 만들어졌다. 두 숫자를 나란히 놓고 비교하려면 같은 코드에서 나와야 하므로, 캐시된 검출 상자로 DEV를 다시 집계해 값이 바뀌는지 확인했다.",
+  "result": "쇼핑센터 DEV 시퀀스에는 GT/영상 프레임 어긋남이 없어 수정이 무효과였다.",
+  "comparison": {
+    "E0_mobilenet_R0": {
+      "macroMaeBefore": 0.6440476190476191,
+      "macroMaeAfter": 0.6440476190476191,
+      "smallRecallBefore": 0.0,
+      "smallRecallAfter": 0.0,
+      "identical": true
+    },
+    "E1_mobilenet_R1": {
+      "macroMaeBefore": 0.7482142857142857,
+      "macroMaeAfter": 0.7482142857142857,
+      "smallRecallBefore": 0.004287245444801715,
+      "smallRecallAfter": 0.004287245444801715,
+      "identical": true
+    },
+    "E2_mobilenet_R2": {
+      "macroMaeBefore": 0.7505952380952381,
+      "macroMaeAfter": 0.7505952380952381,
+      "smallRecallBefore": 0.0,
+      "smallRecallAfter": 0.0,
+      "identical": true
+    },
+    "E3_resnet50_R0": {
+      "macroMaeBefore": 1.155952380952381,
+      "macroMaeAfter": 1.155952380952381,
+      "smallRecallBefore": 0.015005359056806002,
+      "smallRecallAfter": 0.015005359056806002,
+      "identical": true
+    },
+    "E4_resnet50_R1": {
+      "macroMaeBefore": 1.0476190476190477,
+      "macroMaeAfter": 1.0476190476190477,
+      "smallRecallBefore": 0.03215434083601286,
+      "smallRecallAfter": 0.03215434083601286,
+      "identical": true
+    }
+  },
+  "selectionRuleReapplied": "E0_mobilenet_R0",
+  "selectionUnchanged": true,
+  "note": "재현이므로 후보 선택을 다시 한 것이 아니다. 같은 답이 나오는지 확인했을 뿐이다."
+}

@@ -1,0 +1,100 @@
+{
+  "frozenBeforeFinalTest": true,
+  "selectionRules": [
+    "1) DEVELOPMENT occupancy macro MAE 최소",
+    "2) MAE 차이가 0.1명 이내이면 small-person recall 높은 쪽",
+    "3) 그래도 동률이면 crossing recall 평균 높은 쪽",
+    "4) 그래도 동률이면 FPS 높은 / 단순한 쪽"
+  ],
+  "maeMarginPersons": 0.1,
+  "marginNote": "DEV GT 평균 인원이 1.2~1.6명이라 0.10명은 그 6~8% 수준이다. FINAL 결과를 보기 전에 정했다.",
+  "candidatesConsidered": {
+    "E0_mobilenet_R0": {
+      "macroMae": 0.6440476190476191,
+      "smallRecall": 0.0,
+      "recall": 0.5778105962709987,
+      "fps": 44.5495173771751
+    },
+    "E1_mobilenet_R1": {
+      "macroMae": 0.7482142857142857,
+      "smallRecall": 0.004287245444801715,
+      "recall": 0.5451356839579102,
+      "fps": 32.43914708144983
+    },
+    "E2_mobilenet_R2": {
+      "macroMae": 0.7505952380952381,
+      "smallRecall": 0.0,
+      "recall": 0.4628022890899022,
+      "fps": 20.938712898328575
+    },
+    "E3_resnet50_R0": {
+      "macroMae": 1.155952380952381,
+      "smallRecall": 0.015005359056806002,
+      "recall": 0.6902344471109471,
+      "fps": 14.334154281581784
+    },
+    "E4_resnet50_R1": {
+      "macroMae": 1.0476190476190477,
+      "smallRecall": 0.03215434083601286,
+      "recall": 0.680635037843825,
+      "fps": 7.708252250735467
+    }
+  },
+  "maeTiedWithinMargin": [
+    "E0_mobilenet_R0"
+  ],
+  "selectedCandidate": "E0_mobilenet_R0",
+  "selectedDevScores": {
+    "recall": 0.5778105962709987,
+    "small": 0.0,
+    "medium": 0.6686298822070675,
+    "large": 0.7734499205087441,
+    "fpPerFrame": 0.5878326996197719,
+    "macroMae": 0.6440476190476191,
+    "macroBias": -0.08166666666666667,
+    "inRecall": 0.3333333333333333,
+    "outRecall": 0.8333333333333334,
+    "fps": 44.5495173771751,
+    "peakVramMb": 269.8,
+    "shape": "800x1066",
+    "gtTotal": 5417,
+    "gtMatched": 3130
+  },
+  "baselineForComparison": "E0_mobilenet_R0",
+  "alsoEvaluatedOnFinalForContrast": "E3_resnet50_R0",
+  "contrastNote": "대조군은 DEV에서 recall이 가장 높았던 조건이다. **선택에 쓰지 않았다.** FINAL 결과를 보고 후보를 바꾸지 않는다.",
+  "frozenConfig": {
+    "dataset": "CAVIAR INRIA lobby set (CAVIARDATA1)",
+    "license": "Creative Commons BY-SA",
+    "acknowledgement": "EC Funded CAVIAR project/IST 2001 37540",
+    "threshold": 0.7,
+    "roi": [
+      0.0,
+      0.2,
+      1.0,
+      0.95
+    ],
+    "lineXNormalized": 0.5,
+    "inDirection": "POSITIVE (right->left)",
+    "anchor": "BOTTOM_CENTER",
+    "occupancyMethod": "detection_only (dual-path occupancy 경로)",
+    "trackerForCrossing": {
+      "minHits": 1,
+      "maxAge": 30
+    },
+    "eventToleranceSeconds": 1.5,
+    "sampleEveryFrames": 25,
+    "matchIou": 0.5,
+    "matchingAlgorithm": "greedy IoU descending, one-to-one",
+    "sizeVariable": "normalized_bbox_height = bbox_height / image_height",
+    "sizeBins": {
+      "SMALL": "< 0.10",
+      "MEDIUM": "0.10 ~ 0.20",
+      "LARGE": ">= 0.20"
+    },
+    "occludedGtExcludedFromDetectionRecall": true,
+    "scoredFramesRule": "detection frame 과 GT frame 의 교집합만 채점"
+  },
+  "noFineTuning": true,
+  "sha256OfRecordWithoutHash": "fa32b378dd68f4d2cee0214535861aa928e74f971640c7dba51b8bb83038647f"
+}
