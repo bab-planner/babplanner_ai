@@ -96,7 +96,13 @@ occupancy가 프레임당 1.3명을 덜 센다. 조건과 한계는
 [reports/cctv_a4_cross_video.md](reports/cctv_a4_cross_video.md),
 [reports/cctv_a5_small_person.md](reports/cctv_a5_small_person.md),
 [reports/cctv_a6_trajectory_continuity.md](reports/cctv_a6_trajectory_continuity.md)에
-있다.
+있다. 여섯 단계를 한 장으로 줄인 것은
+[reports/cctv_research_summary.md](reports/cctv_research_summary.md)다.
+
+**연구 트랙은 A6에서 닫았다.** 영상에서 관측을 만들어 백엔드로 보내는
+시연 파이프라인은 [demo/cctv_collector/](demo/cctv_collector/)에 있다.
+인원수를 혼잡도 **단계**로 바꾸는 규칙은 AI 출력이 아니라 식당별 운영
+설정이고, 지금 저장소에 있는 값은 보정되지 않은 시연용이다.
 
 **얼굴을 다루지 않는다.** 사람을 영상 밖에서 다시 알아보지 않고, 회원 정보와
 연결하지 않는다. `track_id`는 영상 한 세션 안에서만 유효한 임시 번호이며 파일로

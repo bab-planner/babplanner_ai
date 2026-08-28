@@ -1,5 +1,18 @@
 # AI-1. CCTV 기반 비식별 식당 혼잡도·이용 인원 분석
 
+> **Research Track Status: COMPLETED THROUGH A6.**
+>
+> A1~A6로 연구 단계를 닫았다. 이후 이 디렉터리의 변경은 **버그 수정,
+> 문서 정오, demo integration 지원**으로 제한한다. 새로운 parameter tuning이나
+> detector 교체는 별도 연구 Stage를 열고 그 Stage의 동결 절차를 거쳐야 한다.
+>
+> 이유는 간단하다. A4부터 모든 선택은 "결과를 보기 전에 규칙을 동결하고
+> 한 번만 채점한다"는 절차 위에 서 있다. 그 절차 밖에서 값을 조금씩 고치면
+> 지금까지의 숫자가 무엇을 잰 것인지 알 수 없게 된다.
+>
+> 시연 파이프라인은 [`demo/cctv_collector/`](../../demo/cctv_collector/)에 있고,
+> 연구 전체 요약은 [`reports/cctv_research_summary.md`](../../reports/cctv_research_summary.md)다.
+
 *CCTV-based Anonymous Occupancy and Entry Counting*
 
 ---
