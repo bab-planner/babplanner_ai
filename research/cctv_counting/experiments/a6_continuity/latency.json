@@ -1,0 +1,33 @@
+{
+  "split": "FINAL",
+  "repeats": 3,
+  "note": "tracker.update()만 잰다. detector 추론은 두 갈래가 공유하므로 비교 대상이 아니다. 3회 중 최소값을 쓴다.",
+  "detectorFpsMean": 13.431089464386865,
+  "sourceFps": 25.0,
+  "rows": [
+    {
+      "policy": "P0_baseline",
+      "tracker": "baseline_greedy",
+      "frames": 18549,
+      "boxesPerFrame": 2.06706561000593,
+      "msPerFrame": 0.037292242169306905,
+      "framesPerSecond": 26815.22863280777
+    },
+    {
+      "policy": "P1_dual_threshold",
+      "tracker": "baseline_greedy",
+      "frames": 18549,
+      "boxesPerFrame": 2.4972774812658365,
+      "msPerFrame": 0.05034117203093193,
+      "framesPerSecond": 19864.456063628277
+    },
+    {
+      "policy": "P2_motion",
+      "tracker": "motion_aware",
+      "frames": 18549,
+      "boxesPerFrame": 2.4972774812658365,
+      "msPerFrame": 0.06415797617149863,
+      "framesPerSecond": 15586.52656572165
+    }
+  ]
+}

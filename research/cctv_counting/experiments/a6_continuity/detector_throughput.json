@@ -1,0 +1,23 @@
+{
+  "device": "cuda",
+  "model": "fasterrcnn_mobilenet_v3_large_fpn",
+  "warmupFrames": 30,
+  "repeats": 2,
+  "note": "모델 적재와 warmup을 뺀 순수 추론 속도. 같은 시점에 로비 시퀀스도 함께 재서 A5(45.1 fps) 대비 차이가 데이터 탓인지 장비 상태 탓인지 구분한다.",
+  "rows": [
+    {
+      "set": "lobby",
+      "sequence": "Browse1",
+      "frames": 1044,
+      "fps": 11.907653274594661,
+      "msPerFrame": 83.97960344827392
+    },
+    {
+      "set": "corridor",
+      "sequence": "EnterExitCrossingPaths2cor",
+      "frames": 485,
+      "fps": 15.219743535837944,
+      "msPerFrame": 65.70412948452771
+    }
+  ]
+}

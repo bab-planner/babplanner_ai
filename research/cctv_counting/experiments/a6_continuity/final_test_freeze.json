@@ -1,0 +1,212 @@
+{
+  "baseline": "P0_baseline",
+  "dataRoles": {
+    "ANALYSIS_LOBBY": "CAVIAR INRIA 로비 17편 (A5 FINAL). 결과를 이미 봤다. 원인 분석 전용.",
+    "ANALYSIS_SHOP": "CAVIAR 쇼핑센터 front 8편 (A4 TEST -> A5 ANALYSIS). 원인 분석 전용.",
+    "DEVELOPMENT": "CAVIAR 쇼핑센터 front 5편 (A4 DEV). 후보 선택에 쓴다.",
+    "FINAL": "CAVIAR 쇼핑센터 corridor 12편. 한 번도 추론한 적 없다. 한 번만 채점한다."
+  },
+  "detector": {
+    "fineTuned": false,
+    "model": "fasterrcnn_mobilenet_v3_large_fpn",
+    "note": "A5에서 선택된 조건 그대로. A6의 축은 tracking mechanism이므로 detector는 고정한다. A5에서 crossing이 더 좋아 보였던 resnet50을 사후 이유로 채택하지 않는다.",
+    "scoreFloor": 0.05,
+    "tag": "E0_mobilenet_R0"
+  },
+  "finalJudgement": {
+    "adoptIf": [
+      "FINAL 통과 계수 오차가 baseline보다 낮다",
+      "FINAL 사건 precision guardrail을 통과한다",
+      "추가 tracker 비용이 서비스 시연을 막지 않는다"
+    ],
+    "note": "FINAL에서 P0과 P2만이 판정 대상이다. P1/P3/P4도 함께 돌려 기록하지만 **선택을 바꾸는 데 쓰지 않는다.** A5에서 대조군 E3를 함께 돌리되 선택에 쓰지 않은 것과 같다.",
+    "otherwise": "개선하지 못하면 기존 tracker를 유지하고 '더 복잡한 tracker가 항상 좋지는 않다'를 결과로 기록한다."
+  },
+  "finalSequences": [
+    "EnterExitCrossingPaths2cor",
+    "OneLeaveShop2cor",
+    "OneLeaveShopReenter2cor",
+    "OneShopOneWait2cor",
+    "OneStopEnter2cor",
+    "OneStopMoveEnter2cor",
+    "OneStopMoveNoEnter2cor",
+    "OneStopNoEnter2cor",
+    "ShopAssistant2cor",
+    "ThreePastShop2cor",
+    "TwoEnterShop2cor",
+    "TwoLeaveShop2cor"
+  ],
+  "forbidden": [
+    "FINAL 결과를 본 뒤 임계값/tracker/선 규칙 변경",
+    "시퀀스별 선 위치 튜닝",
+    "detector 재탐색, 해상도 실험, fine-tuning",
+    "re-identification / appearance embedding",
+    "cross-session identity"
+  ],
+  "frozenAt": "2026-08-28",
+  "geometry": {
+    "anchor": "BOTTOM_CENTER",
+    "band": 0.01,
+    "cooldownSeconds": 0.5,
+    "frameHeight": 288,
+    "frameWidth": 384,
+    "lineXNormalized": 0.5,
+    "minConfirmDistance": 0.03,
+    "note": "A4와 완전히 같다. 카메라가 바뀌었다고 선을 다시 맞추지 않는다.",
+    "roi": [
+      0.0,
+      0.2,
+      1.0,
+      0.95
+    ],
+    "sourceFps": 25.0
+  },
+  "hypotheses": {
+    "H5": "통과 누락은 전체 detector recall보다 통과 순간 주변의 시간적 연속성과 더 강하게 연결된다. 판정 근거: (a) 검출이 충분했던 사건(창 검출 coverage >= 0.5)만 봐도 놓친 사건의 창 연속성이 절대 0.10 이상 낮다, (b) 연속성을 개선한 tracker가 통과 회복을 실제로 늘린다. 둘 다 필요하다.",
+    "H6": "entry 갈래에 낮은 신뢰도 상자를 허용하면 통과 recall이 오르고, motion association이 false crossing 증가를 억제한다. 판정 근거: recall 상승 + precision guardrail 통과."
+  },
+  "occupancyCandidates": [
+    0.5,
+    0.7
+  ],
+  "policies": {
+    "P0_baseline": {
+      "iouThreshold": 0.3,
+      "lowIouThreshold": 0.2,
+      "maxAgeFrames": 30,
+      "maxAgeSeconds": 1.2,
+      "minHits": 1,
+      "occupancyThreshold": 0.7,
+      "tracker": "baseline_greedy",
+      "trackerHighThreshold": 0.7,
+      "trackerLowThreshold": 0.7,
+      "velocitySmoothing": 0.5
+    },
+    "P1_dual_threshold": {
+      "iouThreshold": 0.3,
+      "lowIouThreshold": 0.2,
+      "maxAgeFrames": 30,
+      "maxAgeSeconds": 1.2,
+      "minHits": 1,
+      "occupancyThreshold": 0.7,
+      "tracker": "baseline_greedy",
+      "trackerHighThreshold": 0.5,
+      "trackerLowThreshold": 0.3,
+      "velocitySmoothing": 0.5
+    },
+    "P2_motion": {
+      "iouThreshold": 0.3,
+      "lowIouThreshold": 0.2,
+      "maxAgeFrames": 30,
+      "maxAgeSeconds": 1.2,
+      "minHits": 1,
+      "occupancyThreshold": 0.7,
+      "tracker": "motion_aware",
+      "trackerHighThreshold": 0.5,
+      "trackerLowThreshold": 0.3,
+      "velocitySmoothing": 0.5
+    },
+    "P3_motion_long_age": {
+      "iouThreshold": 0.3,
+      "lowIouThreshold": 0.2,
+      "maxAgeFrames": 30,
+      "maxAgeSeconds": 2.0,
+      "minHits": 1,
+      "occupancyThreshold": 0.7,
+      "tracker": "motion_aware",
+      "trackerHighThreshold": 0.5,
+      "trackerLowThreshold": 0.3,
+      "velocitySmoothing": 0.5
+    },
+    "P4_motion_low01": {
+      "iouThreshold": 0.3,
+      "lowIouThreshold": 0.2,
+      "maxAgeFrames": 30,
+      "maxAgeSeconds": 1.2,
+      "minHits": 1,
+      "occupancyThreshold": 0.7,
+      "tracker": "motion_aware",
+      "trackerHighThreshold": 0.5,
+      "trackerLowThreshold": 0.1,
+      "velocitySmoothing": 0.5
+    }
+  },
+  "purpose": "FINAL(corridor 12편) 실행 전에 detector / 임계값 / tracker / 선 규칙 / 판정 규칙을 고정한다. 이 파일이 쓰인 뒤에는 바꾸지 않는다.",
+  "scoring": {
+    "crossingWindowSeconds": 1.0,
+    "detectionMatchIou": 0.5,
+    "eventToleranceSeconds": 1.5,
+    "occludedGtInDetectionRecall": false,
+    "sampleEvery": 25,
+    "scoredFrames": "검출 프레임 ∩ 정답 프레임"
+  },
+  "selected": "P2_motion",
+  "selectionRule": {
+    "entry": {
+      "decision": "P2와 P3가 0.10으로 공동 최소이고 F1(0.957)과 gap recovery(0.803)까지 같다. tie-break 3에 따라 max_age가 짧은 P2를 선택한다. 두 후보 모두 guardrail을 통과한다.",
+      "devResult": {
+        "P0_baseline": {
+          "countError": 0.3,
+          "f1": 0.737,
+          "gapRecovery": 0.793,
+          "precision": 1.0
+        },
+        "P1_dual_threshold": {
+          "countError": 0.2,
+          "f1": 0.857,
+          "gapRecovery": 0.748,
+          "precision": 1.0
+        },
+        "P2_motion": {
+          "countError": 0.1,
+          "f1": 0.957,
+          "gapRecovery": 0.803,
+          "precision": 1.0
+        },
+        "P3_motion_long_age": {
+          "countError": 0.1,
+          "f1": 0.957,
+          "gapRecovery": 0.803,
+          "precision": 1.0
+        },
+        "P4_motion_low01": {
+          "countError": 0.2,
+          "f1": 0.857,
+          "gapRecovery": 0.745,
+          "precision": 1.0
+        }
+      },
+      "guardrail": "사건 precision(IN/OUT 평균)이 0.85 미만이면 reject, 그리고 baseline precision 대비 절대 0.10 이상 낮으면 reject. recall을 올리려고 없는 통과를 만들어 내는 것을 막는다. 0.85는 제품 관점의 절대 하한이다 — 잘못 센 입장은 수요 정답을 그대로 부풀린다.",
+      "primary": "DEV 평균 절대 통과 계수 오차 ((|dIN| + |dOUT|) / 2의 시퀀스 평균) 최소",
+      "tieBreak": [
+        "1) 계수 오차 차이가 0.05건 이내이면 사건 F1이 높은 쪽",
+        "2) 그래도 같으면 gap recovery rate가 높은 쪽",
+        "3) 그래도 같으면 더 단순한 쪽 (max_age가 짧고 low threshold가 높은 쪽)"
+      ]
+    },
+    "note": "규칙의 형태(주 지표, guardrail 종류, tie-break 순서)는 DEV를 돌리기 전에 정했다. 수치 margin은 DEV 통계를 보고 정했고, FINAL을 돌리기 전에 이 파일로 동결한다.",
+    "occupancy": {
+      "alsoReported": [
+        "bias",
+        "falsePositivesPerFrame"
+      ],
+      "decision": "T_occ = 0.7. 주 지표에서 단독 최소이고 guardrail을 통과한다.",
+      "devResult": {
+        "T=0.5": {
+          "fpPerFrame": 1.963,
+          "macroMae": 1.612,
+          "microRecall": 0.618
+        },
+        "T=0.7": {
+          "fpPerFrame": 0.593,
+          "macroMae": 0.644,
+          "microRecall": 0.578
+        }
+      },
+      "guardrail": "검출 micro recall이 baseline(T=0.7) 대비 절대 0.10 이상 낮으면 reject. A5에서 낮은 MAE가 오탐/누락 상쇄일 수 있다는 것을 확인했으므로 MAE 하나로 고르지 않는다.",
+      "primary": "DEV occupancy macro MAE 최소"
+    }
+  },
+  "sha256OfRecordWithoutHash": "09116207068947f68d1d47effc7c06fd50b81209fae811086b7615d1ef3bf1d3",
+  "stage": "A6"
+}

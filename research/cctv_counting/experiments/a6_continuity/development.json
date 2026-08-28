@@ -1,0 +1,2620 @@
+{
+  "split": "DEV",
+  "detector": {
+    "tag": "E0_mobilenet_R0",
+    "model": "fasterrcnn_mobilenet_v3_large_fpn"
+  },
+  "crossingWindowSeconds": 1.0,
+  "eventToleranceSeconds": 1.5,
+  "occupancyThresholds": [
+    0.5,
+    0.7
+  ],
+  "policies": {
+    "P0_baseline": {
+      "occupancyThreshold": 0.7,
+      "trackerHighThreshold": 0.7,
+      "trackerLowThreshold": 0.7,
+      "tracker": "baseline_greedy",
+      "iouThreshold": 0.3,
+      "lowIouThreshold": 0.2,
+      "maxAgeFrames": 30,
+      "maxAgeSeconds": 1.2,
+      "minHits": 1,
+      "velocitySmoothing": 0.5
+    },
+    "P1_dual_threshold": {
+      "occupancyThreshold": 0.7,
+      "trackerHighThreshold": 0.5,
+      "trackerLowThreshold": 0.3,
+      "tracker": "baseline_greedy",
+      "iouThreshold": 0.3,
+      "lowIouThreshold": 0.2,
+      "maxAgeFrames": 30,
+      "maxAgeSeconds": 1.2,
+      "minHits": 1,
+      "velocitySmoothing": 0.5
+    },
+    "P2_motion": {
+      "occupancyThreshold": 0.7,
+      "trackerHighThreshold": 0.5,
+      "trackerLowThreshold": 0.3,
+      "tracker": "motion_aware",
+      "iouThreshold": 0.3,
+      "lowIouThreshold": 0.2,
+      "maxAgeFrames": 30,
+      "maxAgeSeconds": 1.2,
+      "minHits": 1,
+      "velocitySmoothing": 0.5
+    },
+    "P3_motion_long_age": {
+      "occupancyThreshold": 0.7,
+      "trackerHighThreshold": 0.5,
+      "trackerLowThreshold": 0.3,
+      "tracker": "motion_aware",
+      "iouThreshold": 0.3,
+      "lowIouThreshold": 0.2,
+      "maxAgeFrames": 30,
+      "maxAgeSeconds": 2.0,
+      "minHits": 1,
+      "velocitySmoothing": 0.5
+    },
+    "P4_motion_low01": {
+      "occupancyThreshold": 0.7,
+      "trackerHighThreshold": 0.5,
+      "trackerLowThreshold": 0.1,
+      "tracker": "motion_aware",
+      "iouThreshold": 0.3,
+      "lowIouThreshold": 0.2,
+      "maxAgeFrames": 30,
+      "maxAgeSeconds": 1.2,
+      "minHits": 1,
+      "velocitySmoothing": 0.5
+    }
+  },
+  "rows": [
+    {
+      "sequence": "EnterExitCrossingPaths1front",
+      "detectorTag": "E0_mobilenet_R0",
+      "detectSeconds": 9.419366599999194,
+      "detectFps": 40.66090813367778,
+      "frameCount": 383,
+      "gtFrames": 383,
+      "occupancyRows": [
+        {
+          "threshold": 0.5,
+          "scoredFrames": 383,
+          "detection": {
+            "gtTotal": 535,
+            "gtMatched": 364,
+            "recall": 0.680373831775701,
+            "precision": 0.31542461005199307,
+            "falsePositivesPerFrame": 2.06266318537859,
+            "bySize": {
+              "SMALL": {
+                "total": 40,
+                "matched": 0,
+                "recall": 0.0
+              },
+              "MEDIUM": {
+                "total": 336,
+                "matched": 238,
+                "recall": 0.7083333333333334
+              },
+              "LARGE": {
+                "total": 159,
+                "matched": 126,
+                "recall": 0.7924528301886793
+              }
+            }
+          },
+          "occupancy": {
+            "samples": 16,
+            "mae": 1.875,
+            "rmse": 2.318404623873926,
+            "bias": 1.875
+          }
+        },
+        {
+          "threshold": 0.7,
+          "scoredFrames": 383,
+          "detection": {
+            "gtTotal": 535,
+            "gtMatched": 344,
+            "recall": 0.6429906542056075,
+            "precision": 0.6003490401396161,
+            "falsePositivesPerFrame": 0.597911227154047,
+            "bySize": {
+              "SMALL": {
+                "total": 40,
+                "matched": 0,
+                "recall": 0.0
+              },
+              "MEDIUM": {
+                "total": 336,
+                "matched": 230,
+                "recall": 0.6845238095238095
+              },
+              "LARGE": {
+                "total": 159,
+                "matched": 114,
+                "recall": 0.7169811320754716
+              }
+            }
+          },
+          "occupancy": {
+            "samples": 16,
+            "mae": 0.625,
+            "rmse": 0.8660254037844386,
+            "bias": -0.125
+          }
+        }
+      ],
+      "entryRows": [
+        {
+          "policy": "P0_baseline",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.7,
+            "trackerLowThreshold": 0.7,
+            "tracker": "baseline_greedy",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 383,
+          "crossing": {
+            "IN": {
+              "actual": 1,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 1,
+              "precision": null,
+              "recall": 0.0,
+              "f1": null,
+              "countError": 1
+            },
+            "OUT": {
+              "actual": 1,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 1,
+              "precision": null,
+              "recall": 0.0,
+              "f1": null,
+              "countError": 1
+            }
+          },
+          "continuity": {
+            "gtTracks": 4,
+            "coveredTracks": 3,
+            "totalFragments": 28,
+            "fragmentsPerGtTrack": 9.333333333333334,
+            "idSwitches": 14,
+            "gaps": 13,
+            "recoveredGaps": 11,
+            "gapRecoveryRate": 0.8461538461538461
+          },
+          "events": [
+            {
+              "frameIndex": 146,
+              "direction": "OUT",
+              "gtTrackId": 2,
+              "normalizedHeight": 0.13194444444444445,
+              "matched": false,
+              "windowFrames": 51,
+              "detectionCoverage": 0.11764705882352941,
+              "trackCoverage": 0.11764705882352941,
+              "dominantTrackShare": 0.11764705882352941,
+              "distinctTrackIds": 1,
+              "spansBothSides": false,
+              "cause": "DETECTION_GAP",
+              "longestGapSeconds": 0.0
+            },
+            {
+              "frameIndex": 297,
+              "direction": "IN",
+              "gtTrackId": 2,
+              "normalizedHeight": 0.20833333333333334,
+              "matched": false,
+              "windowFrames": 51,
+              "detectionCoverage": 0.7058823529411765,
+              "trackCoverage": 0.7058823529411765,
+              "dominantTrackShare": 0.45098039215686275,
+              "distinctTrackIds": 2,
+              "spansBothSides": false,
+              "cause": "ID_SWITCH",
+              "longestGapSeconds": 0.36
+            }
+          ],
+          "missedCauses": {
+            "DETECTION_GAP": 1,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 1,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.03361650005535921,
+          "trackerMsPerFrame": 0.0877715406145149
+        },
+        {
+          "policy": "P1_dual_threshold",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.3,
+            "tracker": "baseline_greedy",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 383,
+          "crossing": {
+            "IN": {
+              "actual": 1,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 1,
+              "precision": null,
+              "recall": 0.0,
+              "f1": null,
+              "countError": 1
+            },
+            "OUT": {
+              "actual": 1,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 1,
+              "precision": null,
+              "recall": 0.0,
+              "f1": null,
+              "countError": 1
+            }
+          },
+          "continuity": {
+            "gtTracks": 4,
+            "coveredTracks": 4,
+            "totalFragments": 33,
+            "fragmentsPerGtTrack": 8.25,
+            "idSwitches": 25,
+            "gaps": 8,
+            "recoveredGaps": 4,
+            "gapRecoveryRate": 0.5
+          },
+          "events": [
+            {
+              "frameIndex": 146,
+              "direction": "OUT",
+              "gtTrackId": 2,
+              "normalizedHeight": 0.13194444444444445,
+              "matched": false,
+              "windowFrames": 51,
+              "detectionCoverage": 0.17647058823529413,
+              "trackCoverage": 0.13725490196078433,
+              "dominantTrackShare": 0.11764705882352941,
+              "distinctTrackIds": 2,
+              "spansBothSides": false,
+              "cause": "DETECTION_GAP",
+              "longestGapSeconds": 1.28
+            },
+            {
+              "frameIndex": 297,
+              "direction": "IN",
+              "gtTrackId": 2,
+              "normalizedHeight": 0.20833333333333334,
+              "matched": false,
+              "windowFrames": 51,
+              "detectionCoverage": 0.8235294117647058,
+              "trackCoverage": 0.8235294117647058,
+              "dominantTrackShare": 0.49019607843137253,
+              "distinctTrackIds": 3,
+              "spansBothSides": false,
+              "cause": "ID_SWITCH",
+              "longestGapSeconds": 0.32
+            }
+          ],
+          "missedCauses": {
+            "DETECTION_GAP": 1,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 1,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.08392240008106455,
+          "trackerMsPerFrame": 0.21911853807066461
+        },
+        {
+          "policy": "P2_motion",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.3,
+            "tracker": "motion_aware",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 383,
+          "crossing": {
+            "IN": {
+              "actual": 1,
+              "predicted": 1,
+              "matched": 1,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 1,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 1,
+              "precision": null,
+              "recall": 0.0,
+              "f1": null,
+              "countError": 1
+            }
+          },
+          "continuity": {
+            "gtTracks": 4,
+            "coveredTracks": 4,
+            "totalFragments": 32,
+            "fragmentsPerGtTrack": 8.0,
+            "idSwitches": 23,
+            "gaps": 8,
+            "recoveredGaps": 5,
+            "gapRecoveryRate": 0.625
+          },
+          "events": [
+            {
+              "frameIndex": 146,
+              "direction": "OUT",
+              "gtTrackId": 2,
+              "normalizedHeight": 0.13194444444444445,
+              "matched": false,
+              "windowFrames": 51,
+              "detectionCoverage": 0.17647058823529413,
+              "trackCoverage": 0.13725490196078433,
+              "dominantTrackShare": 0.11764705882352941,
+              "distinctTrackIds": 2,
+              "spansBothSides": false,
+              "cause": "DETECTION_GAP",
+              "longestGapSeconds": 1.28
+            },
+            {
+              "frameIndex": 297,
+              "direction": "IN",
+              "gtTrackId": 2,
+              "normalizedHeight": 0.20833333333333334,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.8235294117647058,
+              "trackCoverage": 0.8235294117647058,
+              "dominantTrackShare": 0.8235294117647058,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            }
+          ],
+          "missedCauses": {
+            "DETECTION_GAP": 1,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.07911279988184106,
+          "trackerMsPerFrame": 0.2065608352006294
+        },
+        {
+          "policy": "P3_motion_long_age",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.3,
+            "tracker": "motion_aware",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 2.0,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 383,
+          "crossing": {
+            "IN": {
+              "actual": 1,
+              "predicted": 1,
+              "matched": 1,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 1,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 1,
+              "precision": null,
+              "recall": 0.0,
+              "f1": null,
+              "countError": 1
+            }
+          },
+          "continuity": {
+            "gtTracks": 4,
+            "coveredTracks": 4,
+            "totalFragments": 32,
+            "fragmentsPerGtTrack": 8.0,
+            "idSwitches": 23,
+            "gaps": 8,
+            "recoveredGaps": 5,
+            "gapRecoveryRate": 0.625
+          },
+          "events": [
+            {
+              "frameIndex": 146,
+              "direction": "OUT",
+              "gtTrackId": 2,
+              "normalizedHeight": 0.13194444444444445,
+              "matched": false,
+              "windowFrames": 51,
+              "detectionCoverage": 0.17647058823529413,
+              "trackCoverage": 0.13725490196078433,
+              "dominantTrackShare": 0.11764705882352941,
+              "distinctTrackIds": 2,
+              "spansBothSides": false,
+              "cause": "DETECTION_GAP",
+              "longestGapSeconds": 1.28
+            },
+            {
+              "frameIndex": 297,
+              "direction": "IN",
+              "gtTrackId": 2,
+              "normalizedHeight": 0.20833333333333334,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.8235294117647058,
+              "trackCoverage": 0.8235294117647058,
+              "dominantTrackShare": 0.8235294117647058,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            }
+          ],
+          "missedCauses": {
+            "DETECTION_GAP": 1,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.09859689998847898,
+          "trackerMsPerFrame": 0.2574331592388485
+        },
+        {
+          "policy": "P4_motion_low01",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.1,
+            "tracker": "motion_aware",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 383,
+          "crossing": {
+            "IN": {
+              "actual": 1,
+              "predicted": 1,
+              "matched": 1,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 1,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 1,
+              "precision": null,
+              "recall": 0.0,
+              "f1": null,
+              "countError": 1
+            }
+          },
+          "continuity": {
+            "gtTracks": 4,
+            "coveredTracks": 4,
+            "totalFragments": 30,
+            "fragmentsPerGtTrack": 7.5,
+            "idSwitches": 21,
+            "gaps": 8,
+            "recoveredGaps": 5,
+            "gapRecoveryRate": 0.625
+          },
+          "events": [
+            {
+              "frameIndex": 146,
+              "direction": "OUT",
+              "gtTrackId": 2,
+              "normalizedHeight": 0.13194444444444445,
+              "matched": false,
+              "windowFrames": 51,
+              "detectionCoverage": 0.23529411764705882,
+              "trackCoverage": 0.13725490196078433,
+              "dominantTrackShare": 0.11764705882352941,
+              "distinctTrackIds": 2,
+              "spansBothSides": false,
+              "cause": "DETECTION_GAP",
+              "longestGapSeconds": 1.28
+            },
+            {
+              "frameIndex": 297,
+              "direction": "IN",
+              "gtTrackId": 2,
+              "normalizedHeight": 0.20833333333333334,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.8823529411764706,
+              "trackCoverage": 0.8823529411764706,
+              "dominantTrackShare": 0.8823529411764706,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            }
+          ],
+          "missedCauses": {
+            "DETECTION_GAP": 1,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.1292434000351932,
+          "trackerMsPerFrame": 0.3374501306401911
+        }
+      ]
+    },
+    {
+      "sequence": "OneLeaveShop1front",
+      "detectorTag": "E0_mobilenet_R0",
+      "detectSeconds": 6.7140147000027355,
+      "detectFps": 43.93794371642943,
+      "frameCount": 295,
+      "gtFrames": 295,
+      "occupancyRows": [
+        {
+          "threshold": 0.5,
+          "scoredFrames": 295,
+          "detection": {
+            "gtTotal": 438,
+            "gtMatched": 161,
+            "recall": 0.3675799086757991,
+            "precision": 0.20801033591731266,
+            "falsePositivesPerFrame": 2.077966101694915,
+            "bySize": {
+              "SMALL": {
+                "total": 234,
+                "matched": 0,
+                "recall": 0.0
+              },
+              "MEDIUM": {
+                "total": 166,
+                "matched": 139,
+                "recall": 0.8373493975903614
+              },
+              "LARGE": {
+                "total": 38,
+                "matched": 22,
+                "recall": 0.5789473684210527
+              }
+            }
+          },
+          "occupancy": {
+            "samples": 12,
+            "mae": 1.25,
+            "rmse": 1.6583123951777,
+            "bias": 0.9166666666666666
+          }
+        },
+        {
+          "threshold": 0.7,
+          "scoredFrames": 295,
+          "detection": {
+            "gtTotal": 438,
+            "gtMatched": 150,
+            "recall": 0.3424657534246575,
+            "precision": 0.42016806722689076,
+            "falsePositivesPerFrame": 0.7016949152542373,
+            "bySize": {
+              "SMALL": {
+                "total": 234,
+                "matched": 0,
+                "recall": 0.0
+              },
+              "MEDIUM": {
+                "total": 166,
+                "matched": 130,
+                "recall": 0.7831325301204819
+              },
+              "LARGE": {
+                "total": 38,
+                "matched": 20,
+                "recall": 0.5263157894736842
+              }
+            }
+          },
+          "occupancy": {
+            "samples": 12,
+            "mae": 0.8333333333333334,
+            "rmse": 0.9128709291752769,
+            "bias": -0.3333333333333333
+          }
+        }
+      ],
+      "entryRows": [
+        {
+          "policy": "P0_baseline",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.7,
+            "trackerLowThreshold": 0.7,
+            "tracker": "baseline_greedy",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 295,
+          "crossing": {
+            "IN": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 3,
+            "coveredTracks": 2,
+            "totalFragments": 14,
+            "fragmentsPerGtTrack": 7.0,
+            "idSwitches": 5,
+            "gaps": 8,
+            "recoveredGaps": 7,
+            "gapRecoveryRate": 0.875
+          },
+          "events": [],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.02258989997790195,
+          "trackerMsPerFrame": 0.07657593212848118
+        },
+        {
+          "policy": "P1_dual_threshold",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.3,
+            "tracker": "baseline_greedy",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 295,
+          "crossing": {
+            "IN": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 3,
+            "coveredTracks": 2,
+            "totalFragments": 14,
+            "fragmentsPerGtTrack": 7.0,
+            "idSwitches": 8,
+            "gaps": 5,
+            "recoveredGaps": 4,
+            "gapRecoveryRate": 0.8
+          },
+          "events": [],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.051495300089300144,
+          "trackerMsPerFrame": 0.1745603392857632
+        },
+        {
+          "policy": "P2_motion",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.3,
+            "tracker": "motion_aware",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 295,
+          "crossing": {
+            "IN": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 3,
+            "coveredTracks": 2,
+            "totalFragments": 12,
+            "fragmentsPerGtTrack": 6.0,
+            "idSwitches": 7,
+            "gaps": 4,
+            "recoveredGaps": 3,
+            "gapRecoveryRate": 0.75
+          },
+          "events": [],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.05710680007177871,
+          "trackerMsPerFrame": 0.19358237312467358
+        },
+        {
+          "policy": "P3_motion_long_age",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.3,
+            "tracker": "motion_aware",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 2.0,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 295,
+          "crossing": {
+            "IN": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 3,
+            "coveredTracks": 2,
+            "totalFragments": 12,
+            "fragmentsPerGtTrack": 6.0,
+            "idSwitches": 7,
+            "gaps": 4,
+            "recoveredGaps": 3,
+            "gapRecoveryRate": 0.75
+          },
+          "events": [],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.06253520001337165,
+          "trackerMsPerFrame": 0.21198372885888694
+        },
+        {
+          "policy": "P4_motion_low01",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.1,
+            "tracker": "motion_aware",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 295,
+          "crossing": {
+            "IN": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 3,
+            "coveredTracks": 2,
+            "totalFragments": 14,
+            "fragmentsPerGtTrack": 7.0,
+            "idSwitches": 7,
+            "gaps": 5,
+            "recoveredGaps": 5,
+            "gapRecoveryRate": 1.0
+          },
+          "events": [],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.08336529997177422,
+          "trackerMsPerFrame": 0.28259423719245497
+        }
+      ]
+    },
+    {
+      "sequence": "OneLeaveShopReenter1front",
+      "detectorTag": "E0_mobilenet_R0",
+      "detectSeconds": 8.562799899998936,
+      "detectFps": 45.54585002039443,
+      "frameCount": 390,
+      "gtFrames": 390,
+      "occupancyRows": [
+        {
+          "threshold": 0.5,
+          "scoredFrames": 390,
+          "detection": {
+            "gtTotal": 450,
+            "gtMatched": 329,
+            "recall": 0.7311111111111112,
+            "precision": 0.3219178082191781,
+            "falsePositivesPerFrame": 1.7769230769230768,
+            "bySize": {
+              "SMALL": {
+                "total": 50,
+                "matched": 0,
+                "recall": 0.0
+              },
+              "MEDIUM": {
+                "total": 273,
+                "matched": 210,
+                "recall": 0.7692307692307693
+              },
+              "LARGE": {
+                "total": 127,
+                "matched": 119,
+                "recall": 0.937007874015748
+              }
+            }
+          },
+          "occupancy": {
+            "samples": 16,
+            "mae": 1.5,
+            "rmse": 1.8371173070873836,
+            "bias": 1.5
+          }
+        },
+        {
+          "threshold": 0.7,
+          "scoredFrames": 390,
+          "detection": {
+            "gtTotal": 450,
+            "gtMatched": 310,
+            "recall": 0.6888888888888889,
+            "precision": 0.62,
+            "falsePositivesPerFrame": 0.48717948717948717,
+            "bySize": {
+              "SMALL": {
+                "total": 50,
+                "matched": 0,
+                "recall": 0.0
+              },
+              "MEDIUM": {
+                "total": 273,
+                "matched": 201,
+                "recall": 0.7362637362637363
+              },
+              "LARGE": {
+                "total": 127,
+                "matched": 109,
+                "recall": 0.8582677165354331
+              }
+            }
+          },
+          "occupancy": {
+            "samples": 16,
+            "mae": 0.5,
+            "rmse": 0.7905694150420949,
+            "bias": 0.0
+          }
+        }
+      ],
+      "entryRows": [
+        {
+          "policy": "P0_baseline",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.7,
+            "trackerLowThreshold": 0.7,
+            "tracker": "baseline_greedy",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 390,
+          "crossing": {
+            "IN": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 2,
+            "coveredTracks": 2,
+            "totalFragments": 15,
+            "fragmentsPerGtTrack": 7.5,
+            "idSwitches": 3,
+            "gaps": 11,
+            "recoveredGaps": 10,
+            "gapRecoveryRate": 0.9090909090909091
+          },
+          "events": [],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.028084299985494,
+          "trackerMsPerFrame": 0.07201102560383077
+        },
+        {
+          "policy": "P1_dual_threshold",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.3,
+            "tracker": "baseline_greedy",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 390,
+          "crossing": {
+            "IN": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 2,
+            "coveredTracks": 2,
+            "totalFragments": 10,
+            "fragmentsPerGtTrack": 5.0,
+            "idSwitches": 5,
+            "gaps": 6,
+            "recoveredGaps": 3,
+            "gapRecoveryRate": 0.5
+          },
+          "events": [],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.0775657999329269,
+          "trackerMsPerFrame": 0.19888666649468434
+        },
+        {
+          "policy": "P2_motion",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.3,
+            "tracker": "motion_aware",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 390,
+          "crossing": {
+            "IN": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 2,
+            "coveredTracks": 2,
+            "totalFragments": 10,
+            "fragmentsPerGtTrack": 5.0,
+            "idSwitches": 5,
+            "gaps": 6,
+            "recoveredGaps": 3,
+            "gapRecoveryRate": 0.5
+          },
+          "events": [],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.08012009999947622,
+          "trackerMsPerFrame": 0.20543615384481084
+        },
+        {
+          "policy": "P3_motion_long_age",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.3,
+            "tracker": "motion_aware",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 2.0,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 390,
+          "crossing": {
+            "IN": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 2,
+            "coveredTracks": 2,
+            "totalFragments": 10,
+            "fragmentsPerGtTrack": 5.0,
+            "idSwitches": 5,
+            "gaps": 6,
+            "recoveredGaps": 3,
+            "gapRecoveryRate": 0.5
+          },
+          "events": [],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.0931646000535693,
+          "trackerMsPerFrame": 0.23888358988094693
+        },
+        {
+          "policy": "P4_motion_low01",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.1,
+            "tracker": "motion_aware",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 390,
+          "crossing": {
+            "IN": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 0,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 2,
+            "coveredTracks": 2,
+            "totalFragments": 12,
+            "fragmentsPerGtTrack": 6.0,
+            "idSwitches": 9,
+            "gaps": 4,
+            "recoveredGaps": 1,
+            "gapRecoveryRate": 0.25
+          },
+          "events": [],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.11465970002609538,
+          "trackerMsPerFrame": 0.293999230836142
+        }
+      ]
+    },
+    {
+      "sequence": "OneShopOneWait1front",
+      "detectorTag": "E0_mobilenet_R0",
+      "detectSeconds": 28.75750519999565,
+      "detectFps": 47.883152256205044,
+      "frameCount": 1377,
+      "gtFrames": 1377,
+      "occupancyRows": [
+        {
+          "threshold": 0.5,
+          "scoredFrames": 1377,
+          "detection": {
+            "gtTotal": 2177,
+            "gtMatched": 1442,
+            "recall": 0.662379421221865,
+            "precision": 0.3478890229191797,
+            "falsePositivesPerFrame": 1.962962962962963,
+            "bySize": {
+              "SMALL": {
+                "total": 305,
+                "matched": 1,
+                "recall": 0.003278688524590164
+              },
+              "MEDIUM": {
+                "total": 1128,
+                "matched": 822,
+                "recall": 0.7287234042553191
+              },
+              "LARGE": {
+                "total": 744,
+                "matched": 619,
+                "recall": 0.831989247311828
+              }
+            }
+          },
+          "occupancy": {
+            "samples": 56,
+            "mae": 1.7678571428571428,
+            "rmse": 2.083095224488241,
+            "bias": 1.5892857142857142
+          }
+        },
+        {
+          "threshold": 0.7,
+          "scoredFrames": 1377,
+          "detection": {
+            "gtTotal": 2177,
+            "gtMatched": 1330,
+            "recall": 0.6109324758842444,
+            "precision": 0.6261770244821092,
+            "falsePositivesPerFrame": 0.5766158315177923,
+            "bySize": {
+              "SMALL": {
+                "total": 305,
+                "matched": 0,
+                "recall": 0.0
+              },
+              "MEDIUM": {
+                "total": 1128,
+                "matched": 761,
+                "recall": 0.674645390070922
+              },
+              "LARGE": {
+                "total": 744,
+                "matched": 569,
+                "recall": 0.7647849462365591
+              }
+            }
+          },
+          "occupancy": {
+            "samples": 56,
+            "mae": 0.6785714285714286,
+            "rmse": 1.0177004891982149,
+            "bias": 0.0
+          }
+        }
+      ],
+      "entryRows": [
+        {
+          "policy": "P0_baseline",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.7,
+            "trackerLowThreshold": 0.7,
+            "tracker": "baseline_greedy",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 1377,
+          "crossing": {
+            "IN": {
+              "actual": 1,
+              "predicted": 1,
+              "matched": 1,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 3,
+              "predicted": 3,
+              "matched": 3,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 4,
+            "coveredTracks": 4,
+            "totalFragments": 105,
+            "fragmentsPerGtTrack": 26.25,
+            "idSwitches": 28,
+            "gaps": 95,
+            "recoveredGaps": 73,
+            "gapRecoveryRate": 0.7684210526315789
+          },
+          "events": [
+            {
+              "frameIndex": 483,
+              "direction": "OUT",
+              "gtTrackId": 0,
+              "normalizedHeight": 0.19791666666666666,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.47058823529411764,
+              "trackCoverage": 0.47058823529411764,
+              "dominantTrackShare": 0.23529411764705882,
+              "distinctTrackIds": 3,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 499,
+              "direction": "OUT",
+              "gtTrackId": 2,
+              "normalizedHeight": 0.20833333333333334,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.803921568627451,
+              "trackCoverage": 0.803921568627451,
+              "dominantTrackShare": 0.49019607843137253,
+              "distinctTrackIds": 3,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 750,
+              "direction": "OUT",
+              "gtTrackId": 3,
+              "normalizedHeight": 0.19791666666666666,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9411764705882353,
+              "trackCoverage": 0.9411764705882353,
+              "dominantTrackShare": 0.9411764705882353,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 1150,
+              "direction": "IN",
+              "gtTrackId": 0,
+              "normalizedHeight": 0.19791666666666666,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.8823529411764706,
+              "trackCoverage": 0.8823529411764706,
+              "dominantTrackShare": 0.8823529411764706,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            }
+          ],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.10613360019488027,
+          "trackerMsPerFrame": 0.0770759623782718
+        },
+        {
+          "policy": "P1_dual_threshold",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.3,
+            "tracker": "baseline_greedy",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 1377,
+          "crossing": {
+            "IN": {
+              "actual": 1,
+              "predicted": 1,
+              "matched": 1,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 3,
+              "predicted": 3,
+              "matched": 3,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 4,
+            "coveredTracks": 4,
+            "totalFragments": 94,
+            "fragmentsPerGtTrack": 23.5,
+            "idSwitches": 34,
+            "gaps": 71,
+            "recoveredGaps": 56,
+            "gapRecoveryRate": 0.7887323943661971
+          },
+          "events": [
+            {
+              "frameIndex": 483,
+              "direction": "OUT",
+              "gtTrackId": 0,
+              "normalizedHeight": 0.19791666666666666,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.6862745098039216,
+              "trackCoverage": 0.6862745098039216,
+              "dominantTrackShare": 0.4117647058823529,
+              "distinctTrackIds": 3,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 499,
+              "direction": "OUT",
+              "gtTrackId": 2,
+              "normalizedHeight": 0.20833333333333334,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9215686274509803,
+              "trackCoverage": 0.9019607843137255,
+              "dominantTrackShare": 0.5490196078431373,
+              "distinctTrackIds": 4,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 750,
+              "direction": "OUT",
+              "gtTrackId": 3,
+              "normalizedHeight": 0.19791666666666666,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9803921568627451,
+              "trackCoverage": 0.9803921568627451,
+              "dominantTrackShare": 0.9803921568627451,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 1150,
+              "direction": "IN",
+              "gtTrackId": 0,
+              "normalizedHeight": 0.19791666666666666,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9215686274509803,
+              "trackCoverage": 0.9215686274509803,
+              "dominantTrackShare": 0.9215686274509803,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            }
+          ],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.24679760003346018,
+          "trackerMsPerFrame": 0.17922846770766898
+        },
+        {
+          "policy": "P2_motion",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.3,
+            "tracker": "motion_aware",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 1377,
+          "crossing": {
+            "IN": {
+              "actual": 1,
+              "predicted": 1,
+              "matched": 1,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 3,
+              "predicted": 3,
+              "matched": 3,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 4,
+            "coveredTracks": 4,
+            "totalFragments": 94,
+            "fragmentsPerGtTrack": 23.5,
+            "idSwitches": 31,
+            "gaps": 71,
+            "recoveredGaps": 59,
+            "gapRecoveryRate": 0.8309859154929577
+          },
+          "events": [
+            {
+              "frameIndex": 483,
+              "direction": "OUT",
+              "gtTrackId": 0,
+              "normalizedHeight": 0.19791666666666666,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.6862745098039216,
+              "trackCoverage": 0.6862745098039216,
+              "dominantTrackShare": 0.43137254901960786,
+              "distinctTrackIds": 2,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 499,
+              "direction": "OUT",
+              "gtTrackId": 2,
+              "normalizedHeight": 0.20833333333333334,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9215686274509803,
+              "trackCoverage": 0.9215686274509803,
+              "dominantTrackShare": 0.5686274509803921,
+              "distinctTrackIds": 3,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 750,
+              "direction": "OUT",
+              "gtTrackId": 3,
+              "normalizedHeight": 0.19791666666666666,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9803921568627451,
+              "trackCoverage": 0.9803921568627451,
+              "dominantTrackShare": 0.9803921568627451,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 1150,
+              "direction": "IN",
+              "gtTrackId": 0,
+              "normalizedHeight": 0.19791666666666666,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9215686274509803,
+              "trackCoverage": 0.9215686274509803,
+              "dominantTrackShare": 0.9215686274509803,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            }
+          ],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.2734145999784232,
+          "trackerMsPerFrame": 0.1985581699189711
+        },
+        {
+          "policy": "P3_motion_long_age",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.3,
+            "tracker": "motion_aware",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 2.0,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 1377,
+          "crossing": {
+            "IN": {
+              "actual": 1,
+              "predicted": 1,
+              "matched": 1,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 3,
+              "predicted": 3,
+              "matched": 3,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 4,
+            "coveredTracks": 4,
+            "totalFragments": 94,
+            "fragmentsPerGtTrack": 23.5,
+            "idSwitches": 31,
+            "gaps": 71,
+            "recoveredGaps": 59,
+            "gapRecoveryRate": 0.8309859154929577
+          },
+          "events": [
+            {
+              "frameIndex": 483,
+              "direction": "OUT",
+              "gtTrackId": 0,
+              "normalizedHeight": 0.19791666666666666,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.6862745098039216,
+              "trackCoverage": 0.6862745098039216,
+              "dominantTrackShare": 0.43137254901960786,
+              "distinctTrackIds": 2,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 499,
+              "direction": "OUT",
+              "gtTrackId": 2,
+              "normalizedHeight": 0.20833333333333334,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9215686274509803,
+              "trackCoverage": 0.9215686274509803,
+              "dominantTrackShare": 0.5686274509803921,
+              "distinctTrackIds": 3,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 750,
+              "direction": "OUT",
+              "gtTrackId": 3,
+              "normalizedHeight": 0.19791666666666666,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9803921568627451,
+              "trackCoverage": 0.9803921568627451,
+              "dominantTrackShare": 0.9803921568627451,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 1150,
+              "direction": "IN",
+              "gtTrackId": 0,
+              "normalizedHeight": 0.19791666666666666,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9215686274509803,
+              "trackCoverage": 0.9215686274509803,
+              "dominantTrackShare": 0.9215686274509803,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            }
+          ],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.3002858999170712,
+          "trackerMsPerFrame": 0.2180725489593836
+        },
+        {
+          "policy": "P4_motion_low01",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.1,
+            "tracker": "motion_aware",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 1377,
+          "crossing": {
+            "IN": {
+              "actual": 1,
+              "predicted": 1,
+              "matched": 1,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 3,
+              "predicted": 3,
+              "matched": 3,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 4,
+            "coveredTracks": 4,
+            "totalFragments": 85,
+            "fragmentsPerGtTrack": 21.25,
+            "idSwitches": 34,
+            "gaps": 58,
+            "recoveredGaps": 47,
+            "gapRecoveryRate": 0.8103448275862069
+          },
+          "events": [
+            {
+              "frameIndex": 483,
+              "direction": "OUT",
+              "gtTrackId": 0,
+              "normalizedHeight": 0.19791666666666666,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.7647058823529411,
+              "trackCoverage": 0.7450980392156863,
+              "dominantTrackShare": 0.37254901960784315,
+              "distinctTrackIds": 3,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 499,
+              "direction": "OUT",
+              "gtTrackId": 2,
+              "normalizedHeight": 0.20833333333333334,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9803921568627451,
+              "trackCoverage": 0.9803921568627451,
+              "dominantTrackShare": 0.8235294117647058,
+              "distinctTrackIds": 3,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 750,
+              "direction": "OUT",
+              "gtTrackId": 3,
+              "normalizedHeight": 0.19791666666666666,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 1.0,
+              "trackCoverage": 1.0,
+              "dominantTrackShare": 1.0,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 1150,
+              "direction": "IN",
+              "gtTrackId": 0,
+              "normalizedHeight": 0.19791666666666666,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9215686274509803,
+              "trackCoverage": 0.9215686274509803,
+              "dominantTrackShare": 0.9215686274509803,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            }
+          ],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.5846395000990015,
+          "trackerMsPerFrame": 0.42457480036238304
+        }
+      ]
+    },
+    {
+      "sequence": "OneStopEnter1front",
+      "detectorTag": "E0_mobilenet_R0",
+      "detectSeconds": 33.54223980000097,
+      "detectFps": 44.71973275916883,
+      "frameCount": 1500,
+      "gtFrames": 1500,
+      "occupancyRows": [
+        {
+          "threshold": 0.5,
+          "scoredFrames": 1500,
+          "detection": {
+            "gtTotal": 1817,
+            "gtMatched": 1052,
+            "recall": 0.5789763346175014,
+            "precision": 0.2662617058972412,
+            "falsePositivesPerFrame": 1.9326666666666668,
+            "bySize": {
+              "SMALL": {
+                "total": 304,
+                "matched": 0,
+                "recall": 0.0
+              },
+              "MEDIUM": {
+                "total": 1323,
+                "matched": 882,
+                "recall": 0.6666666666666666
+              },
+              "LARGE": {
+                "total": 190,
+                "matched": 170,
+                "recall": 0.8947368421052632
+              }
+            }
+          },
+          "occupancy": {
+            "samples": 60,
+            "mae": 1.6666666666666667,
+            "rmse": 1.9578900207451218,
+            "bias": 1.6
+          }
+        },
+        {
+          "threshold": 0.7,
+          "scoredFrames": 1500,
+          "detection": {
+            "gtTotal": 1817,
+            "gtMatched": 996,
+            "recall": 0.5481563015960375,
+            "precision": 0.5255936675461741,
+            "falsePositivesPerFrame": 0.5993333333333334,
+            "bySize": {
+              "SMALL": {
+                "total": 304,
+                "matched": 0,
+                "recall": 0.0
+              },
+              "MEDIUM": {
+                "total": 1323,
+                "matched": 835,
+                "recall": 0.6311413454270597
+              },
+              "LARGE": {
+                "total": 190,
+                "matched": 161,
+                "recall": 0.8473684210526315
+              }
+            }
+          },
+          "occupancy": {
+            "samples": 60,
+            "mae": 0.5833333333333334,
+            "rmse": 0.9036961141150639,
+            "bias": 0.05
+          }
+        }
+      ],
+      "entryRows": [
+        {
+          "policy": "P0_baseline",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.7,
+            "trackerLowThreshold": 0.7,
+            "tracker": "baseline_greedy",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 1500,
+          "crossing": {
+            "IN": {
+              "actual": 1,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 1,
+              "precision": null,
+              "recall": 0.0,
+              "f1": null,
+              "countError": 1
+            },
+            "OUT": {
+              "actual": 2,
+              "predicted": 2,
+              "matched": 2,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 5,
+            "coveredTracks": 5,
+            "totalFragments": 53,
+            "fragmentsPerGtTrack": 10.6,
+            "idSwitches": 15,
+            "gaps": 42,
+            "recoveredGaps": 33,
+            "gapRecoveryRate": 0.7857142857142857
+          },
+          "events": [
+            {
+              "frameIndex": 97,
+              "direction": "OUT",
+              "gtTrackId": 0,
+              "normalizedHeight": 0.19444444444444445,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.8627450980392157,
+              "trackCoverage": 0.8627450980392157,
+              "dominantTrackShare": 0.8627450980392157,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 347,
+              "direction": "OUT",
+              "gtTrackId": 1,
+              "normalizedHeight": 0.21180555555555555,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.7843137254901961,
+              "trackCoverage": 0.7843137254901961,
+              "dominantTrackShare": 0.45098039215686275,
+              "distinctTrackIds": 2,
+              "spansBothSides": false
+            },
+            {
+              "frameIndex": 1335,
+              "direction": "IN",
+              "gtTrackId": 3,
+              "normalizedHeight": 0.18055555555555555,
+              "matched": false,
+              "windowFrames": 51,
+              "detectionCoverage": 0.5882352941176471,
+              "trackCoverage": 0.5882352941176471,
+              "dominantTrackShare": 0.5490196078431373,
+              "distinctTrackIds": 2,
+              "spansBothSides": false,
+              "cause": "ID_SWITCH",
+              "longestGapSeconds": 0.44
+            }
+          ],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 1,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.16754489979939535,
+          "trackerMsPerFrame": 0.11169659986626357
+        },
+        {
+          "policy": "P1_dual_threshold",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.3,
+            "tracker": "baseline_greedy",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 1500,
+          "crossing": {
+            "IN": {
+              "actual": 1,
+              "predicted": 1,
+              "matched": 1,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 2,
+              "predicted": 2,
+              "matched": 2,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 5,
+            "coveredTracks": 5,
+            "totalFragments": 56,
+            "fragmentsPerGtTrack": 11.2,
+            "idSwitches": 26,
+            "gaps": 33,
+            "recoveredGaps": 25,
+            "gapRecoveryRate": 0.7575757575757576
+          },
+          "events": [
+            {
+              "frameIndex": 97,
+              "direction": "OUT",
+              "gtTrackId": 0,
+              "normalizedHeight": 0.19444444444444445,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9019607843137255,
+              "trackCoverage": 0.9019607843137255,
+              "dominantTrackShare": 0.47058823529411764,
+              "distinctTrackIds": 2,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 347,
+              "direction": "OUT",
+              "gtTrackId": 1,
+              "normalizedHeight": 0.21180555555555555,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9019607843137255,
+              "trackCoverage": 0.9019607843137255,
+              "dominantTrackShare": 0.45098039215686275,
+              "distinctTrackIds": 2,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 1335,
+              "direction": "IN",
+              "gtTrackId": 3,
+              "normalizedHeight": 0.18055555555555555,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.8235294117647058,
+              "trackCoverage": 0.8235294117647058,
+              "dominantTrackShare": 0.8235294117647058,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            }
+          ],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.30385579990252154,
+          "trackerMsPerFrame": 0.2025705332683477
+        },
+        {
+          "policy": "P2_motion",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.3,
+            "tracker": "motion_aware",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 1500,
+          "crossing": {
+            "IN": {
+              "actual": 1,
+              "predicted": 1,
+              "matched": 1,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 2,
+              "predicted": 2,
+              "matched": 2,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 5,
+            "coveredTracks": 5,
+            "totalFragments": 49,
+            "fragmentsPerGtTrack": 9.8,
+            "idSwitches": 16,
+            "gaps": 33,
+            "recoveredGaps": 28,
+            "gapRecoveryRate": 0.8484848484848485
+          },
+          "events": [
+            {
+              "frameIndex": 97,
+              "direction": "OUT",
+              "gtTrackId": 0,
+              "normalizedHeight": 0.19444444444444445,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9019607843137255,
+              "trackCoverage": 0.9019607843137255,
+              "dominantTrackShare": 0.9019607843137255,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 347,
+              "direction": "OUT",
+              "gtTrackId": 1,
+              "normalizedHeight": 0.21180555555555555,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9019607843137255,
+              "trackCoverage": 0.9019607843137255,
+              "dominantTrackShare": 0.45098039215686275,
+              "distinctTrackIds": 3,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 1335,
+              "direction": "IN",
+              "gtTrackId": 3,
+              "normalizedHeight": 0.18055555555555555,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.8235294117647058,
+              "trackCoverage": 0.8235294117647058,
+              "dominantTrackShare": 0.8235294117647058,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            }
+          ],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.3197137998577091,
+          "trackerMsPerFrame": 0.21314253323847274
+        },
+        {
+          "policy": "P3_motion_long_age",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.3,
+            "tracker": "motion_aware",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 2.0,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 1500,
+          "crossing": {
+            "IN": {
+              "actual": 1,
+              "predicted": 1,
+              "matched": 1,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            },
+            "OUT": {
+              "actual": 2,
+              "predicted": 2,
+              "matched": 2,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 5,
+            "coveredTracks": 5,
+            "totalFragments": 49,
+            "fragmentsPerGtTrack": 9.8,
+            "idSwitches": 16,
+            "gaps": 33,
+            "recoveredGaps": 28,
+            "gapRecoveryRate": 0.8484848484848485
+          },
+          "events": [
+            {
+              "frameIndex": 97,
+              "direction": "OUT",
+              "gtTrackId": 0,
+              "normalizedHeight": 0.19444444444444445,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9019607843137255,
+              "trackCoverage": 0.9019607843137255,
+              "dominantTrackShare": 0.9019607843137255,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 347,
+              "direction": "OUT",
+              "gtTrackId": 1,
+              "normalizedHeight": 0.21180555555555555,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9019607843137255,
+              "trackCoverage": 0.9019607843137255,
+              "dominantTrackShare": 0.45098039215686275,
+              "distinctTrackIds": 3,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 1335,
+              "direction": "IN",
+              "gtTrackId": 3,
+              "normalizedHeight": 0.18055555555555555,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.8235294117647058,
+              "trackCoverage": 0.8235294117647058,
+              "dominantTrackShare": 0.8235294117647058,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            }
+          ],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 0,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.3533936001258553,
+          "trackerMsPerFrame": 0.23559573341723686
+        },
+        {
+          "policy": "P4_motion_low01",
+          "config": {
+            "occupancyThreshold": 0.7,
+            "trackerHighThreshold": 0.5,
+            "trackerLowThreshold": 0.1,
+            "tracker": "motion_aware",
+            "iouThreshold": 0.3,
+            "lowIouThreshold": 0.2,
+            "maxAgeFrames": 30,
+            "maxAgeSeconds": 1.2,
+            "minHits": 1,
+            "velocitySmoothing": 0.5
+          },
+          "scoredFrames": 1500,
+          "crossing": {
+            "IN": {
+              "actual": 1,
+              "predicted": 0,
+              "matched": 0,
+              "falsePositives": 0,
+              "missed": 1,
+              "precision": null,
+              "recall": 0.0,
+              "f1": null,
+              "countError": 1
+            },
+            "OUT": {
+              "actual": 2,
+              "predicted": 2,
+              "matched": 2,
+              "falsePositives": 0,
+              "missed": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "countError": 0
+            }
+          },
+          "continuity": {
+            "gtTracks": 5,
+            "coveredTracks": 5,
+            "totalFragments": 46,
+            "fragmentsPerGtTrack": 9.2,
+            "idSwitches": 23,
+            "gaps": 27,
+            "recoveredGaps": 18,
+            "gapRecoveryRate": 0.6666666666666666
+          },
+          "events": [
+            {
+              "frameIndex": 97,
+              "direction": "OUT",
+              "gtTrackId": 0,
+              "normalizedHeight": 0.19444444444444445,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 1.0,
+              "trackCoverage": 1.0,
+              "dominantTrackShare": 1.0,
+              "distinctTrackIds": 1,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 347,
+              "direction": "OUT",
+              "gtTrackId": 1,
+              "normalizedHeight": 0.21180555555555555,
+              "matched": true,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9215686274509803,
+              "trackCoverage": 0.9215686274509803,
+              "dominantTrackShare": 0.47058823529411764,
+              "distinctTrackIds": 2,
+              "spansBothSides": true
+            },
+            {
+              "frameIndex": 1335,
+              "direction": "IN",
+              "gtTrackId": 3,
+              "normalizedHeight": 0.18055555555555555,
+              "matched": false,
+              "windowFrames": 51,
+              "detectionCoverage": 0.9411764705882353,
+              "trackCoverage": 0.8823529411764706,
+              "dominantTrackShare": 0.7647058823529411,
+              "distinctTrackIds": 2,
+              "spansBothSides": true,
+              "cause": "ID_SWITCH",
+              "longestGapSeconds": 0.24
+            }
+          ],
+          "missedCauses": {
+            "DETECTION_GAP": 0,
+            "ASSOCIATION_BREAK": 0,
+            "TRACK_EXPIRY": 0,
+            "ID_SWITCH": 1,
+            "LINE_GEOMETRY": 0,
+            "OTHER": 0
+          },
+          "trackerSeconds": 0.5590340999988257,
+          "trackerMsPerFrame": 0.37268939999921713
+        }
+      ]
+    }
+  ]
+}

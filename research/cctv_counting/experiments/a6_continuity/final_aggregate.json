@@ -1,0 +1,222 @@
+[
+  {
+    "split": "FINAL",
+    "source": "research\\cctv_counting\\experiments\\a6_continuity\\final.json",
+    "sequences": 12,
+    "occupancy": [
+      {
+        "threshold": 0.5,
+        "macroMae": 1.267549227435873,
+        "bias": -1.1172752177221748,
+        "macroRecall": 0.875784372626835,
+        "microRecall": 0.8778582452807788,
+        "fpPerFrame": 0.24330955670187215
+      },
+      {
+        "threshold": 0.7,
+        "macroMae": 1.353556432377667,
+        "bias": -1.3072325661385464,
+        "macroRecall": 0.850411738010183,
+        "microRecall": 0.8477739522735367,
+        "fpPerFrame": 0.1346445942639585
+      }
+    ],
+    "entry": [
+      {
+        "policy": "P0_baseline",
+        "countErrorMae": 0.8333333333333334,
+        "in": {
+          "actual": 21,
+          "predicted": 15,
+          "matched": 14,
+          "fp": 1
+        },
+        "out": {
+          "actual": 31,
+          "predicted": 17,
+          "matched": 17,
+          "fp": 0
+        },
+        "precision": 0.9666666666666667,
+        "recall": 0.60752688172043,
+        "f1": 0.7461293260473587,
+        "fragmentsPerGtTrack": 12.160919540229886,
+        "idSwitches": 302,
+        "gaps": 773,
+        "recoveredGaps": 669,
+        "gapRecoveryRate": 0.8654592496765847,
+        "trackerMsPerFrame": 0.10620009898107957,
+        "missedCauses": {
+          "DETECTION_GAP": 3,
+          "ASSOCIATION_BREAK": 0,
+          "TRACK_EXPIRY": 0,
+          "ID_SWITCH": 2,
+          "LINE_GEOMETRY": 0,
+          "OTHER": 16
+        },
+        "matchedDominantShare": 0.9218399951031402,
+        "missedDominantShare": 0.5818219889023496,
+        "matchedDetectionCoverage": 0.9376527718267328,
+        "missedDetectionCoverage": 0.6079657797520228,
+        "matchedEvents": 31,
+        "missedEvents": 9
+      },
+      {
+        "policy": "P1_dual_threshold",
+        "countErrorMae": 0.875,
+        "in": {
+          "actual": 21,
+          "predicted": 14,
+          "matched": 14,
+          "fp": 0
+        },
+        "out": {
+          "actual": 31,
+          "predicted": 17,
+          "matched": 17,
+          "fp": 0
+        },
+        "precision": 1.0,
+        "recall": 0.60752688172043,
+        "f1": 0.7558528428093645,
+        "fragmentsPerGtTrack": 12.540229885057471,
+        "idSwitches": 636,
+        "gaps": 520,
+        "recoveredGaps": 368,
+        "gapRecoveryRate": 0.7076923076923077,
+        "trackerMsPerFrame": 0.11832607776940342,
+        "missedCauses": {
+          "DETECTION_GAP": 3,
+          "ASSOCIATION_BREAK": 0,
+          "TRACK_EXPIRY": 0,
+          "ID_SWITCH": 2,
+          "LINE_GEOMETRY": 0,
+          "OTHER": 16
+        },
+        "matchedDominantShare": 0.9344902164820142,
+        "missedDominantShare": 0.5905365858522408,
+        "matchedDetectionCoverage": 0.9540980596192692,
+        "missedDetectionCoverage": 0.6223071573286946,
+        "matchedEvents": 31,
+        "missedEvents": 9
+      },
+      {
+        "policy": "P2_motion",
+        "countErrorMae": 0.8333333333333334,
+        "in": {
+          "actual": 21,
+          "predicted": 15,
+          "matched": 15,
+          "fp": 0
+        },
+        "out": {
+          "actual": 31,
+          "predicted": 17,
+          "matched": 17,
+          "fp": 0
+        },
+        "precision": 1.0,
+        "recall": 0.631336405529954,
+        "f1": 0.7740112994350283,
+        "fragmentsPerGtTrack": 11.28735632183908,
+        "idSwitches": 529,
+        "gaps": 515,
+        "recoveredGaps": 366,
+        "gapRecoveryRate": 0.7106796116504854,
+        "trackerMsPerFrame": 0.13789356356184784,
+        "missedCauses": {
+          "DETECTION_GAP": 3,
+          "ASSOCIATION_BREAK": 0,
+          "TRACK_EXPIRY": 0,
+          "ID_SWITCH": 1,
+          "LINE_GEOMETRY": 0,
+          "OTHER": 16
+        },
+        "matchedDominantShare": 0.9065128874130297,
+        "missedDominantShare": 0.5712164041818101,
+        "matchedDetectionCoverage": 0.9469540638836179,
+        "missedDetectionCoverage": 0.6094092774849774,
+        "matchedEvents": 32,
+        "missedEvents": 8
+      },
+      {
+        "policy": "P3_motion_long_age",
+        "countErrorMae": 0.75,
+        "in": {
+          "actual": 21,
+          "predicted": 16,
+          "matched": 15,
+          "fp": 1
+        },
+        "out": {
+          "actual": 31,
+          "predicted": 18,
+          "matched": 18,
+          "fp": 0
+        },
+        "precision": 0.96875,
+        "recall": 0.6474654377880185,
+        "f1": 0.7761739285396062,
+        "fragmentsPerGtTrack": 11.425287356321839,
+        "idSwitches": 536,
+        "gaps": 522,
+        "recoveredGaps": 371,
+        "gapRecoveryRate": 0.710727969348659,
+        "trackerMsPerFrame": 0.144285242800576,
+        "missedCauses": {
+          "DETECTION_GAP": 3,
+          "ASSOCIATION_BREAK": 0,
+          "TRACK_EXPIRY": 0,
+          "ID_SWITCH": 1,
+          "LINE_GEOMETRY": 0,
+          "OTHER": 15
+        },
+        "matchedDominantShare": 0.9093458302186955,
+        "missedDominantShare": 0.5099616047792115,
+        "matchedDetectionCoverage": 0.9485615164932053,
+        "missedDetectionCoverage": 0.5536106028399742,
+        "matchedEvents": 33,
+        "missedEvents": 7
+      },
+      {
+        "policy": "P4_motion_low01",
+        "countErrorMae": 0.8333333333333334,
+        "in": {
+          "actual": 21,
+          "predicted": 15,
+          "matched": 15,
+          "fp": 0
+        },
+        "out": {
+          "actual": 31,
+          "predicted": 19,
+          "matched": 17,
+          "fp": 2
+        },
+        "precision": 0.9473684210526316,
+        "recall": 0.631336405529954,
+        "f1": 0.757720079889384,
+        "fragmentsPerGtTrack": 12.045977011494253,
+        "idSwitches": 645,
+        "gaps": 486,
+        "recoveredGaps": 316,
+        "gapRecoveryRate": 0.6502057613168725,
+        "trackerMsPerFrame": 0.17024256843454386,
+        "missedCauses": {
+          "DETECTION_GAP": 3,
+          "ASSOCIATION_BREAK": 0,
+          "TRACK_EXPIRY": 0,
+          "ID_SWITCH": 1,
+          "LINE_GEOMETRY": 0,
+          "OTHER": 16
+        },
+        "matchedDominantShare": 0.9199932795698925,
+        "missedDominantShare": 0.5859222865347512,
+        "matchedDetectionCoverage": 0.9561452403542062,
+        "missedDetectionCoverage": 0.6768583725076018,
+        "matchedEvents": 32,
+        "missedEvents": 8
+      }
+    ]
+  }
+]

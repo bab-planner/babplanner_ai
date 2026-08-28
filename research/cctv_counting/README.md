@@ -73,10 +73,11 @@ detection-only baseline에서 같이 기록하는 값이 하나 있다. 이름 �
 
 ```mermaid
 flowchart TD
-    V[Video<br/>파일 또는 스트림] --> D[Person Detector<br/>torchvision COCO pretrained]
-    D --> F[Filter<br/>person class / confidence / ROI]
-    F --> O1[Occupancy Count<br/>필터 통과 상자 수]
-    F --> T[Multi Object Tracker<br/>ByteTrack-inspired 2단계 IoU 연결]
+    V[Video<br/>파일 또는 스트림] --> D[Shared Person Detector<br/>torchvision COCO pretrained<br/>프레임당 한 번]
+    D --> FO[high-confidence filtering<br/>conf >= T_occ, ROI]
+    D --> FE[high + low detections<br/>conf >= T_low, ROI]
+    FO --> O1[Occupancy Count<br/>필터 통과 상자 수]
+    FE --> T[Multi Object Tracker<br/>기본 ByteTrack-inspired greedy<br/>선택 MotionAwareTracker]
     T --> C[Line Crossing<br/>상태 기계]
     C --> E[Entry / Exit Count]
     O1 --> R[Reliability Signal<br/>mean/min confidence, flag]
@@ -91,6 +92,25 @@ flowchart TD
   occupancy   detector + 임계값 + ROI       추적을 거치지 않는다
   entry       추적 + 선 통과                 추적이 있어야 정의된다
 ```
+
+**A6에서 두 갈래의 임계값을 갈랐다.** 추론은 여전히 프레임당 한 번이고,
+갈라지는 것은 필터 정책뿐이다. 두 과제가 서로 다른 오차를 싫어하기 때문이다.
+
+```
+  occupancy   오탐 하나가 그 프레임 인원을 그대로 부풀린다.
+              놓친 사람은 다음 프레임에 다시 셀 기회가 있다.   -> 높은 임계값
+
+  entry       궤적이 한 번 끊기면 track이 쪼개지고, 쪼개진 track은
+              선을 넘은 것을 모른다. 되찾을 기회가 없다.        -> 낮은 임계값까지 받는다
+```
+
+`dualpath.py`가 이 규칙을 코드로 못박는다 — `detector_calls`가 프레임 수와
+같아야 한다는 것이 테스트로 걸려 있다.
+
+**임계값을 가르는 이득의 크기는 장면에 달렸다.** DEV(쇼핑센터 front)에서는
+통과 계수 오차가 0.30에서 0.20으로 줄었지만, FINAL(corridor)에서는 변화가
+없었다. 사람이 크게 보이는 장면에서는 낮은 신뢰도 상자를 열 이유가 적다.
+근거는 [A6 보고서](../../reports/cctv_a6_trajectory_continuity.md).
 
 **현재 occupancy 읽기 방식에서는 추적이 기여할 자리가 없다.** `update()`가
 "이번 프레임에 검출과 매칭된 track"만 돌려주므로, `min_hits=1`이면
@@ -112,7 +132,12 @@ detection-only와 계수가 **구조적으로 같아진다**. 실제 비교 대�
 |---|---|---|
 | `geometry.py` | 정규화/픽셀 좌표, 상자, 선, ROI | 없음 |
 | `detection.py` | Detection, detector 경계, 필터 | 없음 |
-| `tracking.py` | ByteTrack-inspired 추적 | 없음 |
+| `tracking.py` | ByteTrack-inspired 추적 (A2 baseline) | 없음 |
+| `motion_tracking.py` | 시간 기반 소멸 + 시간 비례 외삽 추적 (A6) | 없음 |
+| `assignment.py` | Hungarian 전역 할당 | 없음 |
+| `dualpath.py` | 공유 detector + 과제별 정책 | 없음 |
+| `continuity.py` | fragmentation / gap recovery / 통과 창 | 없음 |
+| `attribution.py` | 놓친 통과 사건의 원인 분류 | 없음 |
 | `crossing.py` | 선 통과 상태 기계 | 없음 |
 | `reliability.py` | 신뢰 신호 | 없음 |
 | `observations.py` | CSV 스키마 | 없음 |
@@ -258,10 +283,35 @@ Detection Box*, ECCV 2022. 공식 구현(ifzhang/ByteTrack)은 MIT이고, 여기
 re-identification은 하지 않기로 했다. numpy/scipy 없이 표준 라이브러리만으로
 돌면 계수 로직 전체를 무거운 의존성 없이 그대로 검증할 수 있다.
 
-**단순화가 더 빠르다거나 원본과 같은 성능이라고 주장하지 않는다.** 재 본 적이
-없다. 두 방식을 나란히 돌려 비교하는 것은 벤치마크 단계의 할 일이고,
-`reports/cctv_baseline.md`의 다음 실험 목록에 있다. 그때까지 이 tracker에서
-나온 수치를 ByteTrack의 성능으로 읽으면 안 된다.
+**단순화가 더 빠르다거나 원본과 같은 성능이라고 주장하지 않는다.** 이
+tracker에서 나온 수치를 ByteTrack의 성능으로 읽으면 안 된다.
+
+### A6에서 비교 후보를 하나 만들었다 — `MotionAwareTracker`
+
+A5에서 "검출을 전부 회복시켜도 통과 사건은 43%만 살아난다"가 나왔다. 남은
+절반은 궤적이 끊기는 문제였고, A6가 그것을 겨냥해 tracker 하나를 더 만들었다.
+
+| | `ByteTrackInspiredTracker` (기본) | `MotionAwareTracker` (선택) |
+|---|---|---|
+| 소멸 | `max_age` 프레임 | `max_age_seconds` 초 |
+| 외삽 | 놓친 시간과 무관하게 1프레임분 | 놓친 시간에 비례 |
+| 속도 | 직전 프레임 차이 | 지수이동평균 |
+| 할당 | IoU 내림차순 greedy | Hungarian 전역 할당 (`assignment.py`) |
+| 외형 특징 | 없음 | 없음 |
+
+**Kalman filter는 쓰지 않는다.** 진단이 가리킨 결함이 측정 잡음이 아니라
+"놓친 시간과 무관한 1프레임 외삽"이었기 때문이다. 그래서 이름도
+`MotionAwareTracker`이고, 이것을 ByteTrack이라고 부르지 않는다.
+
+**기본값은 여전히 greedy 쪽이다.** A6 FINAL(처음 보는 corridor 카메라 12편)에서
+동결한 주 지표인 통과 계수 오차가 개선되지 않았다(0.83 → 0.83). 사전에 정한
+채택 조건을 통과하지 못했으므로 바꾸지 않았다.
+
+그래도 저장소에 남긴 이유가 있다. 같은 평가에서 **나빠진 지표가 하나도 없고**
+(precision 0.967 → 1.000, F1 0.746 → 0.774, fragmentation 12.16 → 11.29),
+`ID_SWITCH`로 분류된 통과 실패는 13건 중 11건이 회복되었으며, 추가 비용이
+프레임당 0.027 ms다. 카메라별 ROI와 통과 창을 다시 정한 뒤 재평가할 값어치가
+있다. 자세한 것은 [A6 보고서](../../reports/cctv_a6_trajectory_continuity.md).
 
 ### 왜 이 계열인가
 

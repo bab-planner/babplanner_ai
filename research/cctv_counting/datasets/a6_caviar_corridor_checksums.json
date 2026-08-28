@@ -1,0 +1,105 @@
+{
+  "source": "https://homepages.inf.ed.ac.uk/rbf/CAVIARDATA2/",
+  "license": "Creative Commons BY-SA",
+  "acknowledgement": "EC Funded CAVIAR project/IST 2001 37540, http://homepages.inf.ed.ac.uk/rbf/CAVIAR/",
+  "note": "A6 FINAL TEST. corridor(along the hallway) 시점, 계열별 두 번째 촬영본 12편. 원본은 커밋하지 않는다. 지문만 남긴다.",
+  "downloadedAt": "2026-08-28",
+  "files": {
+    "c2es2gt.xml": {
+      "sha256": "b6eb8395c50198dc08b8fd9e1309d826a2a428363e9e1e5f7658552e3a85e662",
+      "bytes": 7364857
+    },
+    "c2ls2gt.xml": {
+      "sha256": "8126339c3254517369ada3dbb55ac44654862def5fe13b58783aec8cff7a9b5b",
+      "bytes": 852963
+    },
+    "c3ps2gt.xml": {
+      "sha256": "50f2240dd4b32a749d516900b1a1239b11f144b2daa731457d046ec2cddc23a4",
+      "bytes": 15218858
+    },
+    "ceecp2gt.xml": {
+      "sha256": "aec11775deb5081f3f39c80f1281e84e8ff31d0c281390118857cf10b06fd8d9",
+      "bytes": 639497
+    },
+    "cols2gt.xml": {
+      "sha256": "674c3ee0ce8b3c2b6774560c320f7321cf70912313cf5f08696c6303720e75d5",
+      "bytes": 3646865
+    },
+    "colsr2gt.xml": {
+      "sha256": "23270241c5c085b9918554b1884cb43629416009fe5a90c16978f868049169d9",
+      "bytes": 1470910
+    },
+    "cose2gt.xml": {
+      "sha256": "4eb4e6e9bd8162e9442d9aa7d3e5abd6bb5567baf669cf021500eb869eb32b0f",
+      "bytes": 3040550
+    },
+    "cosme2gt.xml": {
+      "sha256": "c6bd9b5307dcd61ac4febecaf2c86c74a2b3659ce022bf514e48ce14922d91b9",
+      "bytes": 7516499
+    },
+    "cosmne2gt.xml": {
+      "sha256": "d82644dcd103de4f32bf75068d0f887e0f1183c95fdb94aa0eff449620bd7cc6",
+      "bytes": 2303968
+    },
+    "cosne2gt.xml": {
+      "sha256": "3bcb05f2bdca9b07da0c3f195d848a35db639d85f2d976826d52f98528d01d12",
+      "bytes": 2114462
+    },
+    "cosow2gt.xml": {
+      "sha256": "12e7eee098af2cb505d1cfba696a4d387d0acfbd5b27fb5a0ae020e553a89b85",
+      "bytes": 12471412
+    },
+    "csa2gt.xml": {
+      "sha256": "3a85a646084b8869e9d12e31464810d3798009b335effacb49409c570d22a598",
+      "bytes": 10307279
+    },
+    "EnterExitCrossingPaths2cor.mpg": {
+      "sha256": "38748ca0c32cd602729f36c55830eb9667f7ecdbbc9b627e84099107319ab036",
+      "bytes": 2856243
+    },
+    "OneLeaveShop2cor.mpg": {
+      "sha256": "00834361773343472f81282fa86a5c4f9965cbab379dabbe3c639f0c7b2e5397",
+      "bytes": 6488841
+    },
+    "OneLeaveShopReenter2cor.mpg": {
+      "sha256": "162ea10eec2cf6910b6933663595f06a2bd435999b4d84cc005e5e68c05024bf",
+      "bytes": 3264555
+    },
+    "OneShopOneWait2cor.mpg": {
+      "sha256": "5adeb464ec45aa7b20e742115a42dec3328e99630362103aa2bba562a8f69ef3",
+      "bytes": 8449585
+    },
+    "OneStopEnter2cor.mpg": {
+      "sha256": "4ae90160f7de448ce12ff337f3abb356e1a7ea10ea80e8b9ae829f0eba6379b9",
+      "bytes": 15736150
+    },
+    "OneStopMoveEnter2cor.mpg": {
+      "sha256": "676ae02d0a3ed46b94452d53631371edd6422e325344a168db68de43fbc7e9e5",
+      "bytes": 12927621
+    },
+    "OneStopMoveNoEnter2cor.mpg": {
+      "sha256": "0d82dcd4a027937f77a767160c0705970fbdff582df1cf7665f891bdb5d6665e",
+      "bytes": 6015210
+    },
+    "OneStopNoEnter2cor.mpg": {
+      "sha256": "4d75be05a62b05a94509918f169a5b9778cdb3c2f33a60ebd61fda470c71d7c0",
+      "bytes": 8674895
+    },
+    "ShopAssistant2cor.mpg": {
+      "sha256": "c0a3a23f9af1706a34082e6efb2e35dabbfc746dcd6691dad13e66122830a379",
+      "bytes": 21307027
+    },
+    "ThreePastShop2cor.mpg": {
+      "sha256": "1fa7d41d113332c2dde21b49c6bfb0a19f01a9720637247338830384620115d6",
+      "bytes": 8804826
+    },
+    "TwoEnterShop2cor.mpg": {
+      "sha256": "baf85c387735dbe30d7f1426a383ed6a6f323e5c79d1bf4b72fa8c89ce11ac0e",
+      "bytes": 9272043
+    },
+    "TwoLeaveShop2cor.mpg": {
+      "sha256": "aa396f40f645e9e837d6ff41dae4530792f195abf17033131777d56def664ca4",
+      "bytes": 3504739
+    }
+  }
+}

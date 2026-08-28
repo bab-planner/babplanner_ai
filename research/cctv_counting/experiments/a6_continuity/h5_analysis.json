@@ -1,0 +1,41 @@
+{
+  "policy": "P0_baseline",
+  "detectionFloor": 0.5,
+  "sources": [
+    "research\\cctv_counting\\experiments\\a6_continuity\\analysis_shop.json",
+    "research\\cctv_counting\\experiments\\a6_continuity\\analysis_lobby.json"
+  ],
+  "all": {
+    "matched": {
+      "n": 40,
+      "detectionCoverage": 0.6213141936936718,
+      "trackCoverage": 0.6213141936936718,
+      "dominantTrackShare": 0.5657712072683324,
+      "singleTrackShare": 0.525
+    },
+    "missed": {
+      "n": 46,
+      "detectionCoverage": 0.34850540524703083,
+      "trackCoverage": 0.34850540524703083,
+      "dominantTrackShare": 0.2490711651478291,
+      "singleTrackShare": 0.34782608695652173
+    }
+  },
+  "detectionSufficient": {
+    "matched": {
+      "n": 29,
+      "detectionCoverage": 0.7640297498309668,
+      "trackCoverage": 0.7640297498309668,
+      "dominantTrackShare": 0.7018255578093305,
+      "singleTrackShare": 0.5862068965517241
+    },
+    "missed": {
+      "n": 13,
+      "detectionCoverage": 0.6772247360482655,
+      "trackCoverage": 0.6772247360482655,
+      "dominantTrackShare": 0.42986425339366513,
+      "singleTrackShare": 0.15384615384615385
+    }
+  },
+  "note": "detectionSufficient는 창 검출 coverage가 floor 이상인 사건만 모은 것이다. 여기서도 맞힘/놓침이 갈리면 그 차이는 검출이 아니다."
+}

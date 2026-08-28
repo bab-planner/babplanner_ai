@@ -79,10 +79,24 @@ GPU(RTX 4060 Ti)에서 **31 fps**.
 "있는 사건을 놓친 것"이었다. 한쪽만 보고 고쳤다면 다른 쪽에서는 효과가
 없었을 것이다.
 
-**급식소 검증이 아니다.** 쇼핑센터 복도이고, 13편이 전부 같은 카메라다.
-cross-sequence이지 cross-camera도 아니다. 조건과 한계는
-[reports/cctv_baseline.md](reports/cctv_baseline.md)와
-[reports/cctv_a4_cross_video.md](reports/cctv_a4_cross_video.md)에 있다.
+이어서 **다른 장소**(사무실 로비 17편)와 **다른 카메라**(같은 쇼핑센터의
+corridor 시점 12편)에서 각각 한 번씩 더 평가했다. 매번 결과를 보기 전에
+설정과 판정 규칙을 동결하고 지문(SHA-256)을 남겼다.
+
+**두 번 다 가설이 기각되었고, 그것이 이 트랙의 성과다.** 해상도를 올리거나
+더 큰 detector를 쓰면 누락이 회복될 것이라는 가설은 A5에서 기각되었다
+(recall 0.578 → 0.463). 통과 누락이 궤적 연속성 문제라는 A6의 가설은 원인
+분해로는 확인되었지만(그 원인의 실패 13건 중 11건 회복), 새 카메라에서
+주 지표를 개선하지 못해 **개선된 tracker를 채택하지 않았다.**
+
+**급식소 검증이 아니다.** 공개 데이터의 쇼핑센터와 사무실 로비다. 그리고
+지금 수치로 발주를 움직이면 안 된다 — 통과 계수 recall이 0.6~0.8이고
+occupancy가 프레임당 1.3명을 덜 센다. 조건과 한계는
+[reports/cctv_baseline.md](reports/cctv_baseline.md),
+[reports/cctv_a4_cross_video.md](reports/cctv_a4_cross_video.md),
+[reports/cctv_a5_small_person.md](reports/cctv_a5_small_person.md),
+[reports/cctv_a6_trajectory_continuity.md](reports/cctv_a6_trajectory_continuity.md)에
+있다.
 
 **얼굴을 다루지 않는다.** 사람을 영상 밖에서 다시 알아보지 않고, 회원 정보와
 연결하지 않는다. `track_id`는 영상 한 세션 안에서만 유효한 임시 번호이며 파일로

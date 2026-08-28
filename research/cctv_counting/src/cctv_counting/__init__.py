@@ -17,14 +17,20 @@ track_id는 영상 한 세션 안에서만 유효한 임시 번호이고 파일�
 """
 
 from cctv_counting.detection import Detection, PersonDetector
+from cctv_counting.dualpath import DualPathCounter, TaskPolicy, TrackerKind
+from cctv_counting.motion_tracking import MotionAwareTracker
 from cctv_counting.observations import FrameObservation
 from cctv_counting.reliability import ReliabilityFlag
 from cctv_counting.tracking import TrackedPerson
 
 __all__ = [
     "Detection",
+    "DualPathCounter",
     "FrameObservation",
+    "MotionAwareTracker",
     "PersonDetector",
     "ReliabilityFlag",
+    "TaskPolicy",
     "TrackedPerson",
+    "TrackerKind",
 ]
