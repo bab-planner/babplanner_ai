@@ -47,10 +47,12 @@ where = ["src"]
 testpaths = [
     "tests",
     "research/cctv_counting/tests",
+    "research/waste_estimation/tests",
     "demo/cctv_collector/tests",
 ]
 pythonpath = [
     "src",
     "research/cctv_counting/src",
+    "research/waste_estimation/src",
     "demo/cctv_collector/src",
 ]

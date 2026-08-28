@@ -41,5 +41,18 @@ research/cctv_counting/experiments/*/*
 *.engine
 *.trt
 
+# --- 잔반 연구 트랙 (AI-2) ---
+# 급식 사진에는 사람이 찍혀 있을 수 있다. 실험 디렉터리도 같은 규칙을 쓴다.
+research/waste_estimation/data/
+research/waste_estimation/experiments/*
+!research/waste_estimation/experiments/README.md
+!research/waste_estimation/experiments/*/
+research/waste_estimation/experiments/*/*
+!research/waste_estimation/experiments/*/*.json
+!research/waste_estimation/experiments/*/*.yaml
+!research/waste_estimation/experiments/*/*.csv
+# 공개 데이터를 받으면 여기 둔다. 커밋하지 않는다.
+research/waste_estimation/datasets/raw/
+
 # annotations/ 의 CSV 템플릿은 tracked다(위 규칙에 걸리지 않는다).
 # 실제 annotation을 채운 파일은 개인정보 판단 후 별도로 결정한다.

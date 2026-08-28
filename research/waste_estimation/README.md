@@ -3,7 +3,12 @@
 *Vision-based Food Waste Severity Estimation with Selective Prediction*
 
 > **이 폴더에는 모델 코드가 없다.** 이번 단계에서 만들지 않았다. 여기 있는
-> 것은 무엇을 만들 것인지에 대한 정의다.
+> 것은 무엇을 만들 것인지에 대한 정의와, 모델보다 먼저 고정되어야 하는
+> 도구들이다.
+>
+> **W1 상태: 문제 정의 완료. 실제 학습 데이터 0건.**
+> [데이터 점검](dataset_audit.md) · [공개 데이터 후보](datasets/README.md) ·
+> [W1 보고서](../../reports/waste_w1_problem_definition.md)
 
 ## 목표
 
@@ -81,11 +86,46 @@ image → 모델 ┤
 `AnalysisLabel.APPROVED / REJECTED`와 `RejectionReason`은 이미 스키마에 있다
 (`src/babplanner_ai/dataset/schema.py`). 계약이 먼저 서 있는 상태다.
 
+## 연구 질문
+
+W1에서 사전 등록한다. 데이터를 본 뒤에 질문을 바꾸지 않는다.
+
+**RQ-W1.** 식판 이미지 한 장만으로 질량 기반 `waste_rate`를 어느 정도까지
+예측할 수 있는가? 전역 평균 예측과 사람의 눈대중을 얼마나 넘어서는가?
+
+**RQ-W2.** 표본이 적을 때 연속 회귀보다 순서형(ordinal) 정식화가 더
+안정적인가? 안정적이라면 그 대가로 무엇을 잃는가?
+
+**RQ-W3.** 모델의 confidence로 오차가 큰 이미지를 거절하면, 승인한 표본의
+오차가 실제로 줄어드는가? coverage를 얼마나 포기해야 하는가?
+
+**RQ-W4.** 음식 종류와 촬영 조건이 바뀌면 성능이 얼마나 떨어지는가?
+
+RQ-W1이 이 트랙의 존재 이유다. **답이 "거의 못 한다"일 수도 있고, 그것도
+결과다.** CCTV 트랙에서 해상도 가설과 모델 용량 가설을 둘 다 기각한 것이
+그 단계에서 가장 값어치 있는 결과였다.
+
+## 도구
+
+모델보다 먼저 있어야 하는 것들이다. 무거운 의존성이 없어 `.venv`의
+`pytest` 한 번으로 검증된다.
+
+| 파일 | 하는 일 |
+|---|---|
+| `src/waste_estimation/schemas.py` | 정답의 정의를 코드로 못박는다 |
+| `src/waste_estimation/metrics.py` | bias, 순서형 지표. MAE/RMSE는 서비스 것을 그대로 쓴다 |
+| `src/waste_estimation/selective.py` | coverage / selective risk / 곡선 |
+| `src/waste_estimation/splits.py` | 그룹 단위 분할. 누수를 막는다 |
+| `src/waste_estimation/audit.py` | 지금 쓸 수 있는 표본이 몇 개인가 |
+| `src/waste_estimation/public_datasets.py` | 공개 데이터 후보와 확인된 라이선스 |
+| `scripts/audit_dataset.py` | 위를 엮은 읽기 전용 CLI |
+
 ## 시작 조건
 
-**파일럿 데이터가 필요하다.** 지금 저장소에 있는 것은 합성 fixture뿐이다.
+**파일럿 데이터가 필요하다.** 지금 저장소에 있는 것은 합성 fixture뿐이고,
+[데이터 점검](dataset_audit.md)이 그것을 확인했다 — **실제 표본 0건.**
 `docs/waste_pilot_collection_runbook.md`가 현장 수집 절차이고, 그것이 돌기
-전까지 이 트랙은 시작되지 않는다.
+전까지 학습은 시작되지 않는다.
 
 ## 다음 단계 (착수 전)
 
