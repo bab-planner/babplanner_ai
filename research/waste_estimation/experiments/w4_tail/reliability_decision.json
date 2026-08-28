@@ -1,0 +1,15 @@
+{
+  "stage": "W4",
+  "policyHash": "05426ff78705d3c3a125a44552747460105335c5951ec8b7fa1982c0960e97e6",
+  "estimator": "R0_STANDARD",
+  "rawMeanAbsoluteCoverageDrift": 0.07449441684489123,
+  "normalizedMeanAbsoluteCoverageDrift": 0.031175321963966027,
+  "rawAcceptedMaeAt80": 0.14334744942399585,
+  "normalizedAcceptedMaeAt80": 0.13634729539918727,
+  "adoptNormalized": true,
+  "adoptionRule": "normalized를 채택하려면 coverage drift가 raw보다 작고 accepted MAE가 크게 나빠지지 않아야 한다.",
+  "tailSafetyMechanism": false,
+  "tailSafetyNote": "고잔반 구간 안에서의 상관이 0 근처이면 novelty 거절은 고잔반 안전장치가 아니다.",
+  "calibrated": false,
+  "calibrationNote": "백분위 점수는 보정된 정확도 확률이 아니다. 0.90이 '90% 확률로 틀린다'는 뜻이 아니다."
+}

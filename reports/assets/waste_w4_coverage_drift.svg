@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="400" viewBox="0 0 720 400" font-family="system-ui, sans-serif">
+<rect width="720" height="400" fill="#ffffff"/>
+<text x="78" y="28" font-size="16" font-weight="600" fill="#1f2933">coverage 이동 — 참조 집합이 159건에서 318건으로 커질 때</text>
+<text x="78" y="46" font-size="12" fill="#7b8794">|실현 − 목표| · 낮을수록 임계값이 잘 옮겨진다 · W3에서 재지 않았던 값</text>
+<line x1="78" y1="338.0" x2="694" y2="338.0" stroke="#e4e7eb"/>
+<text x="70" y="342.0" font-size="11" fill="#7b8794" text-anchor="end">0.00</text>
+<line x1="78" y1="268.0" x2="694" y2="268.0" stroke="#e4e7eb"/>
+<text x="70" y="272.0" font-size="11" fill="#7b8794" text-anchor="end">0.04</text>
+<line x1="78" y1="198.0" x2="694" y2="198.0" stroke="#e4e7eb"/>
+<text x="70" y="202.0" font-size="11" fill="#7b8794" text-anchor="end">0.07</text>
+<line x1="78" y1="128.0" x2="694" y2="128.0" stroke="#e4e7eb"/>
+<text x="70" y="132.0" font-size="11" fill="#7b8794" text-anchor="end">0.11</text>
+<line x1="78" y1="58.0" x2="694" y2="58.0" stroke="#e4e7eb"/>
+<text x="70" y="62.0" font-size="11" fill="#7b8794" text-anchor="end">0.14</text>
+<rect x="90.0" y="273.7" width="61.0" height="64.3" fill="#c05621" opacity="0.85"/>
+<text x="120.5" y="268.7" font-size="10" fill="#1f2933" text-anchor="middle">0.032</text>
+<rect x="159.0" y="270.9" width="61.0" height="67.1" fill="#2b6cb0" opacity="0.85"/>
+<text x="189.5" y="265.9" font-size="10" fill="#1f2933" text-anchor="middle">0.034</text>
+<text x="155.0" y="356.0" font-size="11" fill="#7b8794" text-anchor="middle">목표 90%</text>
+<rect x="244.0" y="168.4" width="61.0" height="169.6" fill="#c05621" opacity="0.85"/>
+<text x="274.5" y="163.4" font-size="10" fill="#1f2933" text-anchor="middle">0.085</text>
+<rect x="313.0" y="275.5" width="61.0" height="62.5" fill="#2b6cb0" opacity="0.85"/>
+<text x="343.5" y="270.5" font-size="10" fill="#1f2933" text-anchor="middle">0.031</text>
+<text x="309.0" y="356.0" font-size="11" fill="#7b8794" text-anchor="middle">목표 80%</text>
+<rect x="398.0" y="126.1" width="61.0" height="211.9" fill="#c05621" opacity="0.85"/>
+<text x="428.5" y="121.1" font-size="10" fill="#1f2933" text-anchor="middle">0.106</text>
+<rect x="467.0" y="261.7" width="61.0" height="76.3" fill="#2b6cb0" opacity="0.85"/>
+<text x="497.5" y="256.7" font-size="10" fill="#1f2933" text-anchor="middle">0.038</text>
+<text x="463.0" y="356.0" font-size="11" fill="#7b8794" text-anchor="middle">목표 70%</text>
+<rect x="552.0" y="187.8" width="61.0" height="150.2" fill="#c05621" opacity="0.85"/>
+<text x="582.5" y="182.8" font-size="10" fill="#1f2933" text-anchor="middle">0.075</text>
+<rect x="621.0" y="294.5" width="61.0" height="43.5" fill="#2b6cb0" opacity="0.85"/>
+<text x="651.5" y="289.5" font-size="10" fill="#1f2933" text-anchor="middle">0.022</text>
+<text x="617.0" y="356.0" font-size="11" fill="#7b8794" text-anchor="middle">목표 50%</text>
+<rect x="78" y="371" width="12" height="12" fill="#c05621" opacity="0.85"/>
+<text x="96" y="381" font-size="11" fill="#1f2933">C0_RAW (W3 방식)</text>
+<rect x="208.8" y="371" width="12" height="12" fill="#2b6cb0" opacity="0.85"/>
+<text x="226.8" y="381" font-size="11" fill="#1f2933">C0_NORMALIZED</text>
+</svg>

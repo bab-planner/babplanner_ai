@@ -77,7 +77,19 @@ class Ridge:
     _weights: Any = field(default=None, init=False, repr=False)
     _intercept: float = field(default=0.0, init=False, repr=False)
 
-    def fit(self, features: Any, targets: Any) -> "Ridge":
+    def fit(
+        self, features: Any, targets: Any, sample_weight: Any = None
+    ) -> "Ridge":
+        """`sample_weight`를 주면 가중 정규방정식을 푼다.
+
+            w = (XᵀWX + λI)⁻¹ XᵀW(y − ȳ_w)
+
+        표준화는 **가중치 없이** 학습 집합 통계로 한다. 특징의 축척은 가중치와
+        무관한 성질이고, 여기까지 가중치를 태우면 "가중치 효과"와 "축척 변화"가
+        섞여 나중에 분리할 수 없다.
+
+        기본값 `None`이면 W2·W3이 쓰던 계산과 완전히 같다.
+        """
         import numpy as np
 
         matrix = np.asarray(features, dtype=float)
@@ -93,6 +105,19 @@ class Ridge:
         if self.alpha < 0:
             raise BaselineError(f"alpha는 0 이상이어야 합니다: {self.alpha}")
 
+        if sample_weight is None:
+            weights = np.ones(len(matrix), dtype=float)
+        else:
+            weights = np.asarray(sample_weight, dtype=float)
+            if len(weights) != len(matrix):
+                raise BaselineError(
+                    f"가중치 개수가 다릅니다: {len(weights)} vs {len(matrix)}"
+                )
+            if (weights < 0).any():
+                raise BaselineError("가중치는 음수일 수 없습니다.")
+            if weights.sum() <= 0:
+                raise BaselineError("가중치 합이 0입니다.")
+
         self._mean = matrix.mean(axis=0)
         scale = matrix.std(axis=0)
         # 상수 특징은 나누면 폭발한다. 1로 두면 표준화 뒤 0이 된다.
@@ -100,11 +125,12 @@ class Ridge:
         self._scale = scale
         centered = (matrix - self._mean) / scale
 
-        self._intercept = float(target.mean())
+        self._intercept = float((weights * target).sum() / weights.sum())
         residual = target - self._intercept
-        gram = centered.T @ centered
+        weighted = centered * weights[:, None]
+        gram = centered.T @ weighted
         gram[np.diag_indices_from(gram)] += self.alpha
-        self._weights = np.linalg.solve(gram, centered.T @ residual)
+        self._weights = np.linalg.solve(gram, weighted.T @ residual)
         return self
 
     def predict(self, features: Any) -> Any:
@@ -115,6 +141,107 @@ class Ridge:
         matrix = np.asarray(features, dtype=float)
         centered = (matrix - self._mean) / self._scale
         return centered @ self._weights + self._intercept
+
+
+@dataclass
+class LogisticRegression:
+    """L2 정규화 로지스틱 회귀. IRLS(뉴턴법)로 푼다.
+
+    **여기도 scikit-learn을 넣지 않는다.** 이 트랙은 W1부터 numpy 닫힌 해로만
+    baseline을 만들어 왔고, 보조 분류기 하나 때문에 무거운 의존성을 연구
+    환경에 들이면 그 경계가 무너진다. 필요한 것은 선형 분류기 하나다.
+
+    **정규화가 선택이 아니라 필수인 이유.** 특징이 512차원이고 표본이 수백
+    건이면 두 클래스는 거의 항상 완전 분리된다. 정규화가 없으면 가중치가
+    발산하고 예측 확률이 0과 1로 붙어 버린다 — 그러면 stacking 입력으로서
+    아무 정보도 남지 않는다.
+
+    `class_weight="balanced"`는 표준적인 처리다. 고잔반이 드무니 그대로 두면
+    분류기가 "전부 저잔반"이라고 답하는 쪽이 손실이 낮다.
+    """
+
+    alpha: float = 100.0
+    class_weight: str | None = None
+    max_iterations: int = 50
+    tolerance: float = 1e-6
+
+    _mean: Any = field(default=None, init=False, repr=False)
+    _scale: Any = field(default=None, init=False, repr=False)
+    _weights: Any = field(default=None, init=False, repr=False)
+    _intercept: float = field(default=0.0, init=False, repr=False)
+    iterations: int = field(default=0, init=False)
+
+    def fit(self, features: Any, labels: Any) -> "LogisticRegression":
+        import numpy as np
+
+        matrix = np.asarray(features, dtype=float)
+        target = np.asarray(labels, dtype=float)
+        if matrix.ndim != 2:
+            raise BaselineError(f"특징은 2차원이어야 합니다: {matrix.shape}")
+        if len(matrix) != len(target):
+            raise BaselineError(
+                f"개수가 다릅니다: 특징 {len(matrix)}, 라벨 {len(target)}"
+            )
+        if not set(np.unique(target)).issubset({0.0, 1.0}):
+            raise BaselineError("라벨은 0 또는 1이어야 합니다.")
+        if len(np.unique(target)) < 2:
+            raise BaselineError("한 클래스만 있어 분류기를 만들 수 없습니다.")
+        if self.alpha <= 0:
+            raise BaselineError(f"alpha는 양수여야 합니다: {self.alpha}")
+        if self.class_weight not in (None, "balanced"):
+            raise BaselineError(f"알 수 없는 class_weight: {self.class_weight}")
+
+        self._mean = matrix.mean(axis=0)
+        scale = matrix.std(axis=0)
+        scale[scale < 1e-8] = 1.0
+        self._scale = scale
+        design = np.hstack(
+            [np.ones((len(matrix), 1)), (matrix - self._mean) / scale]
+        )
+
+        if self.class_weight == "balanced":
+            counts = np.array([(target == 0).sum(), (target == 1).sum()], dtype=float)
+            per_class = len(target) / (2.0 * counts)
+            weights = np.where(target == 1, per_class[1], per_class[0])
+        else:
+            weights = np.ones(len(target), dtype=float)
+
+        beta = np.zeros(design.shape[1], dtype=float)
+        # 절편은 정규화하지 않는다. 정규화하면 기저 비율이 0.5 쪽으로 끌린다.
+        penalty = np.full(design.shape[1], self.alpha, dtype=float)
+        penalty[0] = 0.0
+
+        for step in range(self.max_iterations):
+            eta = design @ beta
+            probability = 1.0 / (1.0 + np.exp(-np.clip(eta, -30.0, 30.0)))
+            variance = np.clip(probability * (1.0 - probability), 1e-8, None) * weights
+            gradient = design.T @ (weights * (target - probability)) - penalty * beta
+            hessian = (design * variance[:, None]).T @ design
+            hessian[np.diag_indices_from(hessian)] += penalty
+            step_vector = np.linalg.solve(hessian, gradient)
+            beta = beta + step_vector
+            self.iterations = step + 1
+            if np.abs(step_vector).max() < self.tolerance:
+                break
+
+        self._intercept = float(beta[0])
+        self._weights = beta[1:]
+        return self
+
+    def predict_proba(self, features: Any) -> Any:
+        """양성 클래스(고잔반)의 확률. **보정되지 않은 점수다.**"""
+        import numpy as np
+
+        if self._weights is None:
+            raise BaselineError("fit()을 먼저 부르세요.")
+        matrix = np.asarray(features, dtype=float)
+        eta = ((matrix - self._mean) / self._scale) @ self._weights + self._intercept
+        return 1.0 / (1.0 + np.exp(-np.clip(eta, -30.0, 30.0)))
+
+    def predict(self, features: Any, threshold: float = 0.5) -> Any:
+        import numpy as np
+
+        return (self.predict_proba(features) >= threshold).astype(int)
 
 
 def clip(predictions: Any, low: float = 0.0, high: float = 1.0) -> Any:

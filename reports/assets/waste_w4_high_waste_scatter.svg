@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="400" viewBox="0 0 720 400" font-family="system-ui, sans-serif">
+<rect width="720" height="400" fill="#ffffff"/>
+<text x="78" y="28" font-size="16" font-weight="600" fill="#1f2933">고잔반 표본의 정답 대 예측 (W2 분석 집합, n=34)</text>
+<text x="78" y="46" font-size="12" fill="#7b8794">대각선에서 아래로 멀수록 과소추정 · 회색 띠가 치명적 과소추정 구간</text>
+<rect x="78" y="58" width="280" height="280" fill="none" stroke="#e4e7eb"/>
+<line x1="78" y1="338" x2="358" y2="58" stroke="#7b8794" stroke-dasharray="4 4"/>
+<path d="M78,338 L358,58 L358,142.0 L78,338 Z" fill="#b91c1c" opacity="0.07"/>
+<text x="70" y="342.0" font-size="11" fill="#7b8794" text-anchor="end">0.00</text>
+<text x="78.0" y="356.0" font-size="11" fill="#7b8794" text-anchor="middle">0.00</text>
+<text x="70" y="272.0" font-size="11" fill="#7b8794" text-anchor="end">0.25</text>
+<text x="148.0" y="356.0" font-size="11" fill="#7b8794" text-anchor="middle">0.25</text>
+<text x="70" y="202.0" font-size="11" fill="#7b8794" text-anchor="end">0.50</text>
+<text x="218.0" y="356.0" font-size="11" fill="#7b8794" text-anchor="middle">0.50</text>
+<text x="70" y="132.0" font-size="11" fill="#7b8794" text-anchor="end">0.75</text>
+<text x="288.0" y="356.0" font-size="11" fill="#7b8794" text-anchor="middle">0.75</text>
+<text x="70" y="62.0" font-size="11" fill="#7b8794" text-anchor="end">1.00</text>
+<text x="358.0" y="356.0" font-size="11" fill="#7b8794" text-anchor="middle">1.00</text>
+<circle cx="352.6" cy="111.6" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="348.2" cy="58.0" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="353.2" cy="169.8" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="345.3" cy="250.5" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="358.0" cy="58.0" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="353.9" cy="161.1" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="358.0" cy="58.0" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="336.5" cy="88.0" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="358.0" cy="135.0" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="358.0" cy="58.0" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="358.0" cy="150.9" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="330.7" cy="108.8" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="330.0" cy="58.0" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="304.0" cy="142.3" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="310.6" cy="58.0" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="358.0" cy="124.8" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="358.0" cy="200.0" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="353.1" cy="157.2" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="358.0" cy="60.6" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="317.2" cy="328.4" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="351.8" cy="182.4" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="358.0" cy="258.6" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="358.0" cy="224.0" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="358.0" cy="216.4" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="341.5" cy="228.9" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="348.3" cy="172.0" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="341.5" cy="169.1" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="358.0" cy="182.0" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="358.0" cy="138.2" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="309.7" cy="182.4" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="358.0" cy="162.9" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="358.0" cy="136.3" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="358.0" cy="70.6" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="341.5" cy="58.0" r="3.4" fill="#2f855a" opacity="0.55"/>
+<circle cx="352.6" cy="102.5" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="348.2" cy="58.0" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="353.2" cy="147.8" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="345.3" cy="216.5" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="358.0" cy="58.0" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="353.9" cy="157.1" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="358.0" cy="58.0" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="336.5" cy="71.5" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="358.0" cy="114.0" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="358.0" cy="58.0" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="358.0" cy="123.3" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="330.7" cy="95.2" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="330.0" cy="58.0" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="304.0" cy="131.8" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="310.6" cy="58.0" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="358.0" cy="113.2" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="358.0" cy="188.6" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="353.1" cy="145.0" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="358.0" cy="58.0" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="317.2" cy="299.7" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="351.8" cy="157.7" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="358.0" cy="253.2" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="358.0" cy="210.9" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="358.0" cy="213.9" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="341.5" cy="219.6" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="348.3" cy="161.2" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="341.5" cy="150.7" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="358.0" cy="172.6" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="358.0" cy="128.2" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="309.7" cy="148.9" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="358.0" cy="148.7" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="358.0" cy="125.4" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="358.0" cy="58.0" r="3.4" fill="#c05621" opacity="0.55"/>
+<circle cx="341.5" cy="58.0" r="3.4" fill="#c05621" opacity="0.55"/>
+<text x="218.0" y="366" font-size="11" fill="#7b8794" text-anchor="middle">정답 external_waste_ratio</text>
+<rect x="78" y="371" width="12" height="12" fill="#2f855a" opacity="0.85"/>
+<text x="96" y="381" font-size="11" fill="#1f2933">R0 표준</text>
+<rect x="144.0" y="371" width="12" height="12" fill="#c05621" opacity="0.85"/>
+<text x="162.0" y="381" font-size="11" fill="#1f2933">R1 구간균형</text>
+</svg>

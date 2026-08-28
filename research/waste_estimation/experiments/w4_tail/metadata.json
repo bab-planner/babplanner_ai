@@ -1,0 +1,20 @@
+{
+  "stage": "W4",
+  "policyHash": "05426ff78705d3c3a125a44552747460105335c5951ec8b7fa1982c0960e97e6",
+  "developmentCount": 398,
+  "developmentGroups": 24,
+  "highWasteCount": 90,
+  "outerFolds": 5,
+  "innerFolds": 4,
+  "outerGroupLeakage": 0,
+  "analysisOpened": false,
+  "selected": "R0_STANDARD",
+  "selectionReferenceMae": 0.15222160663506892,
+  "gate1Threshold": 0.1722216066350689,
+  "gate1Passed": [
+    "R0_STANDARD",
+    "R2_HIGH_AUX"
+  ],
+  "hyperparameterSearch": false,
+  "note": "R2의 학습 표본 p_high는 안쪽 group OOF로 만들었다. 자기 라벨로 학습한 분류기의 확률을 자기 특징에 붙이지 않는다."
+}
