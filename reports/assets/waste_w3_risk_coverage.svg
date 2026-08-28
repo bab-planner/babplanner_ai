@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="400" viewBox="0 0 720 400" font-family="system-ui, sans-serif">
+<rect width="720" height="400" fill="#ffffff"/>
+<text x="78" y="28" font-size="16" font-weight="600" fill="#1f2933">위험-coverage 곡선 — 승인 표본 MAE</text>
+<text x="78" y="46" font-size="12" fill="#7b8794">coverage를 줄이면 승인 MAE가 내려간다 · oracle은 사후에만 그릴 수 있는 선이다</text>
+<line x1="78" y1="340.0" x2="694" y2="340.0" stroke="#e4e7eb"/>
+<text x="70" y="344.0" font-size="11" fill="#7b8794" text-anchor="end">0.00</text>
+<line x1="78" y1="269.5" x2="694" y2="269.5" stroke="#e4e7eb"/>
+<text x="70" y="273.5" font-size="11" fill="#7b8794" text-anchor="end">0.05</text>
+<line x1="78" y1="199.0" x2="694" y2="199.0" stroke="#e4e7eb"/>
+<text x="70" y="203.0" font-size="11" fill="#7b8794" text-anchor="end">0.10</text>
+<line x1="78" y1="128.5" x2="694" y2="128.5" stroke="#e4e7eb"/>
+<text x="70" y="132.5" font-size="11" fill="#7b8794" text-anchor="end">0.15</text>
+<line x1="78" y1="58.0" x2="694" y2="58.0" stroke="#e4e7eb"/>
+<text x="70" y="62.0" font-size="11" fill="#7b8794" text-anchor="end">0.20</text>
+<text x="78.0" y="358.0" font-size="11" fill="#7b8794" text-anchor="middle">100%</text>
+<text x="232.0" y="358.0" font-size="11" fill="#7b8794" text-anchor="middle">90%</text>
+<text x="386.0" y="358.0" font-size="11" fill="#7b8794" text-anchor="middle">80%</text>
+<text x="540.0" y="358.0" font-size="11" fill="#7b8794" text-anchor="middle">70%</text>
+<text x="694.0" y="358.0" font-size="11" fill="#7b8794" text-anchor="middle">50%</text>
+<text x="386.0" y="386" font-size="11" fill="#7b8794" text-anchor="middle">coverage (승인 비율)</text>
+<text x="16" y="199.0" font-size="11" fill="#7b8794" transform="rotate(-90 16 199.0)" text-anchor="middle">승인 표본 MAE</text>
+<path d="M78.0,116.5 L232.0,128.4 L386.0,141.6 L540.0,158.2 L694.0,181.1" fill="none" stroke="#2b6cb0" stroke-width="2"/>
+<circle cx="78.0" cy="116.5" r="3.4" fill="#2b6cb0"/>
+<circle cx="232.0" cy="128.4" r="3.4" fill="#2b6cb0"/>
+<circle cx="386.0" cy="141.6" r="3.4" fill="#2b6cb0"/>
+<circle cx="540.0" cy="158.2" r="3.4" fill="#2b6cb0"/>
+<circle cx="694.0" cy="181.1" r="3.4" fill="#2b6cb0"/>
+<path d="M78.0,116.5 L232.0,116.4 L386.0,116.6 L540.0,115.9 L694.0,117.4" fill="none" stroke="#c05621" stroke-width="2"/>
+<circle cx="78.0" cy="116.5" r="3.4" fill="#c05621"/>
+<circle cx="232.0" cy="116.4" r="3.4" fill="#c05621"/>
+<circle cx="386.0" cy="116.6" r="3.4" fill="#c05621"/>
+<circle cx="540.0" cy="115.9" r="3.4" fill="#c05621"/>
+<circle cx="694.0" cy="117.4" r="3.4" fill="#c05621"/>
+<path d="M78.0,116.5 L232.0,167.8 L386.0,200.7 L540.0,227.0 L694.0,267.2" fill="none" stroke="#7b8794" stroke-width="2" stroke-dasharray="5 4"/>
+<circle cx="78.0" cy="116.5" r="3.4" fill="#7b8794"/>
+<circle cx="232.0" cy="167.8" r="3.4" fill="#7b8794"/>
+<circle cx="386.0" cy="200.7" r="3.4" fill="#7b8794"/>
+<circle cx="540.0" cy="227.0" r="3.4" fill="#7b8794"/>
+<circle cx="694.0" cy="267.2" r="3.4" fill="#7b8794"/>
+<path d="M78.0,124.9 L232.0,145.8 L386.0,160.7 L540.0,182.7 L694.0,222.5" fill="none" stroke="#6b46c1" stroke-width="2"/>
+<circle cx="78.0" cy="124.9" r="3.4" fill="#6b46c1"/>
+<circle cx="232.0" cy="145.8" r="3.4" fill="#6b46c1"/>
+<circle cx="386.0" cy="160.7" r="3.4" fill="#6b46c1"/>
+<circle cx="540.0" cy="182.7" r="3.4" fill="#6b46c1"/>
+<circle cx="694.0" cy="222.5" r="3.4" fill="#6b46c1"/>
+<line x1="78" y1="366" x2="100" y2="366" stroke="#2b6cb0" stroke-width="2"/>
+<text x="106" y="370" font-size="11" fill="#1f2933">DEVELOPMENT OOF · C0_knn3</text>
+<line x1="277.0" y1="366" x2="299.0" y2="366" stroke="#c05621" stroke-width="2"/>
+<text x="305.0" y="370" font-size="11" fill="#1f2933">무작위 거절</text>
+<line x1="350.6" y1="366" x2="372.6" y2="366" stroke="#7b8794" stroke-width="2" stroke-dasharray="5 4"/>
+<text x="378.6" y="370" font-size="11" fill="#1f2933">oracle 상한 (실행 불가)</text>
+<line x1="496.8" y1="366" x2="518.8" y2="366" stroke="#6b46c1" stroke-width="2"/>
+<text x="524.8" y="370" font-size="11" fill="#1f2933">W2 분석 집합 (시험 아님)</text>
+</svg>

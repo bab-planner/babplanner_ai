@@ -151,6 +151,11 @@ W1에서 정한 규칙을 그대로 적용했다. 통과하지 못한 행은 **�
 | TEST | 116 | 10 |
 | 누수 | **없음** | |
 
+> **재분류 (2026-08-29, W3).** 이 문서가 TEST 116건의 결과를 공개한 시점부터
+> 그 집합은 소비된 것으로 본다. W3부터 이름은 **ANALYSIS (`W2_ANALYSIS`)**
+> 이고, 방법 선택이나 임계값 결정에 쓰지 않는다. 자세한 내용은
+> `reports/waste_w3_selective_prediction.md` §2.
+
 **TEST를 보기 전에 동결했다.**
 `research/waste_estimation/experiments/w2_external/freeze.json`
 sha256 `662626343482afa9…`

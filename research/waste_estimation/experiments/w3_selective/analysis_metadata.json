@@ -1,0 +1,19 @@
+{
+  "stage": "W3",
+  "split": "W2_ANALYSIS",
+  "isFinalTest": false,
+  "isGeneralizationTest": false,
+  "note": "W2에서 이미 결과를 본 집합이다. 여기 숫자는 사후 분석이며 새로운 일반화 근거가 아니다.",
+  "policyHash": "8740ebcafbb3a70561e443640b2e81796f9a377c91355fe33936987a1e3498ab",
+  "selectedSignal": "C0_knn3",
+  "sampleCount": 116,
+  "groupCount": 10,
+  "mae": 0.1525750461262624,
+  "spearman": 0.6065659477953331,
+  "aurc": 0.08556628879587466,
+  "largeErrorCount": 19,
+  "largeErrorCaught": 9,
+  "largeErrorMissed": 10,
+  "predictionSource": "w2_external/test_predictions.csv B2_after",
+  "refit": false
+}

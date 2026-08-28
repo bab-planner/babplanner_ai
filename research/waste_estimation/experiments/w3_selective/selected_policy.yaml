@@ -1,0 +1,6 @@
+# DEVELOPMENT OOF에서 고른 신뢰 정책. ANALYSIS를 보기 전에 정했다.
+signal: C0_knn3
+aurc: 0.108429
+spearman: +0.431727
+score_direction: higher_is_less_reliable
+calibrated: false

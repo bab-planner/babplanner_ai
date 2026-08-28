@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="400" viewBox="0 0 720 400" font-family="system-ui, sans-serif">
+<rect width="720" height="400" fill="#ffffff"/>
+<text x="78" y="28" font-size="16" font-weight="600" fill="#1f2933">coverage별 고잔반 표본 거절률</text>
+<text x="78" y="46" font-size="12" fill="#7b8794">고잔반이 전체보다 빨리 빠진다 · MAE 하락의 일부는 구성 변화다</text>
+<line x1="78" y1="340.0" x2="694" y2="340.0" stroke="#e4e7eb"/>
+<text x="70" y="344.0" font-size="11" fill="#7b8794" text-anchor="end">0%</text>
+<line x1="78" y1="269.5" x2="694" y2="269.5" stroke="#e4e7eb"/>
+<text x="70" y="273.5" font-size="11" fill="#7b8794" text-anchor="end">25%</text>
+<line x1="78" y1="199.0" x2="694" y2="199.0" stroke="#e4e7eb"/>
+<text x="70" y="203.0" font-size="11" fill="#7b8794" text-anchor="end">50%</text>
+<line x1="78" y1="128.5" x2="694" y2="128.5" stroke="#e4e7eb"/>
+<text x="70" y="132.5" font-size="11" fill="#7b8794" text-anchor="end">75%</text>
+<line x1="78" y1="58.0" x2="694" y2="58.0" stroke="#e4e7eb"/>
+<text x="70" y="62.0" font-size="11" fill="#7b8794" text-anchor="end">100%</text>
+<rect x="86.0" y="340.0" width="51.6" height="0.0" fill="#c05621" opacity="0.85"/>
+<rect x="143.6" y="340.0" width="51.6" height="0.0" fill="#2b6cb0" opacity="0.85"/>
+<text x="139.6" y="358.0" font-size="11" fill="#7b8794" text-anchor="middle">100%</text>
+<rect x="209.2" y="276.6" width="51.6" height="63.4" fill="#c05621" opacity="0.85"/>
+<text x="235.0" y="271.6" font-size="10" fill="#1f2933" text-anchor="middle">22%</text>
+<rect x="266.8" y="311.8" width="51.6" height="28.2" fill="#2b6cb0" opacity="0.85"/>
+<text x="292.6" y="306.8" font-size="10" fill="#1f2933" text-anchor="middle">10%</text>
+<text x="262.8" y="358.0" font-size="11" fill="#7b8794" text-anchor="middle">90%</text>
+<rect x="332.4" y="216.4" width="51.6" height="123.6" fill="#c05621" opacity="0.85"/>
+<text x="358.2" y="211.4" font-size="10" fill="#1f2933" text-anchor="middle">44%</text>
+<rect x="390.0" y="283.6" width="51.6" height="56.4" fill="#2b6cb0" opacity="0.85"/>
+<text x="415.8" y="278.6" font-size="10" fill="#1f2933" text-anchor="middle">20%</text>
+<text x="386.0" y="358.0" font-size="11" fill="#7b8794" text-anchor="middle">80%</text>
+<rect x="455.6" y="162.6" width="51.6" height="177.4" fill="#c05621" opacity="0.85"/>
+<text x="481.4" y="157.6" font-size="10" fill="#1f2933" text-anchor="middle">63%</text>
+<rect x="513.2" y="255.4" width="51.6" height="84.6" fill="#2b6cb0" opacity="0.85"/>
+<text x="539.0" y="250.4" font-size="10" fill="#1f2933" text-anchor="middle">30%</text>
+<text x="509.2" y="358.0" font-size="11" fill="#7b8794" text-anchor="middle">70%</text>
+<rect x="578.8" y="92.9" width="51.6" height="247.1" fill="#c05621" opacity="0.85"/>
+<text x="604.6" y="87.9" font-size="10" fill="#1f2933" text-anchor="middle">88%</text>
+<rect x="636.4" y="199.0" width="51.6" height="141.0" fill="#2b6cb0" opacity="0.85"/>
+<text x="662.2" y="194.0" font-size="10" fill="#1f2933" text-anchor="middle">50%</text>
+<text x="632.4" y="358.0" font-size="11" fill="#7b8794" text-anchor="middle">50%</text>
+<text x="386.0" y="386" font-size="11" fill="#7b8794" text-anchor="middle">coverage (승인 비율)</text>
+<line x1="78" y1="366" x2="100" y2="366" stroke="#c05621" stroke-width="2"/>
+<text x="106" y="370" font-size="11" fill="#1f2933">고잔반 거절률</text>
+<line x1="158.2" y1="366" x2="180.2" y2="366" stroke="#2b6cb0" stroke-width="2"/>
+<text x="186.2" y="370" font-size="11" fill="#1f2933">전체 거절률</text>
+</svg>

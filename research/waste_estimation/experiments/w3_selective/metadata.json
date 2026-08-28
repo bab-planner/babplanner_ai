@@ -1,0 +1,24 @@
+{
+  "stage": "W3",
+  "developmentCount": 398,
+  "developmentGroups": 24,
+  "folds": 5,
+  "foldSeed": 42,
+  "baseEstimator": {
+    "backbone": "resnet18",
+    "alpha": 100.0,
+    "source": "W2 development_selection.json (after-only)",
+    "retuned": false
+  },
+  "oofMae": 0.15850786343080112,
+  "developmentMean": 0.35955011722433283,
+  "knnCandidates": [
+    3,
+    5,
+    10
+  ],
+  "ensembleMembers": 5,
+  "ensembleSeed": 20260829,
+  "groupLeakage": 0,
+  "note": "신뢰 점수는 전부 추론 시점 계산이다. 정답이나 잔차가 입력으로 들어가지 않는다."
+}

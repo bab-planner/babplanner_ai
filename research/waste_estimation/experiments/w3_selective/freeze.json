@@ -1,0 +1,62 @@
+{
+  "approvedRule": "reliability_score <= threshold -> APPROVED",
+  "baseEstimator": {
+    "alpha": 100.0,
+    "backbone": "resnet18",
+    "retuned": false,
+    "source": "W2 development_selection.json (after-only)"
+  },
+  "calibrated": false,
+  "calibrationNote": "이 점수는 보정된 정확도 확률이 아니다. '0.82'가 '82% 확률로 맞다'는 뜻이 아니다.",
+  "candidates": [
+    "C0_knn3",
+    "C0_knn5",
+    "C0_knn10",
+    "C1_disagreement",
+    "C2_extremeness",
+    "combined"
+  ],
+  "combinationRule": "가장 좋은 C0 하나와 C1을 rank-normalize 후 동일 가중 평균. 메타 모델을 학습하지 않는다.",
+  "coveragePoints": [
+    1.0,
+    0.9,
+    0.8,
+    0.7,
+    0.5
+  ],
+  "developmentOnly": true,
+  "ensembleMembers": 5,
+  "ensembleSeed": 20260829,
+  "forbidden": [
+    "W2 TEST(ANALYSIS)를 보고 신호/임계값/결합 규칙 변경",
+    "정답이나 잔차를 신뢰 신호 입력으로 사용",
+    "coverage 없이 위험만 보고",
+    "oracle을 실행 가능한 방법으로 표시",
+    "production fixture 교체"
+  ],
+  "frozenAt": "2026-08-29",
+  "knnCandidates": [
+    3,
+    5,
+    10
+  ],
+  "purpose": "DEVELOPMENT OOF에서 신뢰 신호와 임계 정책을 고정한다. 이후 W2 TEST(이제 ANALYSIS)에서 이 정책을 바꾸지 않는다.",
+  "rejectedRule": "reliability_score > threshold -> REJECTED (추론 거절)",
+  "scoreDirection": "높을수록 덜 믿을 만함 (reliability_score)",
+  "selectedAurc": 0.10842925338042837,
+  "selectedSignal": "C0_knn3",
+  "selectedSpearman": 0.4317265386038924,
+  "selectionPrimary": "AURC (낮을수록 좋다)",
+  "selectionTieMargin": 0.002,
+  "selectionTieRule": "단일 신호 < 결합 신호, 그리고 k가 작은 쪽",
+  "sha256OfRecordWithoutHash": "8740ebcafbb3a70561e443640b2e81796f9a377c91355fe33936987a1e3498ab",
+  "stage": "W3",
+  "thresholdSource": "DEVELOPMENT OOF 점수의 분위수. 이후 집합에서 다시 잡지 않는다.",
+  "thresholds": {
+    "0.50": 0.09187821405769554,
+    "0.70": 0.1052697462673507,
+    "0.80": 0.11287913521329382,
+    "0.90": 0.1233792957258693,
+    "1.00": 0.20267948476981465
+  }
+}
