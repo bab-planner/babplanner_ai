@@ -239,7 +239,9 @@ def test_warmup_frames_do_not_count_detections_yet():
     assert results[0].observation.occupancy_count == 0
     assert results[0].detections, "detector는 상자를 냈다"
     assert results[0].tracked == [], "아직 확정된 track은 없다"
-    assert results[0].observation.reliability_flag is ReliabilityFlag.NO_DETECTION
+    # 상자가 있었으므로 NO_DETECTION이 아니다. 그 구분이 이 flag의 요점이다.
+    assert results[0].observation.reliability_flag is ReliabilityFlag.UNCONFIRMED_TRACKS
+    assert results[0].observation.mean_detection_confidence is not None
     # 세 번째 프레임에서 확정된다.
     assert results[2].observation.occupancy_count == 1
 

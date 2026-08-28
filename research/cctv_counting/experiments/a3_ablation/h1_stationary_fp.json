@@ -1,0 +1,67 @@
+{
+  "note": "A2에서 눈으로 확인한 정지 사물 3곳에 사람 상자가 몇 프레임 붙는지 센 것. 읽기 전용 분석이며 파이프라인에 정지 사물 필터를 넣지 않았다.",
+  "regionsPixels": {
+    "traffic_cones": [
+      425,
+      165,
+      475,
+      215
+    ],
+    "post_or_hydrant": [
+      492,
+      320,
+      528,
+      395
+    ],
+    "small_white_object": [
+      590,
+      115,
+      618,
+      150
+    ]
+  },
+  "sampledFrames": 80,
+  "samplingIntervalSeconds": 1.0,
+  "byConfidence": {
+    "0.5": {
+      "traffic_cones": {
+        "framesWithBox": 29,
+        "ofFrames": 80,
+        "ratio": 0.3625,
+        "secondsApprox": 29
+      },
+      "post_or_hydrant": {
+        "framesWithBox": 6,
+        "ofFrames": 80,
+        "ratio": 0.075,
+        "secondsApprox": 6
+      },
+      "small_white_object": {
+        "framesWithBox": 3,
+        "ofFrames": 80,
+        "ratio": 0.0375,
+        "secondsApprox": 3
+      }
+    },
+    "0.7": {
+      "traffic_cones": {
+        "framesWithBox": 9,
+        "ofFrames": 80,
+        "ratio": 0.1125,
+        "secondsApprox": 9
+      },
+      "post_or_hydrant": {
+        "framesWithBox": 4,
+        "ofFrames": 80,
+        "ratio": 0.05,
+        "secondsApprox": 4
+      },
+      "small_white_object": {
+        "framesWithBox": 0,
+        "ofFrames": 80,
+        "ratio": 0.0,
+        "secondsApprox": 0
+      }
+    }
+  }
+}

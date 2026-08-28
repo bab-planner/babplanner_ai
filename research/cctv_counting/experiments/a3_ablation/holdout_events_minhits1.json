@@ -1,0 +1,43 @@
+{
+  "windowStartSeconds": 30.0,
+  "windowEndSeconds": 79.0,
+  "toleranceSeconds": 1.5,
+  "toleranceFixedBeforeSeeingResults": true,
+  "directions": {
+    "IN": {
+      "actual": 7,
+      "predicted": 8,
+      "matched": 7,
+      "falsePositives": 1,
+      "missed": 0,
+      "precision": 0.875,
+      "recall": 1.0,
+      "f1": 0.9333333333333333,
+      "exploratoryOnlySmallSample": true,
+      "falsePositiveTimes": [
+        60.9
+      ],
+      "missedTimes": []
+    },
+    "OUT": {
+      "actual": 4,
+      "predicted": 10,
+      "matched": 4,
+      "falsePositives": 6,
+      "missed": 0,
+      "precision": 0.4,
+      "recall": 1.0,
+      "f1": 0.5714285714285715,
+      "exploratoryOnlySmallSample": true,
+      "falsePositiveTimes": [
+        38.6,
+        47.5,
+        49.7,
+        72.1,
+        73.1,
+        73.7
+      ],
+      "missedTimes": []
+    }
+  }
+}

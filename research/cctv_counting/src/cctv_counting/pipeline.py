@@ -20,7 +20,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from cctv_counting.config import CctvConfig
+from cctv_counting.config import CctvConfig, CountingMethod
+from cctv_counting.confirmation import TemporalConfirmationCounter
 from cctv_counting.crossing import (
     Crossing,
     LineCrossingCounter,
@@ -67,6 +68,9 @@ class CountingPipeline:
     frame_height: int
 
     _tracker: ByteTrackInspiredTracker | None = field(default=None, init=False, repr=False)
+    _confirmer: TemporalConfirmationCounter | None = field(
+        default=None, init=False, repr=False
+    )
     _crossing: LineCrossingCounter | None = field(default=None, init=False, repr=False)
     _policy: ReliabilityPolicy = field(init=False, repr=False)
     _naive_line_hits: int = field(default=0, init=False, repr=False)
@@ -75,6 +79,12 @@ class CountingPipeline:
         if self.frame_width <= 0 or self.frame_height <= 0:
             raise PipelineError(
                 f"프레임 크기가 올바르지 않습니다: {self.frame_width}x{self.frame_height}"
+            )
+
+        if self.config.counting_method is CountingMethod.TEMPORAL_CONFIRMATION:
+            self._confirmer = TemporalConfirmationCounter(
+                min_observations=self.config.confirmation.min_observations,
+                iou_threshold=self.config.confirmation.iou_threshold,
             )
 
         tracker_config = self.config.tracker
@@ -113,6 +123,8 @@ class CountingPipeline:
         """다음 영상으로 넘어가기 전에 부른다. track 번호가 영상을 넘지 않게."""
         if self._tracker is not None:
             self._tracker.reset()
+        if self._confirmer is not None:
+            self._confirmer.reset()
         if self._crossing is not None:
             self._crossing.reset()
         self._naive_line_hits = 0
@@ -139,10 +151,14 @@ class CountingPipeline:
 
         crossings: list[Crossing] = []
         if self._tracker is None:
-            # baseline A. 상자 개수가 곧 occupancy다.
+            # baseline A 또는 B. 어느 쪽이든 입장 인원은 셀 수 없다.
             tracked: list[TrackedPerson] = []
-            occupancy = len(detections)
-            confidences = [d.confidence for d in detections]
+            if self._confirmer is not None:
+                # B. 연속으로 확인된 상자만 센다. 신원은 만들지 않는다.
+                occupancy = len(self._confirmer.update(detections))
+            else:
+                # A. 상자 개수가 곧 occupancy다.
+                occupancy = len(detections)
             entries: int | None = None
             exits: int | None = None
             line = self.config.line.to_line()
@@ -161,7 +177,6 @@ class CountingPipeline:
         else:
             tracked = self._tracker.update(detections)
             occupancy = len(tracked)
-            confidences = [person.confidence for person in tracked]
             if self._crossing is not None:
                 positions = {
                     person.track_id: normalize_point(
@@ -181,7 +196,11 @@ class CountingPipeline:
                 entries = None
                 exits = None
 
-        signal = evaluate_reliability(confidences, occupancy, self._policy)
+        # **detector가 낸 상자의 신뢰도**를 넘긴다. 확정된 track의 것이
+        # 아니다. 그래야 NO_DETECTION이 detector 출력 0과 정확히 대응한다.
+        signal = evaluate_reliability(
+            [d.confidence for d in detections], occupancy, self._policy
+        )
         observation = FrameObservation(
             frame_index=frame_index,
             timestamp_seconds=timestamp_seconds,

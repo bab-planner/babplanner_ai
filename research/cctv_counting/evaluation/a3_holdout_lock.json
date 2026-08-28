@@ -1,0 +1,11 @@
+{
+  "note": "예측을 보기 전에 작성한 holdout 정답의 지문. 이 뒤로 정답 파일이 바뀌면 holdout은 더 이상 pristine이 아니다.",
+  "sealedBeforeSeeingHoldoutPredictions": true,
+  "devRange": "0.0 <= t < 30.0",
+  "holdoutRange": "30.0 <= t <= 79.0",
+  "sha256": {
+    "a3_holdout_occupancy_ground_truth.csv": "76f372232c1122d4f83cc9a3ecf9a5907f9a6f7dd5ebbd11d542416896965ac6",
+    "a3_holdout_crossing_ground_truth.csv": "ccecc2319e1b32daabcf54ebdaad3b221bb01cd6abeb00c07c613c686c49609f",
+    "a2_annotation_rules.md": "8c67c40e22dbefc61ba23bc7457c3ed15d28af6a871bcef17e9ad345dca512be"
+  }
+}

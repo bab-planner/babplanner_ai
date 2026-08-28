@@ -1,0 +1,39 @@
+{
+  "label": "HOLDOUT a3_C_track_minhits1",
+  "windowStartSeconds": 30.0,
+  "windowEndSeconds": 79.0,
+  "samples": 50,
+  "occupancy": {
+    "mae": 0.46,
+    "rmse": 0.8366600265340756,
+    "bias": 0.18,
+    "actualMean": 5.12,
+    "predictedMean": 5.3
+  },
+  "reliabilityStratification": {
+    "OK": {
+      "samples": 50,
+      "meanAbsError": 0.46
+    },
+    "LOW_CONFIDENCE": {
+      "samples": 0,
+      "meanAbsError": null
+    },
+    "NO_DETECTION": {
+      "samples": 0,
+      "meanAbsError": null
+    },
+    "UNCONFIRMED_TRACKS": {
+      "samples": 0,
+      "meanAbsError": null
+    }
+  },
+  "entry": {
+    "actualIn": 7,
+    "predictedIn": 8,
+    "absoluteErrorIn": 1,
+    "actualOut": 4,
+    "predictedOut": 10,
+    "absoluteErrorOut": 6
+  }
+}

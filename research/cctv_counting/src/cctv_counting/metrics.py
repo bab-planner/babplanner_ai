@@ -184,3 +184,94 @@ def render_condition_table(rows: Sequence[ConditionScores]) -> str:
     if not rows:
         return header + "\n| (조건 annotation 없음) | 0 | N/A | N/A |"
     return "\n".join([header, *(row.render() for row in rows)])
+
+
+# --- 사건 단위 대조 ---------------------------------------------------------
+#
+# 개수 오차는 "몇 개 틀렸나"만 말한다. 없는 사건을 셌는지, 있는 사건을 놓쳤는지
+# 구분하지 못한다. 과대 계수 3과 (없는 것 5 + 놓친 것 2)는 같은 개수 오차를
+# 내지만 원인이 전혀 다르다.
+#
+# **허용 오차는 결과를 보기 전에 정한다.** 정답이 1초 간격 표본에서 나왔으므로
+# 사건 시각이 최대 1초 늦게 기록될 수 있고, 확정 거리(hysteresis) 때문에
+# 예측 쪽도 조금 늦는다. 그래서 1.5초로 둔다. 결과가 나쁘다고 이 값을 키우면
+# 그 숫자는 아무것도 재지 않은 것이 된다.
+
+
+@dataclass(frozen=True)
+class TimedEvent:
+    """시각과 방향을 가진 통과 사건 하나."""
+
+    timestamp_seconds: float
+    direction: str
+
+
+@dataclass(frozen=True)
+class EventMatchResult:
+    matched: list[tuple[TimedEvent, TimedEvent]]
+    false_positives: list[TimedEvent]
+    missed: list[TimedEvent]
+
+    @property
+    def precision(self) -> float | None:
+        predicted = len(self.matched) + len(self.false_positives)
+        if predicted == 0:
+            # 예측이 하나도 없으면 정밀도는 정의되지 않는다. 1.0으로 두면
+            # 아무것도 안 낸 모델이 완벽해 보인다.
+            return None
+        return len(self.matched) / predicted
+
+    @property
+    def recall(self) -> float | None:
+        actual = len(self.matched) + len(self.missed)
+        if actual == 0:
+            return None
+        return len(self.matched) / actual
+
+    @property
+    def f1(self) -> float | None:
+        p, r = self.precision, self.recall
+        if p is None or r is None or (p + r) == 0.0:
+            return None
+        return 2 * p * r / (p + r)
+
+
+def match_events(
+    predicted: Sequence[TimedEvent],
+    actual: Sequence[TimedEvent],
+    tolerance_seconds: float,
+) -> EventMatchResult:
+    """예측 사건과 정답 사건을 1:1로 맞춘다.
+
+    방향이 같고 시각 차이가 tolerance 안이면 짝이 될 수 있다. 시각 차이가
+    작은 쌍부터 확정하고, 한 사건은 한 번만 쓰인다. 같은 차이면 이른 사건이
+    먼저다. 같은 입력이면 항상 같은 결과가 나와야 한다.
+    """
+    if tolerance_seconds < 0:
+        raise MetricError(f"tolerance_seconds는 0 이상이어야 합니다: {tolerance_seconds}")
+
+    candidates: list[tuple[float, int, int]] = []
+    for i, p in enumerate(predicted):
+        for j, a in enumerate(actual):
+            if p.direction != a.direction:
+                continue
+            gap = abs(p.timestamp_seconds - a.timestamp_seconds)
+            if gap <= tolerance_seconds:
+                candidates.append((gap, i, j))
+    candidates.sort(key=lambda item: (item[0], item[1], item[2]))
+
+    used_p: set[int] = set()
+    used_a: set[int] = set()
+    matched: list[tuple[TimedEvent, TimedEvent]] = []
+    for _, i, j in candidates:
+        if i in used_p or j in used_a:
+            continue
+        used_p.add(i)
+        used_a.add(j)
+        matched.append((predicted[i], actual[j]))
+
+    return EventMatchResult(
+        matched=matched,
+        false_positives=[p for i, p in enumerate(predicted) if i not in used_p],
+        missed=[a for j, a in enumerate(actual) if j not in used_a],
+    )

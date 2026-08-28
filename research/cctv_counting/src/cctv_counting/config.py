@@ -48,6 +48,24 @@ class DetectorBackend(str, Enum):
     TORCHVISION = "torchvision"
 
 
+class CountingMethod(str, Enum):
+    """occupancy를 무엇으로 셀 것인가.
+
+    A3에서 추가했다. A2까지는 tracker.enabled 하나로 두 가지(A, C)만
+    골랐는데, 그러면 "추적의 이득이 연결에서 왔는가 확인에서 왔는가"를
+    분해할 수 없다. 가운데 항을 명시적으로 둔다.
+    """
+
+    #: A. 프레임별 상자 수. 시간 정보를 전혀 쓰지 않는다.
+    DETECTION_ONLY = "detection_only"
+
+    #: B. 직전 프레임과의 겹침으로 연속 관측만 확인한다. 연결도 신원도 없다.
+    TEMPORAL_CONFIRMATION = "temporal_confirmation"
+
+    #: C. 추적. 이것만 입장/퇴장을 셀 수 있다.
+    TRACKING = "tracking"
+
+
 class Strict(BaseModel):
     """오타를 막는다. 모르는 키가 오면 터진다."""
 
@@ -71,6 +89,14 @@ class DetectorConfig(Strict):
 
     #: 긴 변을 이 길이로 줄여서 넣는다. None이면 원본 그대로.
     max_input_size: int | None = Field(default=None, ge=64)
+
+
+class ConfirmationConfig(Strict):
+    """B baseline 설정. counting_method가 temporal_confirmation일 때만 쓴다."""
+
+    #: 이만큼 연속으로 보인 상자만 센다. 1이면 detection-only와 같아진다.
+    min_observations: int = Field(default=3, ge=1)
+    iou_threshold: float = Field(default=0.3, ge=0.0, le=1.0)
 
 
 class TrackerConfig(Strict):
@@ -197,6 +223,7 @@ class CctvConfig(Strict):
     tracker: TrackerConfig = Field(default_factory=TrackerConfig)
     roi: RoiConfig = Field(default_factory=RoiConfig)
     line: LineConfig = Field(default_factory=LineConfig)
+    confirmation: ConfirmationConfig = Field(default_factory=ConfirmationConfig)
     reliability: ReliabilityConfig = Field(default_factory=ReliabilityConfig)
     window: WindowConfig = Field(default_factory=WindowConfig)
     output: OutputConfig = Field(default_factory=OutputConfig)
@@ -207,6 +234,19 @@ class CctvConfig(Strict):
 
     #: 매 N번째 프레임만 처리한다. 1이면 전부.
     frame_stride: int = Field(default=1, ge=1)
+
+    @property
+    def counting_method(self) -> CountingMethod:
+        """이 설정이 실제로 쓰는 계수 방법.
+
+        tracker.enabled와 confirmation을 따로 두는 대신 여기서 하나로
+        읽는다. 실험 기록에 "무엇으로 셌는가"가 한 값으로 남아야 한다.
+        """
+        if self.tracker.enabled:
+            return CountingMethod.TRACKING
+        if self.confirmation.min_observations > 1:
+            return CountingMethod.TEMPORAL_CONFIRMATION
+        return CountingMethod.DETECTION_ONLY
 
     @property
     def counts_entries(self) -> bool:

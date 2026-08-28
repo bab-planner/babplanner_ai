@@ -138,9 +138,18 @@ def main(argv: list[str] | None = None) -> int:
     if args.confidence is not None:
         overrides["confidence_threshold"] = args.confidence
     if overrides:
-        config = config.model_copy(
-            update={"detector": config.detector.model_copy(update=overrides)}
-        )
+        # **model_copy(update=...)를 쓰지 않는다.** 그것은 검증도 변환도 하지
+        # 않고 값을 그대로 밀어 넣는다. --device cuda 를 주면 Device 열거형이
+        # 아니라 문자열 "cuda"가 들어가고, 나중에 .value를 읽는 자리에서
+        # 터진다. 실제로 A3에서 --device를 처음 쓰다가 발견했다.
+        # 전체를 다시 검증해서 만든다. 잘못된 값도 여기서 걸린다.
+        payload = config_to_dict(config)
+        payload["detector"].update(overrides)
+        try:
+            config = CctvConfig.model_validate(payload)
+        except ValueError as error:
+            print(f"덮어쓴 설정이 올바르지 않습니다: {error}", file=sys.stderr)
+            return EXIT_USAGE
 
     from cctv_counting.video import AnnotatedVideoWriter, VideoError, VideoReader
 

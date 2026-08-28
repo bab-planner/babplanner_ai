@@ -1,0 +1,31 @@
+{
+  "label": "a3_B_confirm3",
+  "windowEndSeconds": 29.0,
+  "samples": 30,
+  "occupancy": {
+    "mae": 0.7666666666666667,
+    "rmse": 1.0801234497346435,
+    "bias": -0.6333333333333333,
+    "actualMean": 5.966666666666667,
+    "predictedMean": 5.333333333333333
+  },
+  "reliabilityStratification": {
+    "OK": {
+      "samples": 29,
+      "meanAbsError": 0.6896551724137931
+    },
+    "LOW_CONFIDENCE": {
+      "samples": 0,
+      "meanAbsError": null
+    },
+    "NO_DETECTION": {
+      "samples": 0,
+      "meanAbsError": null
+    },
+    "UNCONFIRMED_TRACKS": {
+      "samples": 1,
+      "meanAbsError": 3.0
+    }
+  },
+  "entry": null
+}

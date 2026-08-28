@@ -43,6 +43,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--occupancy-gt", type=Path, required=True)
     parser.add_argument("--crossing-gt", type=Path, default=None)
     parser.add_argument("--video-id", required=True)
+    parser.add_argument("--start-seconds", type=float, default=0.0)
     parser.add_argument("--end-seconds", type=float, required=True)
     parser.add_argument("--label", default="")
     parser.add_argument("--out", type=Path, default=None)
@@ -54,7 +55,8 @@ def main(argv: list[str] | None = None) -> int:
     gt = [
         row
         for row in read_occupancy_ground_truth(args.occupancy_gt)
-        if row.video_id == args.video_id and row.timestamp_seconds <= args.end_seconds
+        if row.video_id == args.video_id
+        and args.start_seconds <= row.timestamp_seconds <= args.end_seconds
     ]
     matched = [(row, by_frame[row.frame_index]) for row in gt if row.frame_index in by_frame]
     if len(matched) != len(gt):
@@ -69,7 +71,10 @@ def main(argv: list[str] | None = None) -> int:
 
     label = args.label or args.observations.parent.name
     print(f"=== {label} ===")
-    print(f"정답 구간 0 ~ {args.end_seconds:.0f}초, {len(matched)}개 시점\n")
+    print(
+        f"정답 구간 {args.start_seconds:.0f} ~ {args.end_seconds:.0f}초, "
+        f"{len(matched)}개 시점\n"
+    )
     print("## Occupancy")
     print(scores.render())
     print(f"실제 평균 {sum(actual)/len(actual):.2f}명, 예측 평균 {sum(predicted)/len(predicted):.2f}명")
@@ -84,6 +89,7 @@ def main(argv: list[str] | None = None) -> int:
 
     payload: dict = {
         "label": label,
+        "windowStartSeconds": args.start_seconds,
         "windowEndSeconds": args.end_seconds,
         "samples": len(matched),
         "occupancy": {
@@ -121,28 +127,43 @@ def main(argv: list[str] | None = None) -> int:
         events = [
             e
             for e in read_crossing_ground_truth(args.crossing_gt)
-            if e.video_id == args.video_id and e.timestamp_seconds <= args.end_seconds
+            if e.video_id == args.video_id
+            and args.start_seconds <= e.timestamp_seconds <= args.end_seconds
         ]
         actual_in = sum(1 for e in events if e.direction is Direction.IN)
         actual_out = sum(1 for e in events if e.direction is Direction.OUT)
         end_frame = max(r.frame_index for r, _ in matched)
+        start_frame = min(r.frame_index for r, _ in matched)
         end_obs = by_frame[end_frame]
+        # 구간 시작 시점까지의 누적을 빼야 이 구간의 값이 된다. 0초부터면
+        # 뺄 것이 없다.
+        base_in = base_out = 0
+        if args.start_seconds > 0.0:
+            earlier = [f for f in by_frame if f < start_frame]
+            if earlier:
+                base = by_frame[max(earlier)]
+                base_in = base.entries_total or 0
+                base_out = base.exits_total or 0
 
-        print(f"\n## Entry / Exit (0 ~ {args.end_seconds:.0f}초 누적)")
+        print(
+            f"\n## Entry / Exit ({args.start_seconds:.0f} ~ {args.end_seconds:.0f}초)"
+        )
         if end_obs.entries_total is None:
             print("  측정 안 됨 — 추적을 껐으므로 통과 사건을 셀 수 없다.")
             payload["entry"] = None
         else:
-            in_err = abs(end_obs.entries_total - actual_in)
-            out_err = abs((end_obs.exits_total or 0) - actual_out)
-            print(f"  IN   실제 {actual_in:2d}  예측 {end_obs.entries_total:2d}  절대 오차 {in_err}")
-            print(f"  OUT  실제 {actual_out:2d}  예측 {end_obs.exits_total:2d}  절대 오차 {out_err}")
+            pred_in = end_obs.entries_total - base_in
+            pred_out = (end_obs.exits_total or 0) - base_out
+            in_err = abs(pred_in - actual_in)
+            out_err = abs(pred_out - actual_out)
+            print(f"  IN   실제 {actual_in:2d}  예측 {pred_in:2d}  절대 오차 {in_err}")
+            print(f"  OUT  실제 {actual_out:2d}  예측 {pred_out:2d}  절대 오차 {out_err}")
             payload["entry"] = {
                 "actualIn": actual_in,
-                "predictedIn": end_obs.entries_total,
+                "predictedIn": pred_in,
                 "absoluteErrorIn": in_err,
                 "actualOut": actual_out,
-                "predictedOut": end_obs.exits_total,
+                "predictedOut": pred_out,
                 "absoluteErrorOut": out_err,
             }
 

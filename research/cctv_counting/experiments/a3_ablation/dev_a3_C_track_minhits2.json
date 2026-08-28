@@ -1,0 +1,38 @@
+{
+  "label": "a3_C_track_minhits2",
+  "windowEndSeconds": 29.0,
+  "samples": 30,
+  "occupancy": {
+    "mae": 0.7,
+    "rmse": 1.0165300454651272,
+    "bias": -0.1,
+    "actualMean": 5.966666666666667,
+    "predictedMean": 5.866666666666666
+  },
+  "reliabilityStratification": {
+    "OK": {
+      "samples": 29,
+      "meanAbsError": 0.6206896551724138
+    },
+    "LOW_CONFIDENCE": {
+      "samples": 0,
+      "meanAbsError": null
+    },
+    "NO_DETECTION": {
+      "samples": 0,
+      "meanAbsError": null
+    },
+    "UNCONFIRMED_TRACKS": {
+      "samples": 1,
+      "meanAbsError": 3.0
+    }
+  },
+  "entry": {
+    "actualIn": 7,
+    "predictedIn": 9,
+    "absoluteErrorIn": 2,
+    "actualOut": 4,
+    "predictedOut": 5,
+    "absoluteErrorOut": 1
+  }
+}

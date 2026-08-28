@@ -1,0 +1,12 @@
+video_id,event_index,frame_index,timestamp_seconds,direction,condition,annotator,notes
+a2-demo-vtest,0,370,37.0,OUT,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",어두운 상의. 490 -> 612 px (t35~t37). t36에 선 위였고 인접 프레임으로 확정
+a2-demo-vtest,1,380,38.0,OUT,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",어두운 상의 하단 경로. 512 -> 588 px
+a2-demo-vtest,2,430,43.0,IN,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",어두운 상의. 565 -> 535 px
+a2-demo-vtest,3,460,46.0,IN,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",빨간 자켓. 580 -> 522 px
+a2-demo-vtest,4,520,52.0,IN,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",어두운 상의. 578 -> 548 -> 508 px
+a2-demo-vtest,5,610,61.0,OUT,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",빨강/검정. 473 -> 565 px
+a2-demo-vtest,6,640,64.0,IN,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",어두운 상의. 575 -> 518 px
+a2-demo-vtest,7,680,68.0,IN,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",파란 상의. 582 -> 465 px
+a2-demo-vtest,8,680,68.0,IN,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",빨강/검정. 588 -> 528 px
+a2-demo-vtest,9,750,75.0,IN,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",어두운 상의. 568 -> 522 px
+a2-demo-vtest,10,780,78.0,OUT,daylight,"maeng (single annotator, non-blind; see a2_annotation_rules.md)",어두운 상의. 520 -> 582 px

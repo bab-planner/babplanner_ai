@@ -1,0 +1,53 @@
+# Stage A3 ablation. 자동 생성.
+# 축 하나만 바꾸고 나머지는 a2_demo_tracking.yaml과 동일하다.
+# detector confidence 0.7 는 A2 **dev**에서 고른 값이다.
+# 최종 일반화 성능이 아니라 development-set 선택값이다.
+
+description: C. 추적. min_hits=5
+detector:
+  backend: torchvision
+  confidence_threshold: 0.7
+  device: auto
+  max_input_size: null
+  model: fasterrcnn_mobilenet_v3_large_fpn
+  person_class_id: null
+frame_stride: 1
+line:
+  anchor: BOTTOM_CENTER
+  band: 0.01
+  cooldown_seconds: 0.5
+  enabled: true
+  end:
+  - 0.72
+  - 0.78
+  in_direction: POSITIVE
+  min_confirm_distance: 0.03
+  start:
+  - 0.72
+  - 0.22
+name: a3_C_track_minhits5
+output:
+  annotated_video: true
+  observations_csv: true
+  summary_json: true
+  windows_csv: true
+reliability:
+  min_mean_confidence: 0.45
+roi:
+  enabled: true
+  x1: 0.02
+  x2: 0.98
+  y1: 0.22
+  y2: 0.78
+seed: 0
+tracker:
+  enabled: true
+  high_threshold: 0.5
+  iou_threshold: 0.3
+  low_iou_threshold: 0.2
+  low_threshold: 0.1
+  max_age: 30
+  min_hits: 5
+window:
+  enabled: true
+  seconds: 3.0

@@ -48,6 +48,7 @@ def test_reliability_has_no_crowding_state():
         "OK",
         "LOW_CONFIDENCE",
         "NO_DETECTION",
+        "UNCONFIRMED_TRACKS",
     }
 
 
@@ -132,3 +133,41 @@ def test_reliability_is_a_heuristic_not_a_calibrated_probability():
     just_above = evaluate_reliability([0.501], 1, policy)
     assert just_below.flag is ReliabilityFlag.LOW_CONFIDENCE
     assert just_above.flag is ReliabilityFlag.OK
+
+
+def test_no_detection_means_detector_output_was_empty():
+    """이 값은 detector 출력 0개와 정확히 대응해야 한다.
+
+    A2에서 실제로 어긋나 있었다. 확정된 track의 신뢰도를 넣는 바람에, 상자가
+    7개 있는 프레임이 NO_DETECTION으로 기록됐다. detector가 사람을 봤는데
+    "아무것도 못 봤다"고 남긴 셈이다.
+    """
+    seen_but_not_counted = evaluate_reliability([0.9, 0.8], 0, ReliabilityPolicy())
+    assert seen_but_not_counted.flag is ReliabilityFlag.UNCONFIRMED_TRACKS
+    assert seen_but_not_counted.mean_detection_confidence is not None
+
+    nothing_seen = evaluate_reliability([], 0, ReliabilityPolicy())
+    assert nothing_seen.flag is ReliabilityFlag.NO_DETECTION
+    assert nothing_seen.mean_detection_confidence is None
+
+
+def test_unconfirmed_is_not_low_confidence():
+    """신뢰도가 높아도 아직 안 셌으면 다른 이유로 못 믿는다."""
+    signal = evaluate_reliability([0.99, 0.98], 0, ReliabilityPolicy())
+    assert signal.flag is ReliabilityFlag.UNCONFIRMED_TRACKS
+    assert signal.flag is not ReliabilityFlag.LOW_CONFIDENCE
+    assert signal.is_low_reliability
+
+
+def test_confidence_comes_from_detections_not_counted_tracks():
+    """세어진 수와 무관하게 신뢰도 통계는 detector 출력에서 나온다."""
+    a = evaluate_reliability([0.9, 0.7], 2, ReliabilityPolicy())
+    b = evaluate_reliability([0.9, 0.7], 1, ReliabilityPolicy())
+    assert a.mean_detection_confidence == b.mean_detection_confidence
+    assert a.min_detection_confidence == b.min_detection_confidence
+    assert a.active_track_count == 2 and b.active_track_count == 1
+
+
+def test_negative_counted_is_rejected():
+    with pytest.raises(ReliabilityError):
+        evaluate_reliability([0.9], -1, ReliabilityPolicy())

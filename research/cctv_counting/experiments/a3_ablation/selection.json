@@ -1,0 +1,40 @@
+{
+  "ruleFixedBeforeHoldout": true,
+  "rule": [
+    "1) occupancy MAE가 가장 낮은 것",
+    "2) 동률이면 |bias|가 작은 것",
+    "3) 그래도 동률이면 더 단순한 방법 (detection_only < temporal_confirmation < tracking)",
+    "입장 인원은 추적만 셀 수 있으므로 별도로 고른다. 추적 후보 중 IN/OUT 오차, 그다음 occupancy MAE 순."
+  ],
+  "devRange": "0.0 <= t <= 29.0",
+  "detectorConfidence": 0.7,
+  "detectorConfidenceNote": "A2 development set에서 고른 값이다. 최종 일반화 성능이 아니다.",
+  "occupancyTiedCandidates": [
+    "a3_A_detection_only",
+    "a3_C_track_minhits1"
+  ],
+  "selectedForOccupancy": "a3_A_detection_only",
+  "selectedForEntry": "a3_C_track_minhits1",
+  "devScores": {
+    "occupancy": {
+      "config": "a3_A_detection_only",
+      "mae": 0.6333333333333333,
+      "rmse": 0.8755950357709131,
+      "bias": 0.16666666666666666,
+      "entryErrorIn": null,
+      "entryErrorOut": null,
+      "fps": 29.51273078231667,
+      "supportsEntry": false
+    },
+    "entry": {
+      "config": "a3_C_track_minhits1",
+      "mae": 0.6333333333333333,
+      "rmse": 0.8755950357709131,
+      "bias": 0.16666666666666666,
+      "entryErrorIn": 2,
+      "entryErrorOut": 1,
+      "fps": 32.562917772768486,
+      "supportsEntry": true
+    }
+  }
+}
