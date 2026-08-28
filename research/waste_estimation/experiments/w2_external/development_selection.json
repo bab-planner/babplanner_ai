@@ -1,0 +1,23 @@
+{
+  "after": {
+    "backbone": "resnet18",
+    "alpha": 100.0,
+    "cvMae": 0.15850786343080112,
+    "cvBias": -0.01377264737173034,
+    "tiedCandidates": 1
+  },
+  "concat": {
+    "backbone": "mobilenet_v3_small",
+    "alpha": 100.0,
+    "cvMae": 0.1808436870143064,
+    "cvBias": -0.0018298832084906785,
+    "tiedCandidates": 2
+  },
+  "concat_diff": {
+    "backbone": "mobilenet_v3_small",
+    "alpha": 100.0,
+    "cvMae": 0.18506453151301375,
+    "cvBias": -0.0004222075220987517,
+    "tiedCandidates": 2
+  }
+}

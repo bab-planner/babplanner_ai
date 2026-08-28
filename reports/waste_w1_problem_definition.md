@@ -75,7 +75,13 @@ modelVersion "fastapi-fixture-waste-v1"`을 돌려준다. **그 값은 분석 �
 | 정답 있는 표본 | **0** | 13 (합성) |
 | served / leftover mass | **0** | 13 (합성) |
 | before/after 짝 | **0** | 0 |
-| 학습 가능 | **아니오** | **아니오** |
+| **in-domain 학습 가능** | **아니오** | **아니오** |
+
+> **W2에서 표현을 정정한다.** 여기서 "학습 가능: 아니오"는 **밥플래너 급식소
+> 이미지로 하는 in-domain 학습**을 뜻한다. 조건을 확인한 공개 데이터로 하는
+> **외부 벤치마크 실험은 가능하고, W2에서 실제로 수행했다**
+> ([waste_w2_external_benchmark.md](waste_w2_external_benchmark.md)).
+> 실제 밥플래너 현장 데이터가 0건이라는 사실 자체는 그대로다.
 
 `data/` 에는 `README.md` 하나만 있다. `private/`, `raw/`, `processed/`는
 만들어진 적이 없다. `docs/pilot0_waste_collection_report.md`는 첫 줄이

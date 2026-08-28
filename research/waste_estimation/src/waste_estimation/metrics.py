@@ -6,8 +6,15 @@
 같은 것을 여기 한 번 더 쓰면 두 구현이 갈라지는 날이 온다. 그래서 그것들은
 그대로 가져다 쓰고, 여기에는 **연구에서 새로 필요해진 것만** 둔다.
 
-    가져다 쓰는 것   MAE, RMSE, Median AE
-    여기서 더하는 것 bias, ordinal(class-index) 지표
+    가져다 쓰는 것   MAE, RMSE, Median AE   (**정답이 0~1일 때**)
+    여기서 더하는 것 bias, ordinal 지표, 범위 제한 없는 회귀 지표
+
+**왜 범위 제한 없는 판이 따로 필요한가.** 서비스 지표는 값이 0~1을 벗어나면
+거부한다. 그것은 옳다 — 잔반률 라벨이 1.2라면 측정이나 기록이 틀린 것이다.
+그런데 **회귀 모델의 raw 출력은 0~1을 벗어나는 것이 정상이다.** 그 값을
+지표 계산 전에 잘라 버리면 성능이 좋아 보이고, 자르지 않으면 서비스 지표가
+계산을 거부한다. 그래서 예측 쪽에는 제한 없는 판을 쓰고, 자르는 것은
+**정책**으로 따로 보고한다(`baselines.clip`).
 
 **bias를 왜 더하는가.** MAE는 부호를 지운다. 모델이 늘 적게 예측하는 것과
 늘 많게 예측하는 것은 MAE가 같아도 운영에서 다른 문제다. CCTV 트랙에서
@@ -33,11 +40,19 @@ from babplanner_ai.dataset.metrics import (
 )
 
 __all__ = [
+    "regression_scores",
+    "unbounded_bias",
+    "unbounded_mae",
+    "unbounded_median_ae",
+    "unbounded_rmse",
     "MetricError",
     "bias",
     "class_index_mae",
+    "confusion_matrix",
+    "macro_f1",
     "mean_absolute_error",
     "median_absolute_error",
+    "quadratic_weighted_kappa",
     "root_mean_squared_error",
     "to_class_index",
 ]
@@ -135,3 +150,150 @@ def class_index_mae(
                 )
         total += abs(truth - guess)
     return total / len(actual)
+
+
+def _checked_classes(
+    actual: Sequence[int], predicted: Sequence[int]
+) -> list[tuple[int, int]]:
+    if len(actual) != len(predicted):
+        raise MetricError(
+            f"개수가 다릅니다: 정답 {len(actual)}건, 예측 {len(predicted)}건"
+        )
+    if not actual:
+        raise MetricError("입력이 비어 있습니다.")
+    pairs = []
+    for index, (truth, guess) in enumerate(zip(actual, predicted)):
+        for label, value in (("정답", truth), ("예측", guess)):
+            if isinstance(value, bool) or not isinstance(value, int):
+                raise MetricError(
+                    f"{index}번째 {label} 구간 번호가 정수가 아닙니다: {value!r}"
+                )
+            if value < 0:
+                raise MetricError(f"{index}번째 {label}이 음수입니다: {value}")
+        pairs.append((int(truth), int(guess)))
+    return pairs
+
+
+def confusion_matrix(
+    actual: Sequence[int], predicted: Sequence[int], classes: int
+) -> list[list[int]]:
+    """행이 정답, 열이 예측."""
+    if classes < 2:
+        raise MetricError(f"classes는 2 이상이어야 합니다: {classes}")
+    pairs = _checked_classes(actual, predicted)
+    matrix = [[0] * classes for _ in range(classes)]
+    for truth, guess in pairs:
+        if truth >= classes or guess >= classes:
+            raise MetricError(
+                f"구간 번호가 범위를 벗어났습니다: 정답 {truth}, 예측 {guess}"
+            )
+        matrix[truth][guess] += 1
+    return matrix
+
+
+def macro_f1(
+    actual: Sequence[int], predicted: Sequence[int], classes: int
+) -> float:
+    """구간별 F1의 단순 평균.
+
+    **정확도를 쓰지 않는 이유가 여기 있다.** 잔반 분포가 한쪽으로 몰려
+    있으면 다수 구간만 맞혀도 정확도가 높게 나온다. macro F1은 구간마다
+    같은 무게를 준다.
+
+    표본이 하나도 없는 구간은 평균에서 뺀다. 0으로 세면 등장하지 않는
+    구간 때문에 점수가 내려간다.
+    """
+    matrix = confusion_matrix(actual, predicted, classes)
+    scores: list[float] = []
+    for index in range(classes):
+        true_positive = matrix[index][index]
+        actual_count = sum(matrix[index])
+        predicted_count = sum(row[index] for row in matrix)
+        if actual_count == 0:
+            continue
+        precision = true_positive / predicted_count if predicted_count else 0.0
+        recall = true_positive / actual_count
+        scores.append(
+            2 * precision * recall / (precision + recall)
+            if (precision + recall)
+            else 0.0
+        )
+    if not scores:
+        raise MetricError("정답에 등장하는 구간이 없습니다.")
+    return sum(scores) / len(scores)
+
+
+def quadratic_weighted_kappa(
+    actual: Sequence[int], predicted: Sequence[int], classes: int
+) -> float | None:
+    """구간 거리를 제곱으로 벌주는 일치도.
+
+    순서형에서 널리 쓰인다. 1이면 완전 일치, 0이면 우연 수준, 음수면 우연만
+    못하다.
+
+    **기대 행렬이 0이 되는 경우 None을 돌려준다.** 그럴 때 0을 돌려주면
+    "우연 수준"이라는 뜻이 되는데, 실제로는 계산이 성립하지 않은 것이다.
+    """
+    matrix = confusion_matrix(actual, predicted, classes)
+    total = sum(sum(row) for row in matrix)
+    actual_counts = [sum(row) for row in matrix]
+    predicted_counts = [sum(row[index] for row in matrix) for index in range(classes)]
+
+    numerator = 0.0
+    denominator = 0.0
+    for i in range(classes):
+        for j in range(classes):
+            weight = ((i - j) ** 2) / ((classes - 1) ** 2)
+            expected = actual_counts[i] * predicted_counts[j] / total
+            numerator += weight * matrix[i][j]
+            denominator += weight * expected
+    if denominator == 0:
+        return None
+    return 1.0 - numerator / denominator
+
+
+# --- 범위 제한 없는 회귀 지표 ------------------------------------------------
+#
+# 정답은 0~1이지만 예측은 그렇지 않을 수 있다. 아래 함수들은 예측값의 범위를
+# 검사하지 않는다. 대신 유한한 숫자인지는 확인한다 — NaN이 섞이면 평균이
+# 조용히 NaN이 되고, 그 표는 아무것도 말하지 않는다.
+
+
+def unbounded_mae(actual: Sequence[float], predicted: Sequence[float]) -> float:
+    pairs = _checked_pair(actual, predicted)
+    return sum(abs(truth - guess) for truth, guess in pairs) / len(pairs)
+
+
+def unbounded_rmse(actual: Sequence[float], predicted: Sequence[float]) -> float:
+    pairs = _checked_pair(actual, predicted)
+    return math.sqrt(
+        sum((truth - guess) ** 2 for truth, guess in pairs) / len(pairs)
+    )
+
+
+def unbounded_median_ae(
+    actual: Sequence[float], predicted: Sequence[float]
+) -> float:
+    pairs = _checked_pair(actual, predicted)
+    errors = sorted(abs(truth - guess) for truth, guess in pairs)
+    middle = len(errors) // 2
+    if len(errors) % 2:
+        return errors[middle]
+    return (errors[middle - 1] + errors[middle]) / 2
+
+
+def unbounded_bias(actual: Sequence[float], predicted: Sequence[float]) -> float:
+    return bias(actual, predicted)
+
+
+def regression_scores(
+    actual: Sequence[float], predicted: Sequence[float]
+) -> dict[str, float | int]:
+    """회귀 지표 한 묶음. 예측 범위를 제한하지 않는다."""
+    return {
+        "mae": unbounded_mae(actual, predicted),
+        "rmse": unbounded_rmse(actual, predicted),
+        "medianAe": unbounded_median_ae(actual, predicted),
+        "bias": unbounded_bias(actual, predicted),
+        "count": len(actual),
+    }

@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="400" viewBox="0 0 720 400" font-family="system-ui, sans-serif">
+<rect width="720" height="400" fill="#ffffff"/>
+<text x="78" y="28" font-size="16" font-weight="600" fill="#1f2933">외부 벤치마크 정답 분포 (LeFood-Set TEST)</text>
+<text x="78" y="46" font-size="12" fill="#7b8794">external_waste_ratio · 표본 116건 · 양 끝에 몰려 있다</text>
+<line x1="78" y1="340.0" x2="694" y2="340.0" stroke="#e4e7eb"/>
+<text x="70" y="344.0" font-size="11" fill="#7b8794" text-anchor="end">0</text>
+<line x1="78" y1="269.5" x2="694" y2="269.5" stroke="#e4e7eb"/>
+<text x="70" y="273.5" font-size="11" fill="#7b8794" text-anchor="end">13</text>
+<line x1="78" y1="199.0" x2="694" y2="199.0" stroke="#e4e7eb"/>
+<text x="70" y="203.0" font-size="11" fill="#7b8794" text-anchor="end">27</text>
+<line x1="78" y1="128.5" x2="694" y2="128.5" stroke="#e4e7eb"/>
+<text x="70" y="132.5" font-size="11" fill="#7b8794" text-anchor="end">41</text>
+<line x1="78" y1="58.0" x2="694" y2="58.0" stroke="#e4e7eb"/>
+<text x="70" y="62.0" font-size="11" fill="#7b8794" text-anchor="end">55</text>
+<rect x="81.0" y="58.0" width="55.6" height="282.0" fill="#2b6cb0" opacity="0.85"/>
+<text x="108.8" y="358.0" font-size="10" fill="#7b8794" text-anchor="middle">0.0</text>
+<text x="108.8" y="53.0" font-size="10" fill="#1f2933" text-anchor="middle">55</text>
+<rect x="142.6" y="329.7" width="55.6" height="10.3" fill="#2b6cb0" opacity="0.85"/>
+<text x="170.4" y="358.0" font-size="10" fill="#7b8794" text-anchor="middle">0.1</text>
+<text x="170.4" y="324.7" font-size="10" fill="#1f2933" text-anchor="middle">2</text>
+<rect x="204.2" y="324.6" width="55.6" height="15.4" fill="#2b6cb0" opacity="0.85"/>
+<text x="232.0" y="358.0" font-size="10" fill="#7b8794" text-anchor="middle">0.2</text>
+<text x="232.0" y="319.6" font-size="10" fill="#1f2933" text-anchor="middle">3</text>
+<rect x="265.8" y="319.5" width="55.6" height="20.5" fill="#2b6cb0" opacity="0.85"/>
+<text x="293.6" y="358.0" font-size="10" fill="#7b8794" text-anchor="middle">0.3</text>
+<text x="293.6" y="314.5" font-size="10" fill="#1f2933" text-anchor="middle">4</text>
+<rect x="327.4" y="299.0" width="55.6" height="41.0" fill="#2b6cb0" opacity="0.85"/>
+<text x="355.2" y="358.0" font-size="10" fill="#7b8794" text-anchor="middle">0.4</text>
+<text x="355.2" y="294.0" font-size="10" fill="#1f2933" text-anchor="middle">8</text>
+<rect x="389.0" y="309.2" width="55.6" height="30.8" fill="#2b6cb0" opacity="0.85"/>
+<text x="416.8" y="358.0" font-size="10" fill="#7b8794" text-anchor="middle">0.5</text>
+<text x="416.8" y="304.2" font-size="10" fill="#1f2933" text-anchor="middle">6</text>
+<rect x="450.6" y="340.0" width="55.6" height="0.0" fill="#2b6cb0" opacity="0.85"/>
+<text x="478.4" y="358.0" font-size="10" fill="#7b8794" text-anchor="middle">0.6</text>
+<rect x="512.2" y="319.5" width="55.6" height="20.5" fill="#2b6cb0" opacity="0.85"/>
+<text x="540.0" y="358.0" font-size="10" fill="#7b8794" text-anchor="middle">0.7</text>
+<text x="540.0" y="314.5" font-size="10" fill="#1f2933" text-anchor="middle">4</text>
+<rect x="573.8" y="319.5" width="55.6" height="20.5" fill="#2b6cb0" opacity="0.85"/>
+<text x="601.6" y="358.0" font-size="10" fill="#7b8794" text-anchor="middle">0.8</text>
+<text x="601.6" y="314.5" font-size="10" fill="#1f2933" text-anchor="middle">4</text>
+<rect x="635.4" y="186.2" width="55.6" height="153.8" fill="#2b6cb0" opacity="0.85"/>
+<text x="663.2" y="358.0" font-size="10" fill="#7b8794" text-anchor="middle">0.9</text>
+<text x="663.2" y="181.2" font-size="10" fill="#1f2933" text-anchor="middle">30</text>
+<text x="386.0" y="384" font-size="11" fill="#7b8794" text-anchor="middle">external_waste_ratio</text>
+</svg>

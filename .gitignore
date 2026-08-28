@@ -1,6 +1,8 @@
 .venv/
 # 연구용 환경. torch/CUDA가 들어가므로 서비스 환경과 분리한다.
 .venv-cctv/
+# 잔반 트랙 전용. CCTV 환경을 고정해 두기 위해 따로 둔다.
+.venv-waste/
 __pycache__/
 .pytest_cache/
 *.pyc

@@ -51,7 +51,7 @@ feature 계약 확장은 그 source가 정해진 뒤 별도 version에서 한다
 | | 트랙 | 상태 |
 |---|---|---|
 | AI-1 | [CCTV 혼잡도·이용 인원](research/cctv_counting/) | **공개 데이터 cross-sequence 평가 완료.** 급식소 검증은 아직 |
-| AI-2 | [잔반 분석](research/waste_estimation/) | 문제 정의 완료(W1). **실제 학습 데이터 0건**이라 모델 없음 |
+| AI-2 | [잔반 분석](research/waste_estimation/) | 외부 벤치마크 완료(W2). 밥플래너 데이터는 **여전히 0건**이라 in-domain 모델 없음 |
 | AI-3 | [식수 예측](research/demand_forecasting/) | 계획. 정의만 있고 모델 코드 없음 |
 
 AI-1은 영상에서 현재 인원(occupancy)과 입구 통과 인원(entry count)을 따로
@@ -164,6 +164,7 @@ fixture로 대신 답하면 예측이 없는 배포가 예측을 하고 있는 �
 
 - `docs/waste_ground_truth_protocol.md` — 잔반률의 정의와 측정 절차
 - [reports/waste_w1_problem_definition.md](reports/waste_w1_problem_definition.md) — AI-2 문제 정의(W1)
+- [reports/waste_w2_external_benchmark.md](reports/waste_w2_external_benchmark.md) — AI-2 외부 벤치마크(W2)
 - `docs/waste_dataset_spec.md` — 매니페스트 열, 개인정보 규칙, 분할 기준
 - `docs/waste_evaluation_protocol.md` — 지표와 Go/No-Go
 - `data/README.md` — 데이터 배치와 커밋 금지 규칙

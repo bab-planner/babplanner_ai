@@ -1,0 +1,18 @@
+# DEVELOPMENT 그룹 교차검증으로 고른 설정. TEST를 보기 전에 정했다.
+after:
+  backbone: resnet18
+  alpha: 100.0
+  cv_mae: 0.158508
+  cv_bias: -0.013773
+
+concat:
+  backbone: mobilenet_v3_small
+  alpha: 100.0
+  cv_mae: 0.180844
+  cv_bias: -0.001830
+
+concat_diff:
+  backbone: mobilenet_v3_small
+  alpha: 100.0
+  cv_mae: 0.185065
+  cv_bias: -0.000422

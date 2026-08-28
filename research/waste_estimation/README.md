@@ -6,9 +6,15 @@
 > 것은 무엇을 만들 것인지에 대한 정의와, 모델보다 먼저 고정되어야 하는
 > 도구들이다.
 >
-> **W1 상태: 문제 정의 완료. 실제 학습 데이터 0건.**
+> **상태: W1 문제 정의 완료 · W2 외부 벤치마크 완료.**
+> 밥플래너 현장 데이터는 여전히 0건이다. in-domain 모델은 없다.
 > [데이터 점검](dataset_audit.md) · [공개 데이터 후보](datasets/README.md) ·
-> [W1 보고서](../../reports/waste_w1_problem_definition.md)
+> [W1 보고서](../../reports/waste_w1_problem_definition.md) ·
+> [W2 보고서](../../reports/waste_w2_external_benchmark.md)
+>
+> **W2 한 줄 요약.** 공개 데이터(LeFood-Set)에서 식후 사진 한 장만으로
+> 질량비 MAE 0.153 — 전역 평균 대비 60% 개선. 식전 사진을 더한 이득은
+> 일관되지 않았다(H-W2 지지되지 않음). **급식소 성능이 아니다.**
 
 ## 목표
 
@@ -125,7 +131,11 @@ RQ-W1이 이 트랙의 존재 이유다. **답이 "거의 못 한다"일 수도 
 **파일럿 데이터가 필요하다.** 지금 저장소에 있는 것은 합성 fixture뿐이고,
 [데이터 점검](dataset_audit.md)이 그것을 확인했다 — **실제 표본 0건.**
 `docs/waste_pilot_collection_runbook.md`가 현장 수집 절차이고, 그것이 돌기
-전까지 학습은 시작되지 않는다.
+전까지 **in-domain 학습**은 시작되지 않는다.
+
+**외부 벤치마크는 별개다.** 조건을 확인한 공개 데이터(LeFood-Set, CC BY 4.0)로
+"식후 사진 한 장에서 질량비를 어디까지 맞히는가"를 W2에서 실제로 쟀다.
+[W2 보고서](../../reports/waste_w2_external_benchmark.md).
 
 ## 다음 단계 (착수 전)
 

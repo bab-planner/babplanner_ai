@@ -1,0 +1,96 @@
+{
+  "alphaGrid": [
+    1.0,
+    10.0,
+    100.0,
+    1000.0
+  ],
+  "backbone": {
+    "candidates": [
+      "mobilenet_v3_small",
+      "resnet18"
+    ],
+    "fineTuning": false,
+    "frozen": true,
+    "weightsNote": "torchvision 배포 ImageNet 가중치. 소프트웨어(BSD-3-Clause)와 가중치의 조건은 별개다. 연구·평가 용도로 쓰며 상용 배포 적격이라고 말하지 않는다."
+  },
+  "clippingPolicy": "raw와 clipped를 나란히 보고한다. 지표 계산 전에 몰래 자르지 않는다.",
+  "cvFolds": 5,
+  "cvNote": "DEVELOPMENT 안에서만 그룹 단위 교차검증으로 alpha와 후보를 고른다. TEST는 마지막에 한 번만 본다.",
+  "dataset": {
+    "doi": "10.17632/cchsk79jkt.1",
+    "license": "CC BY 4.0",
+    "name": "LeFood-Set",
+    "source": "https://data.mendeley.com/datasets/cchsk79jkt/1",
+    "usableRecords": 514,
+    "version": "1"
+  },
+  "forbidden": [
+    "TEST를 보고 모델/임계값/구간 변경",
+    "지표 전 clip",
+    "픽셀 면적 비율을 질량비로 사용",
+    "이 결과를 밥플래너 급식소 성능이라고 표현",
+    "fine-tuning (W3 이후 후보)"
+  ],
+  "frozenAt": "2026-08-29",
+  "hypothesis": {
+    "H-W2": "before+after가 after-only보다 여러 분할에서 일관되게 좋다면, 운영 API의 after-only 입력에는 분모가 보이지 않는 정보 격차가 있다. 한 번의 분할에서 0.01 좋아진 것으로는 지지하지 않는다."
+  },
+  "informationGapMetric": "dMAE = MAE(after-only) - MAE(before+after)",
+  "inputArms": {
+    "after": "식후 이미지만. 운영 API와 같은 입력",
+    "concat": "[before, after]",
+    "concat_diff": "[before, after, after-before]"
+  },
+  "labelFormula": "external_waste_ratio = after_mass_g / before_mass_g",
+  "labelGate": [
+    "before_mass_g > 0",
+    "after_mass_g >= 0",
+    "after_mass_g <= before_mass_g",
+    "before/after 이미지가 모두 배포본에 있어야 한다",
+    "before/after 파일명 접두사가 같아야 한다"
+  ],
+  "labelName": "external_waste_ratio. 밥플래너의 waste_rate와 계산식은 같지만 다른 데이터의 값이므로 이름을 분리한다.",
+  "levelEdges": [
+    0.2,
+    0.8
+  ],
+  "levelNames": [
+    "low",
+    "medium",
+    "high"
+  ],
+  "ordinalEdges": [
+    0.2,
+    0.4,
+    0.6,
+    0.8
+  ],
+  "preprocessing": {
+    "deterministic": true,
+    "note": "짝 실험에서 before/after에 서로 다른 무작위 변환을 걸면 비교가 깨진다. 증강을 쓰지 않는다.",
+    "randomAugmentation": false
+  },
+  "primaryMetric": "MAE (raw regression output)",
+  "purpose": "TEST를 보기 전에 데이터·라벨·분할·모델 후보·판정 규칙을 고정한다.",
+  "regressor": "Ridge (표준화 + L2, 정규방정식)",
+  "secondaryMetrics": [
+    "RMSE",
+    "Median AE",
+    "Bias"
+  ],
+  "selectionRule": [
+    "1) DEVELOPMENT 그룹 교차검증 MAE 최소",
+    "2) 차이가 0.005 이내면 |Bias|가 작은 쪽",
+    "3) 그래도 같으면 더 단순한 쪽 (특징 차원이 작은 쪽)"
+  ],
+  "sha256OfRecordWithoutHash": "662626343482afa9932017dc261be6d375098938a7e5ad7d2a8525bf09812a9f",
+  "split": {
+    "developmentCount": 398,
+    "seed": 42,
+    "testCount": 116,
+    "testRatio": 0.3,
+    "unit": "food_category"
+  },
+  "stage": "W2"
+}
