@@ -50,7 +50,7 @@ feature 계약 확장은 그 source가 정해진 뒤 별도 version에서 한다
 
 | | 트랙 | 상태 |
 |---|---|---|
-| AI-1 | [CCTV 혼잡도·이용 인원](research/cctv_counting/) | **첫 정량 파일럿 완료 (ablation + holdout). 공개 벤치마크 미실행** |
+| AI-1 | [CCTV 혼잡도·이용 인원](research/cctv_counting/) | **공개 데이터 cross-sequence 평가 완료.** 급식소 검증은 아직 |
 | AI-2 | [잔반 분석](research/waste_estimation/) | 계획. 정의만 있고 모델 코드 없음 |
 | AI-3 | [식수 예측](research/demand_forecasting/) | 계획. 정의만 있고 모델 코드 없음 |
 
@@ -64,14 +64,25 @@ AI-1은 영상에서 현재 인원(occupancy)과 입구 통과 인원(entry coun
 holdout: Occupancy MAE **0.46명**, 입장 인원 오차 **1**, 퇴장 오차 6.
 GPU(RTX 4060 Ti)에서 **31 fps**.
 
-가장 중요한 결과는 숫자가 아니라 **A2의 결론이 뒤집혔다**는 것이다. "추적이
-혼잡도 계수를 개선한다"고 봤던 것은 검출 오탐을 걸러 준 효과였고, 검출
-임계값을 올리면 같은 효과가 나면서 추적은 오히려 손해였다. 시간적 확인만
-하는 baseline을 따로 만들어 분해해서 확인했다.
+이어서 공개 데이터(CAVIAR, CC BY-SA)의 **서로 다른 영상 13편**으로 다시
+검증했다. 영상 단위로 DEV 5편 / TEST 8편을 나누고, 설정을 고정한 뒤 TEST를
+한 번만 평가했다.
 
-**이것은 급식소 성능이 아니고 공개 벤치마크 결과도 아니다.** 영상 한 편,
-주간 단일 조건이고, holdout도 같은 영상의 뒤 구간이다. 조건과 한계는
-[reports/cctv_baseline.md](reports/cctv_baseline.md)에 전부 적어 두었다.
+두 가지가 나왔다.
+
+**혼잡도에는 추적이 필요 없다.** 13편 전부에서 detection-only와 추적의 계수가
+같았고, TEST macro MAE 차이는 0.008명(사전 동등 마진 0.25명)이었다. 그래서
+**혼잡도는 검출만, 입장 인원은 추적 + 선 통과**로 갈래를 나눴다.
+
+**실패 유형은 도메인에 따라 뒤집힌다.** 실외 영상에서는 통과 계수 오차가
+전부 "없는 사건을 만든 것"이었는데, 저해상도 실내 영상에서는 전부
+"있는 사건을 놓친 것"이었다. 한쪽만 보고 고쳤다면 다른 쪽에서는 효과가
+없었을 것이다.
+
+**급식소 검증이 아니다.** 쇼핑센터 복도이고, 13편이 전부 같은 카메라다.
+cross-sequence이지 cross-camera도 아니다. 조건과 한계는
+[reports/cctv_baseline.md](reports/cctv_baseline.md)와
+[reports/cctv_a4_cross_video.md](reports/cctv_a4_cross_video.md)에 있다.
 
 **얼굴을 다루지 않는다.** 사람을 영상 밖에서 다시 알아보지 않고, 회원 정보와
 연결하지 않는다. `track_id`는 영상 한 세션 안에서만 유효한 임시 번호이며 파일로

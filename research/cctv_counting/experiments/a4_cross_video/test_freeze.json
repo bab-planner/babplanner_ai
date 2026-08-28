@@ -1,0 +1,55 @@
+{
+  "frozenBeforeTest": true,
+  "selectionRules": {
+    "occupancy": [
+      "1) macro MAE 최소",
+      "2) 동률이면 |macro bias| 최소",
+      "3) 그래도 동률이면 단순한 구조 (detection_only < confirmation < tracking)"
+    ],
+    "entry": [
+      "1) IN/OUT 평균 절대 개수 오차 최소",
+      "2) 동률이면 macro event F1 최대",
+      "3) 그래도 동률이면 occupancy macro MAE 최소",
+      "4) 그래도 동률이면 min_hits 큰 쪽(보수적)"
+    ]
+  },
+  "equivalenceMarginPersons": 0.25,
+  "equivalenceMarginNote": "detection_only의 macro MAE가 tracking의 macro MAE + 0.25 이하이면 occupancy에서 동등으로 본다. TEST 결과를 보기 전에 정했다.",
+  "selectedOccupancy": {
+    "threshold": 0.7,
+    "tag": "detection_only",
+    "method": "detection_only",
+    "macroMae": 0.6440476190476191,
+    "macroBias": -0.08166666666666667
+  },
+  "selectedEntry": {
+    "threshold": 0.7,
+    "minHits": 1,
+    "meanCountError": 0.3,
+    "macroF1": 1.0,
+    "occMae": 0.6440476190476191
+  },
+  "fixedGeometry": {
+    "roi": [
+      0.0,
+      0.2,
+      1.0,
+      0.95
+    ],
+    "lineXNormalized": 0.5,
+    "inDirection": "POSITIVE (right->left)",
+    "anchor": "BOTTOM_CENTER",
+    "band": 0.01,
+    "minConfirmDistance": 0.03,
+    "cooldownSeconds": 0.5
+  },
+  "evaluation": {
+    "sampleEveryFrames": 25,
+    "sourceFps": 25.0,
+    "eventToleranceSeconds": 1.5,
+    "note": "모든 시퀀스에 같은 값. TEST 결과를 보고 바꾸지 않는다."
+  },
+  "maxAge": 30,
+  "detector": "torchvision fasterrcnn_mobilenet_v3_large_fpn (COCO pretrained), fine-tuning 없음",
+  "sha256OfThisRecordWithoutHash": "1e196ebd8dce5f4ae3cd80841d412b3f4c458267467b8eed3ee74fbaa150c67e"
+}

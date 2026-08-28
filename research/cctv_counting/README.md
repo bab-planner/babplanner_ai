@@ -75,9 +75,8 @@ detection-only baseline에서 같이 기록하는 값이 하나 있다. 이름 �
 flowchart TD
     V[Video<br/>파일 또는 스트림] --> D[Person Detector<br/>torchvision COCO pretrained]
     D --> F[Filter<br/>person class / confidence / ROI]
+    F --> O1[Occupancy Count<br/>필터 통과 상자 수]
     F --> T[Multi Object Tracker<br/>ByteTrack-inspired 2단계 IoU 연결]
-    F -.detection-only baseline.-> O1
-    T --> O1[Occupancy<br/>확정된 track 수]
     T --> C[Line Crossing<br/>상태 기계]
     C --> E[Entry / Exit Count]
     O1 --> R[Reliability Signal<br/>mean/min confidence, flag]
@@ -86,8 +85,22 @@ flowchart TD
     OUT -.threshold 정책 필요.-> S[Spring<br/>/internal/v1/congestion-observations]
 ```
 
-점선 두 개가 중요하다. 위쪽은 추적을 건너뛰는 baseline A이고, 아래쪽은
-**아직 연결되지 않은 구간**이다. 왜 연결하지 않았는지는 12절.
+**두 갈래다(dual-path).** A4에서 서로 다른 영상 13편으로 검증한 구조다.
+
+```
+  occupancy   detector + 임계값 + ROI       추적을 거치지 않는다
+  entry       추적 + 선 통과                 추적이 있어야 정의된다
+```
+
+occupancy에 추적을 태워도 계수가 달라지지 않는다는 것을 13편 전부에서
+확인했다(detection-only와 `min_hits=1` 추적의 결과가 소수점까지 동일).
+TEST 8편의 macro MAE 차이는 0.008명으로, 사전에 정한 동등 마진 0.25명 안이다.
+자세한 것은 [A4 보고서](../../reports/cctv_a4_cross_video.md).
+
+**detector는 한 번만 돌린다.** 비용의 99.9%가 detector이고 추적은 그
+0.1% 수준이라, 두 경로가 같은 검출 결과를 나눠 쓰면 된다.
+
+점선은 **아직 연결되지 않은 구간**이다. 왜 연결하지 않았는지는 12절.
 
 모듈은 이렇게 나뉜다.
 

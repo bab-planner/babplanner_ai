@@ -1,0 +1,92 @@
+{
+  "split": "TEST",
+  "threshold": 0.7,
+  "matchIou": 0.5,
+  "stationarySeconds": 2.0,
+  "thresholdsFixedBeforeResults": true,
+  "microFalsePositivesPerFrame": 0.7875602623883664,
+  "microFalseNegativesPerFrame": 0.7160357227534971,
+  "microImpliedBias": 0.0715245396348692,
+  "sequences": [
+    {
+      "sequence": "OneStopMoveEnter1front",
+      "frames": 1590,
+      "falsePositivesPerFrame": 0.810062893081761,
+      "falseNegativesPerFrame": 1.5534591194968554,
+      "impliedBias": -0.7433962264150943,
+      "stationaryFalsePositiveRuns": 0,
+      "longestFalsePositiveRunFrames": 25,
+      "longestFalsePositiveRunSeconds": 1.0
+    },
+    {
+      "sequence": "OneStopMoveNoEnter1front",
+      "frames": 1665,
+      "falsePositivesPerFrame": 0.4996996996996997,
+      "falseNegativesPerFrame": 0.12312312312312312,
+      "impliedBias": 0.37657657657657656,
+      "stationaryFalsePositiveRuns": 0,
+      "longestFalsePositiveRunFrames": 13,
+      "longestFalsePositiveRunSeconds": 0.52
+    },
+    {
+      "sequence": "OneStopNoEnter1front",
+      "frames": 725,
+      "falsePositivesPerFrame": 0.5310344827586206,
+      "falseNegativesPerFrame": 0.2082758620689655,
+      "impliedBias": 0.32275862068965516,
+      "stationaryFalsePositiveRuns": 0,
+      "longestFalsePositiveRunFrames": 13,
+      "longestFalsePositiveRunSeconds": 0.52
+    },
+    {
+      "sequence": "ShopAssistant1front",
+      "frames": 1675,
+      "falsePositivesPerFrame": 0.8101492537313433,
+      "falseNegativesPerFrame": 1.337910447761194,
+      "impliedBias": -0.5277611940298508,
+      "stationaryFalsePositiveRuns": 1,
+      "longestFalsePositiveRunFrames": 53,
+      "longestFalsePositiveRunSeconds": 2.12
+    },
+    {
+      "sequence": "ThreePastShop1front",
+      "frames": 1650,
+      "falsePositivesPerFrame": 0.5296969696969697,
+      "falseNegativesPerFrame": 0.5890909090909091,
+      "impliedBias": -0.059393939393939395,
+      "stationaryFalsePositiveRuns": 0,
+      "longestFalsePositiveRunFrames": 14,
+      "longestFalsePositiveRunSeconds": 0.56
+    },
+    {
+      "sequence": "TwoEnterShop1front",
+      "frames": 1645,
+      "falsePositivesPerFrame": 0.6814589665653495,
+      "falseNegativesPerFrame": 1.372644376899696,
+      "impliedBias": -0.6911854103343466,
+      "stationaryFalsePositiveRuns": 0,
+      "longestFalsePositiveRunFrames": 41,
+      "longestFalsePositiveRunSeconds": 1.64
+    },
+    {
+      "sequence": "TwoLeaveShop1front",
+      "frames": 1343,
+      "falsePositivesPerFrame": 0.4460163812360387,
+      "falseNegativesPerFrame": 0.422933730454207,
+      "impliedBias": 0.02308265078183172,
+      "stationaryFalsePositiveRuns": 0,
+      "longestFalsePositiveRunFrames": 24,
+      "longestFalsePositiveRunSeconds": 0.96
+    },
+    {
+      "sequence": "WalkByShop1front",
+      "frames": 2360,
+      "falsePositivesPerFrame": 1.486864406779661,
+      "falseNegativesPerFrame": 0.0826271186440678,
+      "impliedBias": 1.4042372881355931,
+      "stationaryFalsePositiveRuns": 12,
+      "longestFalsePositiveRunFrames": 146,
+      "longestFalsePositiveRunSeconds": 5.84
+    }
+  ]
+}

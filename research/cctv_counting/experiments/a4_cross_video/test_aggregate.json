@@ -1,0 +1,46 @@
+{
+  "detection_only": {
+    "macroMae": 0.879397211198141,
+    "microMae": 0.9468503937007874,
+    "macroRmse": 1.189203644182045,
+    "macroBias": 0.006828876743217967,
+    "sequences": 8,
+    "frames": 12653
+  },
+  "tracking_min_hits1": {
+    "macroMae": 0.879397211198141,
+    "microMae": 0.9468503937007874,
+    "macroRmse": 1.189203644182045,
+    "macroBias": 0.006828876743217967,
+    "sequences": 8,
+    "frames": 12653
+  },
+  "tracking_min_hits3": {
+    "macroMae": 0.8869175904290465,
+    "microMae": 0.9507874015748031,
+    "macroRmse": 1.198917217336984,
+    "macroBias": -0.06496613047745699,
+    "sequences": 8,
+    "frames": 12653
+  },
+  "equivalenceMargin": 0.25,
+  "macroMaeDiffDetectionMinusTracking3": -0.007520379230905538,
+  "dualPathSupported": true,
+  "crossingMicro": {
+    "IN": {
+      "actual": 20,
+      "predicted": 8,
+      "matched": 8,
+      "falsePositives": 0,
+      "missed": 12
+    },
+    "OUT": {
+      "actual": 21,
+      "predicted": 10,
+      "matched": 10,
+      "falsePositives": 0,
+      "missed": 11
+    }
+  },
+  "meanAbsoluteCountError": 1.4375
+}

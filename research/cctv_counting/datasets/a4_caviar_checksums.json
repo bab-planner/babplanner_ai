@@ -1,0 +1,112 @@
+{
+  "source": "https://homepages.inf.ed.ac.uk/rbf/CAVIARDATA2/",
+  "license": "Creative Commons BY-SA",
+  "acknowledgement": "EC Funded CAVIAR project/IST 2001 37540, http://homepages.inf.ed.ac.uk/rbf/CAVIAR/",
+  "note": "원본 파일은 커밋하지 않는다. 지문만 남긴다.",
+  "files": {
+    "EnterExitCrossingPaths1front.mpg": {
+      "sha256": "4ad6b51f756cf5c05df6017137bdb11a31bc320dd53de75aaa06a9dccf8ea7c9",
+      "bytes": 2260632
+    },
+    "f2es1gt.xml": {
+      "sha256": "f5d1309b50fe6e135ff5a14476c68465c0550d0896bf8010b8a79d1e592245e0",
+      "bytes": 4417093
+    },
+    "f2ls1gt.xml": {
+      "sha256": "c76398ada725a604739aaef176cc55326c77f02b8df22cc8b4c742c80c44b0b5",
+      "bytes": 991413
+    },
+    "f3ps1gt.xml": {
+      "sha256": "5e8ff1b7cd2a508710aeefcaff946eb3f79d0d8b1f726c8e49d32e6029169147",
+      "bytes": 2530569
+    },
+    "feecp1gt.xml": {
+      "sha256": "33677afddc823d8b47eb0fa20d59553b8edc6ed041310b071ae6746a86837494",
+      "bytes": 412116
+    },
+    "fols1gt.xml": {
+      "sha256": "7fb4e63cff0a9368da18d965143c73ec7338e2a30f9d29e39e84ba7a442677e8",
+      "bytes": 321654
+    },
+    "folsr1gt.xml": {
+      "sha256": "55dd99703a33b7d0754ec9e1a105af564b8d7c9db31171a2bf92ad927da5d722",
+      "bytes": 342526
+    },
+    "fose1gt.xml": {
+      "sha256": "8379c3dd5fcd5dba9990c4206f54aab85a0f55f65aeb119c61fe9f8420ec6a43",
+      "bytes": 1362281
+    },
+    "fosme1gt.xml": {
+      "sha256": "ba338ec41f4f3f074e02001e6d9e3c9a632e1af77d47f6fea7f4a39e0c124b89",
+      "bytes": 3795578
+    },
+    "fosmne1gt.xml": {
+      "sha256": "5bdd26370b66955dbd63223f6faf528676e7c006a4e2254d390a9ff8b8147f28",
+      "bytes": 614740
+    },
+    "fosne1gt.xml": {
+      "sha256": "b49c517a289d09875d7a22cec2e6d7a822ae035a1f03105b8d2d8301234e1ec8",
+      "bytes": 334561
+    },
+    "fosow1gt.xml": {
+      "sha256": "42a8f9ca31c8b1966150fe6cbbc784213f68a8df780dd31765ebe3c12d38d8c5",
+      "bytes": 1741853
+    },
+    "fsa1gt.xml": {
+      "sha256": "eb7425e2c3f6a306031f14012208a93d730c7a5e5c396db843ca6df8bf7abaab",
+      "bytes": 5654874
+    },
+    "fwbs1gt.xml": {
+      "sha256": "3f3089e75ce78551b28cb2d3f41fe86d4351c92a03b1c05c7d1f9099808091bd",
+      "bytes": 1013884
+    },
+    "OneLeaveShop1front.mpg": {
+      "sha256": "3815e50633b7cb6a8615164f7201e1525f4a34ec22ee0a86e4b162ec329d2dda",
+      "bytes": 1746373
+    },
+    "OneLeaveShopReenter1front.mpg": {
+      "sha256": "8bc287e61b9cb9b614bb4c2e812a2db3f9d85caeb9074fbed5d9447ee916af5d",
+      "bytes": 2301407
+    },
+    "OneShopOneWait1front.mpg": {
+      "sha256": "834694ba2b44e7d3f746e6ffa99da93cc14b608ce3ae0a4101d9af01fb58c3b1",
+      "bytes": 7970654
+    },
+    "OneStopEnter1front.mpg": {
+      "sha256": "fa009a83fa4fe0244000ee328fe7b14890b2af97cd72c2cb2da63bd222d6f8ee",
+      "bytes": 8685526
+    },
+    "OneStopMoveEnter1front.mpg": {
+      "sha256": "b338094c2351a3dd6688090cf6a17c0ab4814553ad4fd9771a995dd2131f2496",
+      "bytes": 9189401
+    },
+    "OneStopMoveNoEnter1front.mpg": {
+      "sha256": "d9b0b374b912b96cc62d680e95cd4801501774779b45d33e30d275b3d0020f72",
+      "bytes": 9629469
+    },
+    "OneStopNoEnter1front.mpg": {
+      "sha256": "dbd67e79d4dcd04e74ad2550b273000b4e2ddf31bcf26d3a59d66944420bca1d",
+      "bytes": 4219007
+    },
+    "ShopAssistant1front.mpg": {
+      "sha256": "eb7d3b83d1117df2a3c39d876171634b748c69dac5addc7e09ed60b3f559519e",
+      "bytes": 9684086
+    },
+    "ThreePastShop1front.mpg": {
+      "sha256": "fcbc1134f54898e9c2f29c37bef4ecb1f50d3f3bbac1f0e61488987579c108d9",
+      "bytes": 9549680
+    },
+    "TwoEnterShop1front.mpg": {
+      "sha256": "42e167669e422f462e9b3954c133d719607d398715701141381ba0987f067b9f",
+      "bytes": 9518398
+    },
+    "TwoLeaveShop1front.mpg": {
+      "sha256": "a6817ce8975fc45d459bfb14dab1559a49eb98950c8d51a258b64fe45ea070fa",
+      "bytes": 7780033
+    },
+    "WalkByShop1front.mpg": {
+      "sha256": "cf2138e7f69ad2700d025eaa39b683716792b4f972170faa7b9b1b99672858ee",
+      "bytes": 13627518
+    }
+  }
+}
