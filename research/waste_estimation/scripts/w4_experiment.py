@@ -302,14 +302,26 @@ def main(argv: list[str] | None = None) -> int:
             mean, deviation = stat(key)
             entry[key] = mean
             entry[f"{key}Std"] = deviation
+        # 두 집계를 **둘 다** 남긴다. 위 루프의 비율은 fold별 비율의 평균(macro)
+        # 이고, pooled는 표본을 한 번씩 센 값이다. 고잔반이 5건인 fold와 52건인
+        # fold를 macro는 똑같이 취급하므로 둘이 다르게 나온다. 하나만 적고 다른
+        # 쪽의 분자·분모를 붙이면 존재하지 않는 분수가 된다.
+        entry["catastrophicRateMacro"] = entry.pop("catastrophicRate")
+        entry["catastrophicRateMacroStd"] = entry.pop("catastrophicRateStd")
         entry["catastrophicCount"] = sum(row["catastrophicCount"] for row in rows)
         entry["highCount"] = sum(row["highCount"] for row in rows)
+        entry["catastrophicRatePooled"] = (
+            entry["catastrophicCount"] / entry["highCount"]
+            if entry["highCount"]
+            else None
+        )
         summary_rows.append(entry)
         print(
             f"  {name:14} 전체 MAE {entry['mae']:.4f}({entry['maeStd']:.3f})  "
             f"고잔반 MAE {entry['highMae']:.4f}({entry['highMaeStd']:.3f})  "
             f"고잔반 Bias {entry['highBias']:+.4f}  "
-            f"치명 {entry['catastrophicRate']:.1%}  "
+            f"치명 pooled {entry['catastrophicRatePooled']:.1%} / "
+            f"macro {entry['catastrophicRateMacro']:.1%}  "
             f"low {entry['lowMae']:.4f}  med {entry['mediumMae']:.4f}"
         )
 
@@ -362,8 +374,10 @@ def main(argv: list[str] | None = None) -> int:
     tie_margin = float(policy["tailTieMargin"])
     tied = [row for row in passed if row["highMae"] - best_tail <= tie_margin]
     if len(tied) > 1:
-        lowest = min(row["catastrophicRate"] for row in tied)
-        tied = [row for row in tied if row["catastrophicRate"] <= lowest + 1e-12]
+        # W4가 실제로 쓴 집계는 macro다. 결과를 본 뒤 규칙을 바꾸지 않으므로
+        # 이름만 명시적으로 만들고 동작은 그대로 둔다.
+        lowest = min(row["catastrophicRateMacro"] for row in tied)
+        tied = [row for row in tied if row["catastrophicRateMacro"] <= lowest + 1e-12]
     chosen = min(tied, key=lambda row: names.index(row["candidate"]))
     print(
         f"선택: {chosen['candidate']}  고잔반 MAE {chosen['highMae']:.4f}  "
@@ -397,11 +411,7 @@ def main(argv: list[str] | None = None) -> int:
     write_csv(
         "candidate_summary.csv",
         ["candidate"]
-        + [
-            key
-            for key in summary_rows[0]
-            if key != "candidate"
-        ],
+        + [key for key in summary_rows[0] if key != "candidate"],
         summary_rows,
     )
     write_csv(
@@ -441,7 +451,8 @@ def main(argv: list[str] | None = None) -> int:
         f"overall_mae: {chosen['mae']:.6f}\n"
         f"high_waste_mae: {chosen['highMae']:.6f}\n"
         f"high_waste_bias: {chosen['highBias']:.6f}\n"
-        f"catastrophic_rate: {chosen['catastrophicRate']:.6f}\n"
+        f"catastrophic_rate_macro: {chosen['catastrophicRateMacro']:.6f}\n"
+        f"catastrophic_rate_pooled: {chosen['catastrophicRatePooled']:.6f}\n"
         f"ridge_alpha: {alpha}\n"
         "selection: gate1 overall MAE guard, gate2 lowest high-waste MAE\n",
         encoding="utf-8",

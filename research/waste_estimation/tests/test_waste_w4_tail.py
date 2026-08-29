@@ -444,9 +444,58 @@ def test_high_waste_bias_is_reported_not_just_absolute_error():
         assert float(row["highBias"]) < 0, "고잔반에서 과소추정이 사라졌다면 확인하세요"
 
 
-def test_catastrophic_rate_is_reported_for_every_candidate():
+def test_both_catastrophic_aggregations_are_reported():
+    """pooled와 fold-macro는 다른 값이다.
+
+    한쪽 분자·분모에 다른 쪽 비율을 붙이면 존재하지 않는 분수가 된다.
+    (W4 초판이 정확히 그렇게 적었고 W5에서 정정했다.)
+    """
     for row in read_csv("candidate_summary.csv"):
-        assert row["catastrophicRate"] not in ("", None)
+        assert row["catastrophicRatePooled"] not in ("", None)
+        assert row["catastrophicRateMacro"] not in ("", None)
+        pooled = float(row["catastrophicRatePooled"])
+        assert pooled == pytest.approx(
+            int(row["catastrophicCount"]) / int(row["highCount"])
+        )
+
+
+def test_the_two_aggregations_actually_differ_here():
+    """둘이 같다면 구분해서 적을 이유가 없다. 이 데이터에서는 다르다."""
+    rows = {row["candidate"]: row for row in read_csv("candidate_summary.csv")}
+    row = rows["R0_STANDARD"]
+    assert float(row["catastrophicRatePooled"]) != pytest.approx(
+        float(row["catastrophicRateMacro"]), abs=1e-4
+    )
+
+
+def test_the_w4_selection_is_unchanged_by_the_aggregation_choice():
+    """정정이 결론을 바꾸지 않았는지 확인한다."""
+    rows = {row["candidate"]: row for row in read_csv("candidate_summary.csv")}
+    for key in ("catastrophicRatePooled", "catastrophicRateMacro"):
+        assert float(rows["R0_STANDARD"][key]) == pytest.approx(
+            float(rows["R2_HIGH_AUX"][key])
+        )
+    meta = read_json("metadata.json")
+    assert meta["selected"] == "R0_STANDARD"
+    assert "R1_BALANCED" not in meta["gate1Passed"]
+
+
+def test_report_records_the_aggregation_correction():
+    text = report_text()
+    assert "pooled" in text and "fold-macro" in text
+    assert "정정" in text
+
+
+def test_report_no_longer_claims_the_representation_is_sufficient():
+    """'정보 부족이 아니라 목적함수 문제'는 현재 근거로 너무 강하다."""
+    text = report_text()
+    retracted = "꼬리 실패는 정보 부족이 아니라 목적함수 문제"
+    # 문장을 지우지 않고 **내렸다고 적는다.** 그래야 무엇이 바뀌었는지 남는다.
+    # 그래서 딱 한 번, 정정 문단 안에서만 등장해야 한다.
+    assert text.count(retracted) == 1
+    assert "초판은" in text[: text.index(retracted)][-200:]
+    assert "충분한** 정보를" in text
+    assert "충분한지는 아직 모른다" in text
 
 
 def test_low_and_medium_are_reported_so_the_tail_fix_cannot_hide_damage():

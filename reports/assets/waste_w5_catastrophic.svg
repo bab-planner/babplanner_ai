@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="400" viewBox="0 0 720 400" font-family="system-ui, sans-serif">
+<rect width="720" height="400" fill="#ffffff"/>
+<text x="78" y="28" font-size="16" font-weight="600" fill="#1f2933">치명적 과소추정 비율 — 이번 선택의 주 기준</text>
+<text x="78" y="46" font-size="12" fill="#7b8794">정답 >= 0.8 이고 정답 − 예측 >= 0.30 · 분모는 고잔반 표본 수 · pooled</text>
+<line x1="78" y1="338.0" x2="694" y2="338.0" stroke="#e4e7eb"/>
+<text x="70" y="342.0" font-size="11" fill="#7b8794" text-anchor="end">0%</text>
+<line x1="78" y1="268.0" x2="694" y2="268.0" stroke="#e4e7eb"/>
+<text x="70" y="272.0" font-size="11" fill="#7b8794" text-anchor="end">12%</text>
+<line x1="78" y1="198.0" x2="694" y2="198.0" stroke="#e4e7eb"/>
+<text x="70" y="202.0" font-size="11" fill="#7b8794" text-anchor="end">25%</text>
+<line x1="78" y1="128.0" x2="694" y2="128.0" stroke="#e4e7eb"/>
+<text x="70" y="132.0" font-size="11" fill="#7b8794" text-anchor="end">38%</text>
+<line x1="78" y1="58.0" x2="694" y2="58.0" stroke="#e4e7eb"/>
+<text x="70" y="62.0" font-size="11" fill="#7b8794" text-anchor="end">50%</text>
+<rect x="90.0" y="138.9" width="84.7" height="199.1" fill="#2b6cb0" opacity="0.85"/>
+<text x="132.3" y="133.9" font-size="10" fill="#1f2933" text-anchor="middle">35.6%</text>
+<rect x="180.7" y="74.5" width="84.7" height="263.5" fill="#c05621" opacity="0.85"/>
+<text x="223.0" y="69.5" font-size="10" fill="#1f2933" text-anchor="middle">47.1%</text>
+<text x="180.7" y="356.0" font-size="11" fill="#7b8794" text-anchor="middle">S0 표준 회귀</text>
+<rect x="295.3" y="213.6" width="84.7" height="124.4" fill="#2b6cb0" opacity="0.85"/>
+<text x="337.7" y="208.6" font-size="10" fill="#1f2933" text-anchor="middle">22.2%</text>
+<rect x="386.0" y="173.3" width="84.7" height="164.7" fill="#c05621" opacity="0.85"/>
+<text x="428.3" y="168.3" font-size="10" fill="#1f2933" text-anchor="middle">29.4%</text>
+<text x="386.0" y="356.0" font-size="11" fill="#7b8794" text-anchor="middle">S1 누적 순서형</text>
+<rect x="500.7" y="269.6" width="84.7" height="68.4" fill="#2b6cb0" opacity="0.85"/>
+<text x="543.0" y="264.6" font-size="10" fill="#1f2933" text-anchor="middle">12.2%</text>
+<rect x="591.3" y="206.2" width="84.7" height="131.8" fill="#c05621" opacity="0.85"/>
+<text x="633.7" y="201.2" font-size="10" fill="#1f2933" text-anchor="middle">23.5%</text>
+<text x="591.3" y="356.0" font-size="11" fill="#7b8794" text-anchor="middle">S2 부드러운 혼합</text>
+<rect x="78" y="371" width="12" height="12" fill="#2b6cb0" opacity="0.85"/>
+<text x="96" y="381" font-size="11" fill="#1f2933">DEVELOPMENT (90건)</text>
+<rect x="230.4" y="371" width="12" height="12" fill="#c05621" opacity="0.85"/>
+<text x="248.4" y="381" font-size="11" fill="#1f2933">W2 분석 집합 (34건, 시험 아님)</text>
+</svg>

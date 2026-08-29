@@ -1,0 +1,43 @@
+{
+  "stage": "W5",
+  "split": "W2_ANALYSIS",
+  "isFinalTest": false,
+  "isGeneralizationTest": false,
+  "isPristineValidation": false,
+  "resultName": "POST-HOC FROZEN ANALYSIS",
+  "note": "W2에서 이미 결과를 본 집합이다. 선택은 DEVELOPMENT에서 끝났고 여기서 바뀌지 않는다.",
+  "policyHash": "cbcebd037f6677e127372576a8dbc106818e0aeb9b1244bc8afe360b9b04c6e0",
+  "selected": "S2_SOFT_HIGH_LOW_MIXTURE",
+  "selectionMadeOn": "DEVELOPMENT group CV",
+  "predictionPolicy": "bounded",
+  "applications": 1,
+  "sampleCount": 116,
+  "groupCount": 10,
+  "highWasteCount": 34,
+  "gate": {
+    "positives": 34,
+    "recall": 0.6764705882352942,
+    "precision": 0.7419354838709677,
+    "f1": 0.7076923076923077,
+    "auroc": 0.9128407460545194
+  },
+  "lowExpertCount": 308,
+  "highExpertCount": 90,
+  "monotonicViolationsRepaired": 72,
+  "binRepresentatives": [
+    0.019402236310435774,
+    0.30496980721424227,
+    0.4953209768732148,
+    0.6976853092900962,
+    0.9555083451436844
+  ],
+  "catastrophicMovement": {
+    "recovered": 8,
+    "remaining": 8,
+    "newRegression": 0
+  },
+  "freshTest": {
+    "available": false,
+    "note": "동일 비율 의미 + VERIFIED 라이선스의 새 데이터셋을 확보하지 못했다. 찾기 위해 범위를 늘리지 않는다. structured-head development complete; pristine external validation pending."
+  }
+}

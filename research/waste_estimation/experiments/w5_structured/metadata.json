@@ -1,0 +1,24 @@
+{
+  "stage": "W5",
+  "policyHash": "cbcebd037f6677e127372576a8dbc106818e0aeb9b1244bc8afe360b9b04c6e0",
+  "developmentCount": 398,
+  "developmentGroups": 24,
+  "highWasteCount": 90,
+  "outerFolds": 5,
+  "outerGroupLeakage": 0,
+  "analysisOpened": false,
+  "predictionPolicy": "bounded",
+  "selected": "S2_SOFT_HIGH_LOW_MIXTURE",
+  "selectionReferenceMae": 0.13985308447185943,
+  "gate1Threshold": 0.15985308447185942,
+  "gate1Passed": [
+    "S0_STANDARD_RIDGE",
+    "S1_CUMULATIVE_ORDINAL_EXPECTATION",
+    "S2_SOFT_HIGH_LOW_MIXTURE"
+  ],
+  "hyperparameterSearch": false,
+  "representationIdenticalAcrossCandidates": true,
+  "monotonicViolationsTotal": 394,
+  "mixtureFailedFolds": 0,
+  "note": "구간 대표값·전문가 분할·게이트 모두 학습 fold 정답만 봤다. 평가 fold 라벨은 어디에도 들어가지 않는다."
+}

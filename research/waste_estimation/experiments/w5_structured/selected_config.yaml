@@ -1,0 +1,10 @@
+# DEVELOPMENT group CV에서 고른 출력 구조. ANALYSIS를 보기 전에 정했다.
+candidate: S2_SOFT_HIGH_LOW_MIXTURE
+prediction_policy: bounded
+overall_mae: 0.130888
+high_waste_mae: 0.152238
+high_waste_bias: -0.137454
+catastrophic_rate_pooled: 0.122222
+catastrophic_rate_macro: 0.119744
+ridge_alpha: 100.0
+selection: gate1 bounded overall MAE guard, gate2 lowest pooled catastrophic rate

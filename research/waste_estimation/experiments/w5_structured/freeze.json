@@ -1,0 +1,154 @@
+{
+  "analysisSplit": {
+    "applications": 1,
+    "groups": 10,
+    "isFinalTest": false,
+    "isGeneralizationTest": false,
+    "isPristineValidation": false,
+    "name": "W2_ANALYSIS",
+    "resultName": "POST-HOC FROZEN ANALYSIS",
+    "size": 116
+  },
+  "binConvention": "왼쪽 닫힘 (y >= t). 마지막 칸이 고잔반 집합과 정확히 같다.",
+  "binConventionNote": "W4의 tail.bin_index는 to_class_index 규약(> edge)을 따른다. 정답이 정확히 0.8인 표본 1건에서 갈리며, W5는 왼쪽 닫힘으로 통일한다.",
+  "binEdges": [
+    0.2,
+    0.4,
+    0.6,
+    0.8
+  ],
+  "candidates": [
+    {
+      "alpha": 100.0,
+      "description": "W2/W4 baseline 그대로. frozen 임베딩 + Ridge alpha=100.",
+      "name": "S0_STANDARD_RIDGE",
+      "outputHead": "direct point regression"
+    },
+    {
+      "binRepresentativeFallback": "구간 중점 (빈 구간일 때만)",
+      "binRepresentatives": "학습 fold 정답의 구간별 평균",
+      "classWeight": "balanced",
+      "classifier": "LogisticRegression",
+      "classifierAlpha": 100.0,
+      "description": "임계값마다 이진 분류기로 누적 확률을 내고, 단조 보정 후 구간 확률로 바꾸고, 학습 fold 구간 평균을 대표값으로 기대값을 만든다.",
+      "differsFromW2T2": "W2 T2는 단일 순서형 클래스 예측이었다. S1은 전체 누적 분포를 만들고 기대값으로 되돌린다. 같은 실험이 아니다.",
+      "monotonicRepair": "running minimum (누적 최솟값, 왼쪽에서 오른쪽으로)",
+      "monotonicRepairNote": "확률을 올리는 방향의 보정(오른쪽부터 최댓값)은 고잔반 확률을 낙관적으로 부풀린다. 과소추정이 관심사이므로 보수적인 쪽을 고른다.",
+      "name": "S1_CUMULATIVE_ORDINAL_EXPECTATION",
+      "outputHead": "cumulative ordinal distribution -> expected value",
+      "thresholds": [
+        0.2,
+        0.4,
+        0.6,
+        0.8
+      ]
+    },
+    {
+      "description": "고잔반 게이트 점수로 저잔반 전문가와 고잔반 전문가의 예측을 부드럽게 섞는다.",
+      "experts": {
+        "high": "학습 fold의 y >= 0.8 표본만, Ridge alpha=100",
+        "nonHigh": "학습 fold의 y < 0.8 표본만, Ridge alpha=100"
+      },
+      "gate": "LogisticRegression(class_weight=balanced), target y >= 0.8",
+      "gateAlpha": 100.0,
+      "gateNote": "게이트 출력은 gating score다. 보정된 확률이라고 부르지 않는다.",
+      "hardSwitching": false,
+      "hardSwitchingNote": "딱딱한 전환은 경계에서 예측이 튄다. 여기서 재려는 것은 혼합 구조이지 전환 규칙이 아니다.",
+      "minExpertSamples": 10,
+      "name": "S2_SOFT_HIGH_LOW_MIXTURE",
+      "outputHead": "soft mixture of two ridge experts"
+    }
+  ],
+  "catastrophicMargin": 0.3,
+  "catastrophicName": "HIGH_WASTE_CATASTROPHIC_UNDERESTIMATION",
+  "catastrophicPrimaryAggregation": "pooled",
+  "catastrophicRule": "정답 >= 0.8 이고 정답 − 예측 >= 0.3",
+  "catastrophicTieMargin": 0.02,
+  "classifierAlpha": 100.0,
+  "cumulativeThresholds": [
+    0.2,
+    0.4,
+    0.6,
+    0.8
+  ],
+  "foldReuseNote": "W4와 동일한 바깥 fold. 후보마다 새로 만들지 않는다.",
+  "forbidden": [
+    "ANALYSIS에서 후보 선택",
+    "ANALYSIS에서 threshold 변경",
+    "ANALYSIS에서 head 구조 변경",
+    "결과를 보고 단조 보정 규칙 변경",
+    "결과를 보고 구간 대표값 규칙 변경",
+    "결과를 보고 예측 정책(bounded/raw) 변경",
+    "평가 fold 정답으로 구간 대표값 계산",
+    "평가 fold 표본으로 전문가 학습",
+    "backbone 변경 / fine-tuning / 데이터 증강",
+    "표본 재가중 추가 실험 (W4에서 끝났다)",
+    "신뢰 방법 재튜닝",
+    "분위 회귀 (이번 범위 밖. S1/S2 결과를 보고 판단)",
+    "production fixture 교체 / FastAPI wiring",
+    "사람 관찰자 값을 모델 입력으로 사용"
+  ],
+  "freshTest": {
+    "available": false,
+    "note": "동일 비율 의미 + VERIFIED 라이선스의 새 데이터셋을 확보하지 못했다. 찾기 위해 범위를 늘리지 않는다. structured-head development complete; pristine external validation pending."
+  },
+  "frozenAt": "2026-08-31",
+  "groupKey": "food category",
+  "guardMetrics": [
+    "low-waste MAE",
+    "medium-waste MAE",
+    "p90 absolute error"
+  ],
+  "highWasteThreshold": 0.8,
+  "hyperparameterSearch": false,
+  "newRegressionDefinition": "S0에서 치명적이 아니었는데 선택 모델에서 치명적이 되면 NEW_CATASTROPHIC_REGRESSION",
+  "outerFolds": 5,
+  "outerSeed": 42,
+  "overallGuardMargin": 0.02,
+  "predictionPolicy": {
+    "differsFromW2": "W2의 주 지표는 raw였다. W5에서 BOUNDED로 바꾼 것을 보고서에 명시한다.",
+    "primary": "BOUNDED — clip(prediction, 0, 1) 후 지표 계산",
+    "reason": "S1은 구조상 [0,1] 안에서만 답하고 제품 API도 [0,1]이다. raw로 재면 S1만 범위 밖 오차가 없어 유리해진다 — 구조가 아니라 범위를 비교하게 된다.",
+    "supplementary": "RAW — 자르지 않은 출력도 함께 기록"
+  },
+  "primaryMetrics": [
+    "overall MAE (bounded)",
+    "overall RMSE (bounded)",
+    "overall Bias (bounded)"
+  ],
+  "priorStages": {
+    "w4CatastrophicAggregation": "pooled(표본을 한 번씩)와 fold-macro(fold 비율의 평균)를 구분해 다시 적었다. W5는 pooled를 주 집계로 쓴다.",
+    "w4CorrectedConclusion": "frozen 표현은 고잔반 표본을 판별하는 신호를 상당히 가지고 있다(AUROC 0.912). 그러나 W4는 그 표현이 정확한 꼬리 크기 회귀에 충분한 정보를 담고 있음을 보이지 않았다. 확인된 것은 단순 재가중과 단순 보조 특징 결합이 부족하다는 것뿐이다.",
+    "w4Freeze": "05426ff78705d3c3a125a44552747460105335c5951ec8b7fa1982c0960e97e6"
+  },
+  "purpose": "표현과 정규화를 그대로 두고 **출력 구조만** 바꿔 꼬리 크기 예측이 개선되는지 본다. 결과를 보기 전에 정의를 봉한다.",
+  "recoveredDefinition": "S0에서 치명적이었던 표본이 선택 모델에서 정답 − 예측 < 0.30이 되면 RECOVERED",
+  "reliabilityFrozen": true,
+  "reliabilityNote": "W3/W4에서 novelty 기반 신뢰가 고잔반 내부 안전장치가 아님을 확인했다. W5에서는 신뢰 후보를 추가하지 않고 재튜닝하지도 않는다. W4의 정규화 kNN coverage 결과는 그대로 유지한다.",
+  "representation": {
+    "arm": "after",
+    "backbone": "resnet18",
+    "changed": false,
+    "frozen": true,
+    "identicalAcrossCandidates": true,
+    "note": "후보 간 표현 차이 0. fine-tuning·backbone 변경·증강 없음.",
+    "weights": "IMAGENET1K_V1"
+  },
+  "ridgeAlpha": 100.0,
+  "selectionRule": [
+    "Gate 1) 전체 MAE(자른 예측, 바깥 fold 평균)가 S0보다 +0.02 넘게 나빠지면 탈락",
+    "Gate 2) 통과 후보 중 치명적 과소추정 비율(pooled)이 가장 낮은 모델",
+    "Tie) 치명적 비율 차이가 0.02 이내이면 고잔반 MAE가 낮은 쪽",
+    "Tie2) 그래도 같으면 전체 MAE가 낮은 쪽",
+    "Tie3) 그래도 같으면 더 단순한 모델 (S0 < S1 < S2)"
+  ],
+  "sha256OfRecordWithoutHash": "cbcebd037f6677e127372576a8dbc106818e0aeb9b1244bc8afe360b9b04c6e0",
+  "stage": "W5",
+  "statisticalClaimLimit": "음식 범주 24개뿐이다. p-value를 억지로 만들지 않는다. fold 단위 일관성으로만 말한다.",
+  "tailMetrics": [
+    "high-waste MAE",
+    "high-waste Bias",
+    "catastrophic count",
+    "catastrophic rate (pooled, macro 둘 다 기록)"
+  ]
+}
