@@ -46,6 +46,11 @@ research/cctv_counting/experiments/*/*
 # --- 잔반 연구 트랙 (AI-2) ---
 # 급식 사진에는 사람이 찍혀 있을 수 있다. 실험 디렉터리도 같은 규칙을 쓴다.
 research/waste_estimation/data/
+
+# 통제된 연출 파일럿 원본. 사진과 개인 폴더 구조는 저장소에 들어가지 않는다.
+# 위 data/ 규칙에 이미 포함되지만, 경로를 명시해 실수로 화이트리스트에
+# 걸리는 일을 막는다.
+research/waste_estimation/data/private/
 research/waste_estimation/experiments/*
 !research/waste_estimation/experiments/README.md
 !research/waste_estimation/experiments/*/
