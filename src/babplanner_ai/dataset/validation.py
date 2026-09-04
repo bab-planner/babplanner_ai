@@ -144,6 +144,16 @@ def group_key_of(sample: DatasetSample) -> str:
 def _check_split_leakage(
     samples: list[DatasetSample], report: ValidationReport
 ) -> None:
+    for sample in samples:
+        if sample.is_gt_excluded and sample.split is not None:
+            # 정답으로 쓰지 않기로 한 표본이 분할에 들어가 있다. 그대로
+            # 두면 학습이나 평가에 섞여 들어간다.
+            report.error(
+                f"정답 제외 표본({sample.gt_exclusion_reason.value})에 "  # type: ignore[union-attr]
+                f"분할 {sample.split.value} 이(가) 붙어 있습니다.",
+                sample.sample_id,
+            )
+
     assigned = [sample for sample in samples if sample.split is not None]
     if not assigned:
         return
@@ -159,10 +169,43 @@ def _check_split_leakage(
                 + ", ".join(sorted(split.value for split in splits))
             )
 
-    if len(assigned) != len(samples):
-        report.warn(
-            f"분할이 없는 표본이 {len(samples) - len(assigned)}건 있습니다."
-        )
+    # 일부러 뺀 표본은 "분할이 없다"고 말하지 않는다. 그건 정상 상태다.
+    pending = [
+        sample
+        for sample in samples
+        if sample.split is None and not sample.is_gt_excluded
+    ]
+    if pending:
+        report.warn(f"분할이 없는 표본이 {len(pending)}건 있습니다.")
+
+
+def _check_gt_exclusions(
+    samples: list[DatasetSample], report: ValidationReport
+) -> None:
+    """정답 제외 표본을 센다.
+
+    조용히 지나가지 않는다. 뼈 메뉴가 많아서 실제로 학습에 쓸 표본이 모자란
+    상황이 "표본 200건"이라는 총계 뒤에 숨는 것을 막는다.
+    """
+    excluded = [sample for sample in samples if sample.is_gt_excluded]
+    if not excluded:
+        return
+
+    by_reason = Counter(
+        sample.gt_exclusion_reason.value  # type: ignore[union-attr]
+        for sample in excluded
+    )
+    breakdown = ", ".join(f"{reason} {count}건" for reason, count in sorted(by_reason.items()))
+    usable = sum(1 for sample in samples if sample.is_supervised_usable)
+    report.warn(
+        f"정답 제외 표본 {len(excluded)}건은 학습·검증·평가에서 빠집니다 "
+        f"({breakdown}). 전체 {len(samples)}건 중 정답으로 쓸 수 있는 표본은 "
+        f"{usable}건입니다."
+    )
+
+    by_menu = Counter(sample.menu_id for sample in excluded)
+    detail = ", ".join(f"menu {menu_id}: {count}건" for menu_id, count in sorted(by_menu.items()))
+    report.warn(f"메뉴별 정답 제외: {detail}")
 
 
 def _check_benchmark_eligibility(
@@ -197,5 +240,6 @@ def validate_dataset(samples: list[DatasetSample], root: Path) -> ValidationRepo
     hashes = _check_files(samples, root, report)
     _check_duplicates(hashes, report)
     _check_split_leakage(samples, report)
+    _check_gt_exclusions(samples, report)
     _check_benchmark_eligibility(samples, report)
     return report

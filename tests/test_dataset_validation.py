@@ -235,3 +235,63 @@ def test_visual_estimate_warns_about_the_benchmark(dataset: Path) -> None:
 
     assert report.ok
     assert any("주 평가 집합에서 제외" in finding.message for finding in report.warnings)
+
+
+# --- 정답 제외 --------------------------------------------------------------
+
+
+def mark_excluded(rows: list[dict[str, str]], count: int, reason: str = "BONE_IN") -> None:
+    """앞의 몇 행에 정답 제외 표시를 붙인다. 옛 매니페스트에는 열이 없다."""
+    for row in rows:
+        row.setdefault("gt_exclusion_reason", "")
+        row.setdefault("gt_exclusion_note", "")
+    for row in rows[:count]:
+        row["gt_exclusion_reason"] = reason
+
+
+def test_manifest_without_the_columns_still_reads(dataset: Path) -> None:
+    # 옛 매니페스트에는 이 열이 없다. 그대로 읽혀야 한다.
+    samples = read_manifest(dataset / "manifest.csv")
+
+    assert all(sample.gt_exclusion_reason is None for sample in samples)
+    assert validate_dataset(samples, dataset).ok
+
+
+def test_exclusions_are_reported_with_counts(dataset: Path) -> None:
+    rows = rows_of(dataset)
+    mark_excluded(rows, 2)
+    path = write_rows(dataset, rows, "excluded.csv")
+
+    report = validate_dataset(read_manifest(path), dataset)
+
+    # 총계 뒤에 숨지 않게 사유별·메뉴별로 센다.
+    assert report.ok
+    assert any(
+        "정답 제외 표본 2건" in finding.message and "BONE_IN 2건" in finding.message
+        for finding in report.warnings
+    )
+    assert any("메뉴별 정답 제외" in finding.message for finding in report.warnings)
+
+
+def test_excluded_sample_with_a_split_is_an_error(dataset: Path) -> None:
+    rows = rows_of(dataset)
+    mark_excluded(rows, 1)
+    rows[0]["split"] = "train"
+    path = write_rows(dataset, rows, "excluded_split.csv")
+
+    report = validate_dataset(read_manifest(path), dataset)
+
+    # 정답으로 쓰지 않기로 한 표본이 학습에 섞여 들어간 상태다.
+    assert not report.ok
+    assert any("분할 train" in finding.message for finding in report.errors)
+
+
+def test_excluded_samples_are_not_called_unsplit(dataset: Path) -> None:
+    rows = rows_of(dataset)
+    mark_excluded(rows, 1)
+    path = write_rows(dataset, rows, "excluded_only.csv")
+
+    report = validate_dataset(read_manifest(path), dataset)
+
+    # 일부러 뺀 것을 "아직 안 나눴다"고 말하지 않는다.
+    assert not any("분할이 없는 표본" in finding.message for finding in report.warnings)

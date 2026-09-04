@@ -12,12 +12,20 @@ from pathlib import Path
 import pytest
 
 from babplanner_ai.dataset.manifest import read_manifest
-from babplanner_ai.dataset.schema import DatasetSample, Split
+from babplanner_ai.dataset.schema import (
+    CURRENT_LABEL_VERSION,
+    AnalysisLabel,
+    DatasetSample,
+    GtExclusionReason,
+    ServedMassSource,
+    Split,
+)
 from babplanner_ai.dataset.splitting import (
     SplitError,
     SplitRatios,
     assign_splits,
     group_by_menu,
+    split_counts,
 )
 from babplanner_ai.dataset.validation import group_key_of
 
@@ -162,3 +170,72 @@ def test_no_split_is_empty(samples: list[DatasetSample]) -> None:
 
     for split in Split:
         assert per_split[split], f"{split.value} 가 비었습니다"
+
+
+# --- 정답 제외 --------------------------------------------------------------
+
+
+def excluded(sample: DatasetSample) -> DatasetSample:
+    return sample.model_copy(
+        update={"gt_exclusion_reason": GtExclusionReason.BONE_IN}
+    )
+
+
+def test_excluded_samples_get_no_split(samples: list[DatasetSample]) -> None:
+    marked = [excluded(samples[0]), *samples[1:]]
+
+    assigned = assign_splits(marked, seed=42)
+
+    by_id = {sample.sample_id: sample for sample in assigned}
+    assert by_id[samples[0].sample_id].split is None
+    # 나머지는 그대로 나뉜다.
+    assert all(
+        sample.split is not None
+        for sample in assigned
+        if not sample.is_gt_excluded
+    )
+
+
+def test_excluded_samples_are_counted_separately(samples: list[DatasetSample]) -> None:
+    marked = [excluded(samples[0]), *samples[1:]]
+
+    counts = split_counts(assign_splits(marked, seed=42))
+
+    # 아직 안 나눈 것과 일부러 뺀 것을 한 칸에 몰아넣지 않는다.
+    assert counts["gt_excluded"] == 1
+    assert "unassigned" not in counts
+
+
+def test_excluded_samples_do_not_fill_the_group_minimum() -> None:
+    """뼈 메뉴만 잔뜩 모아 놓고 분할이 만들어지면 안 된다.
+
+    그룹은 셋인데 쓸 수 있는 표본은 하나뿐인 상태로 분할이 생기면, 학습에
+    쓸 데이터가 없다는 사실이 분할 파일 뒤에 숨는다.
+    """
+    base = DatasetSample(
+        sample_id="s0",
+        image_path="images/s0.png",
+        menu_id=7,
+        capture_session_id="S00",
+        served_edible_mass_g=300.0,
+        leftover_edible_mass_g=60.0,
+        waste_rate=0.2,
+        served_mass_source=ServedMassSource.MEASURED,
+        analysis_label=AnalysisLabel.APPROVED,
+        label_version=CURRENT_LABEL_VERSION,
+    )
+    usable = base.model_copy(update={"sample_id": "s0", "capture_session_id": "S00"})
+    marked = [
+        excluded(base.model_copy(update={"sample_id": f"x{i}", "capture_session_id": f"X{i}"}))
+        for i in range(3)
+    ]
+
+    with pytest.raises(SplitError, match="정답 제외 3건은 세지 않았습니다"):
+        assign_splits([usable, *marked], seed=42)
+
+
+def test_all_excluded_is_an_error(samples: list[DatasetSample]) -> None:
+    marked = [excluded(sample) for sample in samples]
+
+    with pytest.raises(SplitError, match="정답 제외"):
+        assign_splits(marked, seed=42)

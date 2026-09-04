@@ -75,6 +75,58 @@ class RejectionReason(str, Enum):
     OTHER = "OTHER"
 
 
+class GtExclusionReason(str, Enum):
+    """이 표본을 정답 데이터로 쓰지 않는 이유.
+
+    거절(`RejectionReason`)과 다르다. 거절은 사진에서 잔반을 판단할 수 없다는
+    뜻이고, 여기는 **사진도 계량도 멀쩡하지만 질량비가 그 식판의 잔반률을
+    뜻하지 않는다**는 뜻이다.
+
+    표시된 표본도 수집하고 저장하고 QC에서 센다. 버리지 않는다. 다만 학습과
+    검증과 평가에서는 빠지고, 표본 수·범주 수 같은 관문을 채우는 데도 쓰이지
+    않는다. 뼈가 많은 메뉴를 잔뜩 모아 놓고 데이터가 충분하다고 말하게 되는
+    것을 막으려는 것이다.
+    """
+
+    #: 배식에 뼈·껍질·씨가 들어 있다. 가식부만 따로 잴 방법이 없어
+    #: 분자와 분모에 같이 섞이고, 그 편향이 잔반률에 따라 달라진다.
+    #: 낮은 잔반률을 위로 끌어올리므로 상수 보정으로도 지울 수 없다.
+    BONE_IN = "BONE_IN"
+
+    #: 액체 위주라 증발분이 잔반량에서 빠진다. 실제 측정으로 크기를
+    #: 확인하기 전에는 이 값을 규칙으로 붙이지 않는다.
+    EVAPORATIVE = "EVAPORATIVE"
+
+    #: 위에 없는 이유. 반드시 설명을 함께 적는다.
+    OTHER = "OTHER"
+
+
+#: 사유 이름만으로는 뜻이 서지 않아 설명을 반드시 받는 값.
+#: `OTHER`만 남고 이유를 모르는 표본이 쌓이면 나중에 되살릴 수 없다.
+GT_EXCLUSION_REASONS_REQUIRING_NOTE = frozenset({GtExclusionReason.OTHER})
+
+
+def check_gt_exclusion(
+    reason: GtExclusionReason | None, note: str | None
+) -> None:
+    """제외 사유와 설명의 짝이 맞는지.
+
+    현장 기록·메뉴 선언·매니페스트 세 곳이 같은 규칙을 써야 하므로 여기
+    한 곳에만 적는다. 세 곳에 나눠 적으면 언젠가 갈라진다.
+    """
+    if reason is None:
+        if note:
+            # 설명만 남고 사유가 없으면 이 표본이 빠지는지 아닌지를 읽는
+            # 사람마다 다르게 판단하게 된다.
+            raise ValueError("제외 설명만 있고 제외 사유가 없습니다. 둘은 같이 적습니다.")
+        return
+
+    if reason in GT_EXCLUSION_REASONS_REQUIRING_NOTE and not (note or "").strip():
+        # OTHER만 남은 표본은 나중에 왜 뺐는지 알 방법이 없다. 그 상태로
+        # 쌓이면 되살릴 수도, 규칙을 고칠 수도 없다.
+        raise ValueError(f"{reason.value} 로 제외할 때는 이유를 함께 적습니다.")
+
+
 class MealType(str, Enum):
     BREAKFAST = "BREAKFAST"
     LUNCH = "LUNCH"
@@ -123,6 +175,13 @@ class DatasetSample(BaseModel):
 
     served_mass_source: ServedMassSource | None = None
 
+    #: 정답 데이터로 쓰지 않기로 표시한 이유. 비어 있는 것이 정상이다.
+    #: 값이 있으면 학습·검증·평가에서 빠지고 관문 계산에도 들어가지 않는다.
+    gt_exclusion_reason: GtExclusionReason | None = None
+
+    #: 왜 뺐는지. `OTHER`에는 반드시 있어야 한다. 사람 정보는 넣지 않는다.
+    gt_exclusion_note: str | None = None
+
     analysis_label: AnalysisLabel
     rejection_reason: RejectionReason | None = None
 
@@ -134,11 +193,15 @@ class DatasetSample(BaseModel):
 
     @model_validator(mode="after")
     def _check_label_invariants(self) -> "DatasetSample":
+        self._check_gt_exclusion()
         if self.analysis_label is AnalysisLabel.APPROVED:
             self._check_approved()
         else:
             self._check_rejected()
         return self
+
+    def _check_gt_exclusion(self) -> None:
+        check_gt_exclusion(self.gt_exclusion_reason, self.gt_exclusion_note)
 
     def _check_approved(self) -> None:
         if self.rejection_reason is not None:
@@ -185,14 +248,37 @@ class DatasetSample(BaseModel):
         return self.participant_group_id, self.capture_session_id
 
     @property
+    def is_gt_excluded(self) -> bool:
+        """정답 데이터로 쓰지 않기로 표시된 표본인가.
+
+        수집·저장·QC에는 남지만 학습·검증·평가에서는 빠진다.
+        """
+        return self.gt_exclusion_reason is not None
+
+    @property
     def is_primary_benchmark(self) -> bool:
         """주 평가 집합에 넣을 수 있는지.
 
-        승인됐고 제공량을 실제로 잰 표본만 해당한다.
+        승인됐고, 제공량을 실제로 쟀고, 정답 제외 표시가 없는 표본만 해당한다.
         """
         return (
             self.analysis_label is AnalysisLabel.APPROVED
             and self.served_mass_source in PRIMARY_BENCHMARK_SOURCES
+            and not self.is_gt_excluded
+        )
+
+    @property
+    def is_supervised_usable(self) -> bool:
+        """학습·검증·평가에 정답으로 쓸 수 있는지.
+
+        `is_primary_benchmark`보다 넓다. 제공량 출처가 표준 배식량이어도
+        학습에는 쓸 수 있지만 주 평가에는 넣지 않기 때문이다. 제외 표시가
+        있으면 어느 쪽에도 들어가지 않는다.
+        """
+        return (
+            self.analysis_label is AnalysisLabel.APPROVED
+            and self.waste_rate is not None
+            and not self.is_gt_excluded
         )
 
 

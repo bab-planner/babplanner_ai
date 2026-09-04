@@ -17,7 +17,7 @@ from collections import Counter
 from pathlib import Path
 
 from babplanner_ai.dataset.manifest import ManifestError, read_manifest, write_manifest
-from babplanner_ai.dataset.schema import AnalysisLabel, DatasetSample
+from babplanner_ai.dataset.schema import DatasetSample
 from babplanner_ai.dataset.splitting import (
     DEFAULT_RATIOS,
     DEFAULT_SEED,
@@ -45,7 +45,15 @@ def command_validate(args: argparse.Namespace) -> int:
     if report.errors or report.warnings:
         print(report.render())
 
-    print(f"\n표본 {len(samples)}건, 오류 {len(report.errors)}건, 경고 {len(report.warnings)}건")
+    # 총계만 찍지 않는다. 뼈 메뉴가 많아 실제로 쓸 표본이 모자란 상황이
+    # "표본 200건" 뒤에 숨지 않게 한다.
+    usable = sum(1 for sample in samples if sample.is_supervised_usable)
+    excluded = sum(1 for sample in samples if sample.is_gt_excluded)
+    print(
+        f"\n전체 표본 {len(samples)}건, 정답 사용 가능 {usable}건, "
+        f"정답 제외 {excluded}건"
+    )
+    print(f"오류 {len(report.errors)}건, 경고 {len(report.warnings)}건")
     if not report.ok:
         return EXIT_FAILED
     print("문제 없음")
@@ -66,11 +74,12 @@ def command_summarize(args: argparse.Namespace) -> int:
         for sample in samples
         if sample.rejection_reason is not None
     )
+    # 제외 표본의 질량비는 그 식판의 잔반률을 뜻하지 않기로 한 값이다.
+    # 분포에 섞으면 평균과 최대가 거짓말을 한다.
     rates = [
         sample.waste_rate
         for sample in samples
-        if sample.waste_rate is not None
-        and sample.analysis_label is AnalysisLabel.APPROVED
+        if sample.is_supervised_usable and sample.waste_rate is not None
     ]
 
     print(f"표본            {len(samples)}")
@@ -78,13 +87,13 @@ def command_summarize(args: argparse.Namespace) -> int:
         print(f"  {label:<12} {labels[label]}")
 
     if rates:
-        print("\n잔반률(승인분)")
+        print("\n잔반률 · 정답 사용 가능분")
         print(f"  평균          {statistics.fmean(rates):.4f}")
         print(f"  중앙값        {statistics.median(rates):.4f}")
         print(f"  최소          {min(rates):.4f}")
         print(f"  최대          {max(rates):.4f}")
     else:
-        print("\n잔반률(승인분)  없음")
+        print("\n잔반률 · 정답 사용 가능분  없음")
 
     print("\n제공량 출처")
     for source in sorted(sources):
@@ -95,11 +104,42 @@ def command_summarize(args: argparse.Namespace) -> int:
         for reason in sorted(reasons):
             print(f"  {reason:<18} {reasons[reason]}")
 
-    primary = sum(1 for sample in samples if sample.is_primary_benchmark)
-    print(f"\n주 평가 대상    {primary}")
+    excluded = [sample for sample in samples if sample.is_gt_excluded]
+    usable = [sample for sample in samples if sample.is_supervised_usable]
+    primary = [sample for sample in samples if sample.is_primary_benchmark]
+
+    print("\n정답 사용 가능 여부")
+    print(f"  전체 표본     {len(samples)}")
+    print(f"  정답 사용 가능 {len(usable)}")
+    print(f"  주 평가 대상   {len(primary)}")
+    print(f"  정답 제외     {len(excluded)}")
+
+    if excluded:
+        by_reason = Counter(
+            sample.gt_exclusion_reason.value  # type: ignore[union-attr]
+            for sample in excluded
+        )
+        print("\n정답 제외 사유")
+        for reason in sorted(by_reason):
+            print(f"  {reason:<18} {by_reason[reason]}")
+
+        by_menu = Counter(sample.menu_id for sample in excluded)
+        print("\n메뉴별 정답 제외")
+        for menu_id in sorted(by_menu):
+            print(f"  menu {menu_id:<13} {by_menu[menu_id]}")
+
+    # 관문을 채우는 수는 정답으로 쓸 수 있는 표본에서만 센다. 제외 표본이
+    # 범주 수를 채워 주면 실제로 학습할 수 없는 데이터로 관문을 통과한다.
+    print("\n정답 사용 가능 표본 기준")
+    print(f"  메뉴          {len({sample.menu_id for sample in usable})}")
+    print(f"  분할 그룹     {len({group_key_of(sample) for sample in usable})}")
+    high_waste = sum(
+        1 for sample in usable if sample.waste_rate is not None and sample.waste_rate >= 0.8
+    )
+    print(f"  고잔반(≥0.8)  {high_waste}")
 
     # 실제 식별값은 찍지 않는다. 몇 개인지만 센다.
-    print(f"메뉴            {len({sample.menu_id for sample in samples})}")
+    print(f"\n메뉴            {len({sample.menu_id for sample in samples})}")
     print(
         "참가자 그룹     "
         f"{len({sample.participant_group_id for sample in samples if sample.participant_group_id})}"

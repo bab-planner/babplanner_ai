@@ -12,6 +12,7 @@ from babplanner_ai.dataset.schema import (
     CURRENT_LABEL_VERSION,
     AnalysisLabel,
     DatasetSample,
+    GtExclusionReason,
     RejectionReason,
     ServedMassSource,
 )
@@ -177,3 +178,71 @@ def test_group_key_prefers_participant() -> None:
 
     assert participant == "P01"
     assert session == "S01"
+
+
+# --- 정답 제외 --------------------------------------------------------------
+#
+# 뼈가 든 메뉴는 가식부만 따로 잴 수 없어 질량비가 그 식판의 잔반률을 뜻하지
+# 않는다. 버리지는 않되 정답으로는 쓰지 않는다.
+
+
+def test_no_exclusion_by_default() -> None:
+    sample = approved()
+
+    assert sample.gt_exclusion_reason is None
+    assert not sample.is_gt_excluded
+    assert sample.is_primary_benchmark
+    assert sample.is_supervised_usable
+
+
+def test_excluded_sample_leaves_the_benchmark_and_training() -> None:
+    sample = approved(gt_exclusion_reason=GtExclusionReason.BONE_IN)
+
+    assert sample.is_gt_excluded
+    assert not sample.is_primary_benchmark
+    assert not sample.is_supervised_usable
+    # 값은 그대로 남는다. 빼는 것이지 지우는 것이 아니다.
+    assert sample.waste_rate is not None
+
+
+def test_other_needs_a_note() -> None:
+    # OTHER만 남으면 나중에 왜 뺐는지 알 방법이 없다.
+    with pytest.raises(Exception, match="이유를 함께"):
+        approved(gt_exclusion_reason=GtExclusionReason.OTHER)
+
+
+def test_other_with_a_note_is_fine() -> None:
+    sample = approved(
+        gt_exclusion_reason=GtExclusionReason.OTHER,
+        gt_exclusion_note="식후에 국그릇이 하나 늘었다",
+    )
+
+    assert sample.is_gt_excluded
+
+
+def test_bone_in_does_not_need_a_note() -> None:
+    # 사유 이름만으로 뜻이 선다. 설명을 강요하면 아무 말이나 적게 된다.
+    assert approved(gt_exclusion_reason=GtExclusionReason.BONE_IN).is_gt_excluded
+
+
+def test_note_without_a_reason_is_rejected() -> None:
+    # 설명만 남으면 이 표본이 빠지는지 아닌지를 읽는 사람마다 다르게 본다.
+    with pytest.raises(Exception, match="제외 사유가 없습니다"):
+        approved(gt_exclusion_note="뼈가 있었던 것 같다")
+
+
+def test_rejected_sample_can_also_carry_an_exclusion() -> None:
+    # 뼈 메뉴에서 흐린 사진이 나왔다면 두 사실이 다 남아야 한다.
+    sample = DatasetSample(
+        sample_id="s9",
+        image_path="images/s9.png",
+        menu_id=7,
+        capture_session_id="S01",
+        analysis_label=AnalysisLabel.REJECTED,
+        rejection_reason=RejectionReason.SEVERE_BLUR,
+        gt_exclusion_reason=GtExclusionReason.BONE_IN,
+        label_version=CURRENT_LABEL_VERSION,
+    )
+
+    assert sample.is_gt_excluded
+    assert not sample.is_supervised_usable

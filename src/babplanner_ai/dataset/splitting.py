@@ -86,16 +86,30 @@ def assign_splits(
 
     ratios = ratios or SplitRatios.of()
 
+    # 정답 제외 표본은 분할에 넣지 않는다. 매니페스트에는 그대로 남지만
+    # 어느 분할에도 속하지 않아 학습·검증·평가에 들어가지 않는다.
+    #
+    # 그룹을 셀 때도 빼야 한다. 뼈 메뉴만 잔뜩 모아 놓고 "그룹이 셋이니
+    # 나눌 수 있다"가 되면, 정작 학습에 쓸 표본은 없는데 분할은 만들어진다.
+    eligible = [sample for sample in samples if not sample.is_gt_excluded]
+    if not eligible:
+        raise SplitError(
+            f"표본 {len(samples)}건이 전부 정답 제외 표시가 되어 있어 "
+            "학습·검증·평가에 쓸 표본이 없습니다."
+        )
+
     members: dict[str, list[DatasetSample]] = defaultdict(list)
-    for sample in samples:
+    for sample in eligible:
         members[grouper(sample)].append(sample)
 
     keys = sorted(members)
     if len(keys) < 3:
         # 그룹이 셋보다 적으면 세 갈래로 나눌 수 없다. 행을 쪼개서
         # 억지로 만들면 그게 바로 누수다.
+        excluded = len(samples) - len(eligible)
+        detail = f" (정답 제외 {excluded}건은 세지 않았습니다)" if excluded else ""
         raise SplitError(
-            f"그룹이 {len(keys)}개뿐이라 train/val/test로 나눌 수 없습니다. "
+            f"그룹이 {len(keys)}개뿐이라 train/val/test로 나눌 수 없습니다{detail}. "
             "그룹을 더 모으거나 분할을 만들지 마세요."
         )
 
@@ -120,19 +134,37 @@ def assign_splits(
     }
 
     return [
-        sample.model_copy(update={"split": split_of_group[grouper(sample)]})
+        sample.model_copy(
+            update={
+                "split": (
+                    None
+                    if sample.is_gt_excluded
+                    else split_of_group[grouper(sample)]
+                )
+            }
+        )
         for sample in samples
     ]
 
 
 def split_counts(samples: list[DatasetSample]) -> dict[str, int]:
+    """분할별 표본 수.
+
+    분할이 없는 표본을 한 칸에 몰아넣지 않는다. 아직 안 나눈 것과 일부러
+    뺀 것은 다른 상태이고, 섞어 세면 "왜 학습 표본이 적은지"가 가려진다.
+    """
     counts: dict[str, int] = {split.value: 0 for split in Split}
     unassigned = 0
+    gt_excluded = 0
     for sample in samples:
-        if sample.split is None:
+        if sample.is_gt_excluded:
+            gt_excluded += 1
+        elif sample.split is None:
             unassigned += 1
         else:
             counts[sample.split.value] += 1
     if unassigned:
         counts["unassigned"] = unassigned
+    if gt_excluded:
+        counts["gt_excluded"] = gt_excluded
     return counts
