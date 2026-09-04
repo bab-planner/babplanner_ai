@@ -37,6 +37,8 @@ CSV를 쓴다. 사람이 열어 볼 수 있고, 변경 이력이 줄 단위로 �
 | `leftover_edible_mass_g` | 승인 시 ✓ | 잔반 가식부 중량(g) |
 | `waste_rate` | 승인 시 ✓ | 위 두 값의 비 |
 | `served_mass_source` | 승인 시 ✓ | `MEASURED` / `STANDARD_PORTION` / `VISUAL_ESTIMATE` |
+| `gt_exclusion_reason` | | `BONE_IN` / `EVAPORATIVE` / `OTHER`. 비어 있는 것이 정상 |
+| `gt_exclusion_note` | `OTHER` 시 ✓ | 왜 뺐는지 |
 | `analysis_label` | ✓ | `APPROVED` / `REJECTED` |
 | `rejection_reason` | 거절 시 ✓ | 아래 참고 |
 | `image_sha256` | | 파일 해시. 검증기가 대조한다 |
@@ -55,6 +57,28 @@ CSV를 쓴다. 사람이 열어 볼 수 있고, 변경 이력이 줄 단위로 �
 
 `REJECTED`인데 사유가 없으면 **오류**다. 왜 버렸는지 되짚을 수 없는 표본은
 데이터셋을 고치는 데 쓸 수 없다.
+
+### 정답 제외 (`gt_exclusion_reason`)
+
+거절과 다르다. 거절은 사진에서 잔반을 판단할 수 없다는 뜻이고, 정답 제외는
+**사진도 계량도 멀쩡하지만 질량비가 그 식판의 잔반률을 뜻하지 않는다**는
+뜻이다. 뜻과 현장 규칙은 `waste_ground_truth_protocol.md` §2-2에 있다.
+
+값이 있는 행은 매니페스트에 그대로 남지만 다음에서 빠진다.
+
+- `split`이 붙지 않는다. 붙어 있으면 검증기가 **오류**로 잡는다
+- `is_primary_benchmark` / `is_supervised_usable`이 거짓이 된다
+- 표본 수·범주 수·고잔반 수 등 **관문 계산에 들어가지 않는다**
+
+`OTHER`인데 `gt_exclusion_note`가 비어 있으면 **오류**다. 사유만 남고 이유를
+모르는 표본이 쌓이면 되살릴 수도 규칙을 고칠 수도 없다. 반대로 설명만 있고
+사유가 없어도 오류다.
+
+도구는 **전체 표본 수와 정답 사용 가능 표본 수를 항상 따로** 보고한다. 뼈
+메뉴가 많아 실제로 학습할 데이터가 모자란 상황이 총계 뒤에 숨지 않게 하려는
+것이다.
+
+옛 매니페스트에는 이 두 열이 없다. 없으면 비어 있는 것으로 읽는다.
 
 ---
 
@@ -75,6 +99,22 @@ CSV를 쓴다. 사람이 열어 볼 수 있고, 변경 이력이 줄 단위로 �
 현재 서비스가 쓰는 `fixture-waste-v1` 계열 값은 개발용 fixture 식별자이지
 학습된 모델의 버전이 아니다.
 
+### `protocol_version`은 또 다른 축이다
+
+메타데이터에만 있고 행에는 없다. **수집 절차**의 버전이지 정답 정의의
+버전이 아니다.
+
+| | `label_version` | `protocol_version` |
+|---|---|---|
+| 무엇이 바뀌면 올리나 | 정답의 **산술식** | 현장 **수집 규칙** |
+| 섞이면 | 검증기가 오류로 잡는다 | 섞여도 된다. 기록만 남는다 |
+
+`pilot-v2`에서 바뀐 것: 비가식물·식기 구성 규칙(§2-1)과 메뉴 단위 정답
+제외(§2-2)가 들어왔다. **`waste_rate = leftover / served`는 그대로이므로
+`label_version`은 `waste-mass-ratio-v1`을 유지한다.** 산술이 그대로인데
+정답 정의 버전을 올리면, 옛 데이터와 새 데이터를 같이 쓸 수 없게 되어 아무
+이득 없이 데이터가 갈라진다.
+
 ---
 
 ## 4. 데이터셋 메타데이터
@@ -88,7 +128,7 @@ CSV를 쓴다. 사람이 열어 볼 수 있고, 변경 이력이 줄 단위로 �
   "created_at": "2026-01-15T00:00:00Z",
   "collection_site": null,
   "scale_resolution_g": 1.0,
-  "protocol_version": "pilot-v1",
+  "protocol_version": "pilot-v2",
   "notes": null
 }
 ```
