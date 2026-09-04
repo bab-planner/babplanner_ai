@@ -22,6 +22,9 @@ from babplanner_ai.dataset.schema import AnalysisLabel, ServedMassSource
 #: 보여주기 위한 눈금이다.
 EDGE_WIDTH = 0.05
 
+#: 고잔반으로 세는 값. W4/W5와 같은 기준을 쓴다. 여기서 새로 만들지 않는다.
+HIGH_WASTE_THRESHOLD = 0.8
+
 
 @dataclass
 class Distribution:
@@ -61,7 +64,21 @@ class QcReport:
     effective_samples: int = 0
     corrected_samples: int = 0
     labels: Counter = field(default_factory=Counter)
+
+    #: 정답으로 쓸 수 있는 표본. 승인됐고 계산이 맞고 제외 표시가 없다.
+    supervised_usable: int = 0
+    #: 그중 제공량을 실제로 잰 표본. 주 평가 집합 후보다.
     primary_candidates: int = 0
+
+    #: 정답 데이터에서 빼기로 한 표본. 세어서 보여 주되 버리지 않는다.
+    gt_excluded: int = 0
+    gt_exclusion_reasons: Counter = field(default_factory=Counter)
+    gt_exclusion_by_menu: Counter = field(default_factory=Counter)
+
+    #: 관문에 쓰는 수. 제외 표본은 여기 들어가지 않는다.
+    usable_menu_count: int = 0
+    usable_high_waste: int = 0
+
     invalid_measurements: list[tuple[str, str]] = field(default_factory=list)
     duplicate_images: list[list[str]] = field(default_factory=list)
     missing_files: list[str] = field(default_factory=list)
@@ -70,6 +87,7 @@ class QcReport:
     rate: Distribution | None = None
     near_zero: int = 0
     near_one: int = 0
+    exact_zero: int = 0
     menu_count: int = 0
     participant_count: int = 0
     capture_session_count: int = 0
@@ -87,7 +105,37 @@ class QcReport:
         ]
         for label in sorted(self.labels):
             lines.append(f"  {label:<14} {self.labels[label]}")
-        lines.append(f"주 평가 후보     {self.primary_candidates}")
+
+        # 총계와 실제로 쓸 수 있는 수를 나란히 둔다. 뼈 메뉴가 많아서 학습
+        # 표본이 모자란 상황이 "유효 표본 200"이라는 한 줄 뒤에 숨지 않게
+        # 하려는 것이다.
+        lines.extend(
+            [
+                "",
+                f"정답 사용 가능   {self.supervised_usable}",
+                f"주 평가 후보     {self.primary_candidates}",
+                f"정답 제외        {self.gt_excluded}",
+            ]
+        )
+        for reason in sorted(self.gt_exclusion_reasons):
+            lines.append(f"  {reason:<14} {self.gt_exclusion_reasons[reason]}")
+        if self.gt_exclusion_by_menu:
+            lines.append("메뉴별 정답 제외")
+            for menu_id in sorted(self.gt_exclusion_by_menu):
+                lines.append(
+                    f"  menu {menu_id:<9} {self.gt_exclusion_by_menu[menu_id]}"
+                )
+
+        # 관문을 채우는 수는 제외 표본을 빼고 센다.
+        lines.extend(
+            [
+                "",
+                "관문 계산 기준 (정답 사용 가능 표본만)",
+                f"  표본           {self.supervised_usable}",
+                f"  메뉴           {self.usable_menu_count}",
+                f"  고잔반(≥{HIGH_WASTE_THRESHOLD})  {self.usable_high_waste}",
+            ]
+        )
 
         lines.append("")
         lines.append(f"측정 오류        {len(self.invalid_measurements)}")
@@ -102,10 +150,12 @@ class QcReport:
         for sample_id in self.missing_files:
             lines.append(f"  {sample_id}")
 
+        # 분포는 정답 사용 가능 표본만 본다. 제외 표본의 질량비는 그 식판의
+        # 잔반률을 뜻하지 않기로 한 값이라, 섞어 놓으면 분포가 거짓말을 한다.
         for title, distribution in (
-            ("제공량(g)", self.served),
-            ("잔반량(g)", self.leftover),
-            ("잔반률", self.rate),
+            ("제공량(g) · 정답 사용 가능분", self.served),
+            ("잔반량(g) · 정답 사용 가능분", self.leftover),
+            ("잔반률 · 정답 사용 가능분", self.rate),
         ):
             lines.append("")
             lines.append(title)
@@ -115,6 +165,24 @@ class QcReport:
             lines.append("")
             lines.append(f"0 근처(≤{EDGE_WIDTH})  {self.near_zero}")
             lines.append(f"1 근처(≥{1 - EDGE_WIDTH})  {self.near_one}")
+            lines.append(f"정확히 0        {self.exact_zero}")
+
+            # 판정하지 않는다. 어디를 봐야 하는지만 말한다. 이 두 값은 정상일
+            # 수도 있고 식기 구성이 바뀐 흔적일 수도 있어서, 사진을 봐야
+            # 갈린다.
+            if self.near_one or self.exact_zero:
+                lines.append("")
+                lines.append("확인이 필요한 것")
+                if self.near_one:
+                    lines.append(
+                        f"  1 근처 {self.near_one}건 — 손대지 않은 식판인지, "
+                        "식후에 그릇이 올라간 것인지 사진으로 확인"
+                    )
+                if self.exact_zero:
+                    lines.append(
+                        f"  정확히 0 {self.exact_zero}건 — tare가 밀렸는지, "
+                        "다 치우고 쟀는지 확인"
+                    )
 
         lines.extend(
             [
@@ -160,9 +228,17 @@ def build_report(store: CollectionStore) -> QcReport:
     leftover_values: list[float] = []
     rate_values: list[float] = []
     by_hash: dict[str, list[str]] = defaultdict(list)
+    usable_menus: set[int] = set()
 
     for record in latest:
         report.labels[record.analysis_label.value] += 1
+
+        # 제외 표본은 라벨과 무관하게 센다. 거절된 사진도 어느 메뉴에서
+        # 나왔는지가 남아야 무엇을 고칠지 알 수 있다.
+        if record.gt_exclusion_reason is not None:
+            report.gt_excluded += 1
+            report.gt_exclusion_reasons[record.gt_exclusion_reason.value] += 1
+            report.gt_exclusion_by_menu[record.menu_id] += 1
 
         if record.sanitized_image_sha256:
             by_hash[record.sanitized_image_sha256].append(record.sample_id)
@@ -190,9 +266,18 @@ def build_report(store: CollectionStore) -> QcReport:
             report.invalid_measurements.append((record.sample_id, str(error)))
             continue
 
+        if record.gt_exclusion_reason is not None:
+            # 계산은 해 봤다. 앞뒤가 맞는지는 봐야 하기 때문이다. 다만 그
+            # 숫자를 분포에도 관문에도 넣지 않는다.
+            continue
+
         served_values.append(mass.served_edible_mass_g)
         leftover_values.append(mass.leftover_edible_mass_g)
         rate_values.append(mass.waste_rate)
+        report.supervised_usable += 1
+        usable_menus.add(record.menu_id)
+        if mass.waste_rate >= HIGH_WASTE_THRESHOLD:
+            report.usable_high_waste += 1
         if record.served_mass_source is ServedMassSource.MEASURED:
             report.primary_candidates += 1
 
@@ -204,7 +289,9 @@ def build_report(store: CollectionStore) -> QcReport:
     report.rate = Distribution.of(rate_values)
     report.near_zero = sum(1 for rate in rate_values if rate <= EDGE_WIDTH)
     report.near_one = sum(1 for rate in rate_values if rate >= 1 - EDGE_WIDTH)
+    report.exact_zero = sum(1 for rate in rate_values if rate == 0.0)
 
+    report.usable_menu_count = len(usable_menus)
     report.menu_count = len({record.menu_id for record in latest})
     report.participant_count = len(
         {record.participant_group_id for record in latest if record.participant_group_id}

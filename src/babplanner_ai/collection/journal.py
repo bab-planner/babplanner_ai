@@ -17,6 +17,7 @@ from babplanner_ai.collection.image_processing import atomic_write_text
 from babplanner_ai.collection.models import (
     CollectionSession,
     EntryType,
+    MenuExclusion,
     RawMeasurementRecord,
     TareProfile,
 )
@@ -47,6 +48,10 @@ class CollectionStore:
     @property
     def tare_path(self) -> Path:
         return self.session_dir / "tare_profiles.jsonl"
+
+    @property
+    def menu_exclusions_path(self) -> Path:
+        return self.session_dir / "menu_exclusions.jsonl"
 
     @property
     def journal_path(self) -> Path:
@@ -99,6 +104,31 @@ class CollectionStore:
             # 같은 id를 다시 적으면 나중 것이 이긴다. 다시 잰 경우다.
             profiles[profile.tare_profile_id] = profile
         return profiles
+
+    # -- 메뉴 제외 ---------------------------------------------------------
+
+    def append_menu_exclusion(self, exclusion: MenuExclusion) -> None:
+        _append(self.menu_exclusions_path, exclusion.model_dump(mode="json"))
+
+    def read_menu_exclusions(self) -> dict[int, MenuExclusion]:
+        """메뉴별 현재 선언. 같은 메뉴를 다시 선언하면 나중 것이 이긴다.
+
+        해제한 메뉴도 사유 없이 남긴다. 지운 것과 원래 없던 것을 구분할 수
+        있어야 나중에 왜 이 메뉴가 학습에 들어갔는지 되짚을 수 있다.
+        """
+        exclusions: dict[int, MenuExclusion] = {}
+        for payload in _read(self.menu_exclusions_path):
+            try:
+                exclusion = MenuExclusion(**payload)
+            except ValidationError as error:
+                raise JournalError(f"메뉴 제외 선언을 읽을 수 없습니다: {error}") from error
+            exclusions[exclusion.menu_id] = exclusion
+        return exclusions
+
+    def active_menu_exclusion(self, menu_id: int) -> MenuExclusion | None:
+        """지금 걸려 있는 제외. 해제됐거나 선언된 적이 없으면 없음."""
+        exclusion = self.read_menu_exclusions().get(menu_id)
+        return exclusion if exclusion and exclusion.is_excluded else None
 
     # -- 표본 --------------------------------------------------------------
 

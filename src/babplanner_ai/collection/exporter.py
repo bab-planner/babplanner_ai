@@ -72,6 +72,10 @@ def to_sample(
         "analysis_label": record.analysis_label,
         "image_sha256": record.sanitized_image_sha256,
         "label_version": session.label_version,
+        # 거절된 표본에도 그대로 옮긴다. 뼈 메뉴에서 흐린 사진이 나왔다면
+        # 두 사실이 다 남아야 나중에 무엇을 고칠지 알 수 있다.
+        "gt_exclusion_reason": record.gt_exclusion_reason,
+        "gt_exclusion_note": record.gt_exclusion_note,
     }
 
     if record.analysis_label is not AnalysisLabel.APPROVED:

@@ -43,6 +43,7 @@ from babplanner_ai.collection.measurement import compute_mass
 from babplanner_ai.collection.models import (
     CollectionSession,
     MeasurementError,
+    MenuExclusion,
     RawMeasurementRecord,
     TareProfile,
 )
@@ -50,12 +51,22 @@ from babplanner_ai.collection.qc import build_report
 from babplanner_ai.dataset.schema import (
     CURRENT_LABEL_VERSION,
     AnalysisLabel,
+    GtExclusionReason,
     RejectionReason,
     ServedMassSource,
+    check_gt_exclusion,
 )
 
 EXIT_OK = 0
 EXIT_FAILED = 1
+
+#: 수집 절차의 버전. 정답의 산술식(`label_version`)과는 다른 축이다.
+#: v2에서 비가식물·식기 구성 규칙과 메뉴 단위 정답 제외가 들어왔다.
+CURRENT_PROTOCOL_VERSION = "pilot-v2"
+
+#: `--reason` 에서 제외를 푸는 값. enum에 넣지 않는다. "해제"는 사유가
+#: 아니라 사유가 없는 상태이고, 그걸 사유처럼 저장하면 매니페스트에 남는다.
+CLEAR_EXCLUSION = "NONE"
 
 
 def _now() -> str:
@@ -86,6 +97,53 @@ def command_init_session(args: argparse.Namespace) -> int:
     print(f"  데이터셋 버전   {session.dataset_version}")
     print(f"  정답 정의 버전  {session.label_version}")
     print(f"  저울 눈금       {session.scale_resolution_g} g")
+    return EXIT_OK
+
+
+def command_menu_exclusion(args: argparse.Namespace) -> int:
+    """메뉴 하나를 정답 데이터에서 뺄지 정한다.
+
+    한 번 정하면 그 메뉴의 표본에 자동으로 붙는다. 표본마다 다시 묻지 않는다.
+    """
+    store = _store(args)
+    session = store.read_session()
+    if not session.is_open:
+        raise JournalError("이미 닫힌 회차입니다.")
+
+    clearing = args.reason == CLEAR_EXCLUSION
+    reason = None if clearing else GtExclusionReason(args.reason)
+    # 모델을 만들기 전에 본다. pydantic이 내는 말은 현장에서 읽기 어렵다.
+    check_gt_exclusion(reason, args.note)
+
+    exclusion = MenuExclusion(
+        menu_id=args.menu_id,
+        gt_exclusion_reason=reason,
+        gt_exclusion_note=args.note,
+        declared_at=_now(),
+    )
+    store.append_menu_exclusion(exclusion)
+
+    if clearing:
+        print(f"메뉴 {args.menu_id} 의 정답 제외를 해제했습니다.")
+        print("  이후에 기록하는 표본부터 정답 데이터에 들어갑니다.")
+    else:
+        print(f"메뉴 {args.menu_id} 를 정답 데이터에서 제외합니다.")
+        print(f"  사유       {exclusion.gt_exclusion_reason.value}")  # type: ignore[union-attr]
+        if exclusion.gt_exclusion_note:
+            print(f"  설명       {exclusion.gt_exclusion_note}")
+        print("  이후에 기록하는 이 메뉴의 표본은 학습·검증·평가에서 빠집니다.")
+
+    # 이미 기록한 표본은 바뀌지 않는다. 조용히 소급하면 어제 내보낸
+    # 매니페스트와 오늘 내보낸 것이 달라지고 이유를 알 수 없다.
+    already = sum(
+        1 for record in store.latest_records() if record.menu_id == args.menu_id
+    )
+    if already:
+        print(
+            f"\n이 메뉴로 이미 기록한 표본이 {already}건 있습니다. "
+            "소급되지 않습니다."
+        )
+        print("  바꾸려면 correct-sample 로 표본마다 고치세요.")
     return EXIT_OK
 
 
@@ -161,6 +219,9 @@ def _record_sample(
         raise ImageIngestError("같은 이미지가 이미 있습니다: " + ", ".join(existing))
 
     label = AnalysisLabel(args.label)
+    # 정답 제외는 메뉴에 걸린 선언에서 그대로 옮겨 적는다. 수집자는 표본마다
+    # 다시 판단하지 않는다.
+    exclusion = store.active_menu_exclusion(args.menu_id)
     record = RawMeasurementRecord(
         sample_id=sample_id,
         collection_session_id=session.collection_session_id,
@@ -180,6 +241,8 @@ def _record_sample(
         served_mass_source=(
             ServedMassSource(args.mass_source) if args.mass_source else None
         ),
+        gt_exclusion_reason=exclusion.gt_exclusion_reason if exclusion else None,
+        gt_exclusion_note=exclusion.gt_exclusion_note if exclusion else None,
         raw_image_path=str(image.raw_path.relative_to(store.session_dir)).replace(
             "\\", "/"
         ),
@@ -208,6 +271,16 @@ def _record_sample(
         print(f"표본을 기록했습니다: {sample_id}")
         print(f"  판정     {label.value} ({record.rejection_reason})")
 
+    if exclusion is not None:
+        # 조용히 붙이지 않는다. 이 표본이 학습에 안 들어간다는 것을 그 자리에서
+        # 알아야, 하루 종일 모으고 나서 쓸 수 있는 표본이 없다는 것을 늦게
+        # 발견하는 일이 없다.
+        print(
+            f"  정답 제외 {exclusion.gt_exclusion_reason.value}"  # type: ignore[union-attr]
+            f" (메뉴 {args.menu_id} 선언)"
+        )
+        print("           학습·검증·평가와 관문 계산에서 빠집니다.")
+
     store.append_record(record)
     print(f"  이미지   {record.sanitized_image_path}")
     return EXIT_OK
@@ -231,6 +304,18 @@ def command_correct_sample(args: argparse.Namespace) -> int:
         updates["analysis_label"] = AnalysisLabel(args.label)
     if args.rejection_reason is not None:
         updates["rejection_reason"] = RejectionReason(args.rejection_reason)
+    if args.gt_exclusion_reason is not None:
+        # 표본 하나만 메뉴 선언과 다르게 두어야 할 때 쓴다. 평소에는
+        # menu-exclusion 으로 메뉴에 걸고 여기는 건드리지 않는다.
+        clearing = args.gt_exclusion_reason == CLEAR_EXCLUSION
+        reason = None if clearing else GtExclusionReason(args.gt_exclusion_reason)
+        note = None if clearing else args.gt_exclusion_note
+        # 모델을 만들기 전에 본다. pydantic이 내는 말은 현장에서 읽기 어렵다.
+        check_gt_exclusion(reason, note)
+        updates["gt_exclusion_reason"] = reason
+        updates["gt_exclusion_note"] = note
+    elif args.gt_exclusion_note is not None:
+        updates["gt_exclusion_note"] = args.gt_exclusion_note
     if not updates:
         raise JournalError("고칠 값이 없습니다.")
 
@@ -239,6 +324,11 @@ def command_correct_sample(args: argparse.Namespace) -> int:
         tare = store.read_tare_profiles().get(corrected.tare_profile_id or "")
         mass = compute_mass(corrected, tare)
         print(f"잔반률 {mass.waste_rate:.4f}")
+    if "gt_exclusion_reason" in updates:
+        reason = corrected.gt_exclusion_reason
+        print(
+            f"정답 제외 {reason.value}" if reason else "정답 제외를 해제했습니다."
+        )
 
     store.append_record(corrected)
     # 원래 기록은 지우지 않는다. 무엇이 어떻게 바뀌었는지가 남아야 한다.
@@ -296,11 +386,28 @@ def build_parser() -> argparse.ArgumentParser:
     init.add_argument("--root", type=Path, required=True)
     init.add_argument("--dataset-version", required=True)
     init.add_argument("--label-version", default=CURRENT_LABEL_VERSION)
-    init.add_argument("--protocol-version", default="pilot-v1")
+    init.add_argument("--protocol-version", default=CURRENT_PROTOCOL_VERSION)
     init.add_argument("--site-code", default=None, help="급식소 짧은 코드")
     init.add_argument("--scale-resolution-g", type=float, required=True)
     init.add_argument("--notes", default=None)
     init.set_defaults(handler=command_init_session)
+
+    exclusion = subparsers.add_parser(
+        "menu-exclusion",
+        help="메뉴 하나를 정답 데이터에서 뺀다 (표본마다 고르지 않는다)",
+    )
+    _add_session_args(exclusion)
+    exclusion.add_argument("--menu-id", type=int, required=True)
+    exclusion.add_argument(
+        "--reason",
+        required=True,
+        choices=[reason.value for reason in GtExclusionReason] + [CLEAR_EXCLUSION],
+        help=f"{CLEAR_EXCLUSION} 을 주면 제외를 해제한다",
+    )
+    exclusion.add_argument(
+        "--note", default=None, help="왜 빼는지. OTHER 에는 반드시 필요하다"
+    )
+    exclusion.set_defaults(handler=command_menu_exclusion)
 
     participant = subparsers.add_parser(
         "new-participant", help="비식별 참가자 id를 만든다"
@@ -367,6 +474,16 @@ def build_parser() -> argparse.ArgumentParser:
         choices=[reason.value for reason in RejectionReason],
         default=None,
     )
+    correct.add_argument(
+        "--gt-exclusion-reason",
+        choices=[reason.value for reason in GtExclusionReason] + [CLEAR_EXCLUSION],
+        default=None,
+        help=(
+            "표본 하나만 메뉴 선언과 다르게 둘 때. "
+            f"{CLEAR_EXCLUSION} 을 주면 제외를 해제한다"
+        ),
+    )
+    correct.add_argument("--gt-exclusion-note", default=None)
     correct.add_argument("--note", default=None, help="왜 고쳤는지")
     correct.set_defaults(handler=command_correct_sample)
 

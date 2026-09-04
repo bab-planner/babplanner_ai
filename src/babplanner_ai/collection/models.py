@@ -16,9 +16,11 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from babplanner_ai.dataset.schema import (
     AnalysisLabel,
+    GtExclusionReason,
     MealType,
     RejectionReason,
     ServedMassSource,
+    check_gt_exclusion,
 )
 
 #: 기록에 둘 수 없는 이름. 개인정보가 새는 가장 흔한 경로가 "일단 넣어 둔
@@ -129,6 +131,37 @@ class TareProfile(BaseModel):
         return max(self.tare_measurements_g) - min(self.tare_measurements_g)
 
 
+class MenuExclusion(BaseModel):
+    """메뉴 하나를 정답 데이터에서 뺄지 말지.
+
+    **표본이 아니라 메뉴에 붙는 값이다.** 수집자는 그날 그 메뉴에 대해 한 번만
+    정하고, 표본마다 다시 판단하지 않는다. 매번 물으면 같은 메뉴가 어느 날은
+    빠지고 어느 날은 들어가서, 나중에 왜 그런지 알 수 없게 된다.
+
+    기록은 덧붙이기만 한다. 같은 메뉴를 다시 선언하면 나중 것이 이기고,
+    바꾼 이력은 그대로 남는다.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    menu_id: int
+
+    #: 없으면 제외를 해제한다는 뜻이다. 잘못 걸어 둔 것을 되돌리는 길이다.
+    gt_exclusion_reason: GtExclusionReason | None = None
+    gt_exclusion_note: str | None = None
+
+    declared_at: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _check_exclusion(self) -> "MenuExclusion":
+        check_gt_exclusion(self.gt_exclusion_reason, self.gt_exclusion_note)
+        return self
+
+    @property
+    def is_excluded(self) -> bool:
+        return self.gt_exclusion_reason is not None
+
+
 class EntryType(str, Enum):
     SAMPLE = "SAMPLE"
     CORRECTION = "CORRECTION"
@@ -170,6 +203,12 @@ class RawMeasurementRecord(BaseModel):
     captured_at: str | None = None
     served_mass_source: ServedMassSource | None = None
 
+    #: 정답 데이터로 쓰지 않기로 한 이유. 표본을 기록할 때 그 메뉴의
+    #: 선언(`MenuExclusion`)에서 자동으로 옮겨 적는다. 수집자가 표본마다
+    #: 고르는 값이 아니다.
+    gt_exclusion_reason: GtExclusionReason | None = None
+    gt_exclusion_note: str | None = None
+
     #: 수집 루트 기준 상대 경로.
     raw_image_path: str | None = None
     sanitized_image_path: str | None = None
@@ -186,6 +225,7 @@ class RawMeasurementRecord(BaseModel):
 
     @model_validator(mode="after")
     def _check_shape(self) -> "RawMeasurementRecord":
+        check_gt_exclusion(self.gt_exclusion_reason, self.gt_exclusion_note)
         if self.analysis_label is AnalysisLabel.APPROVED:
             if self.rejection_reason is not None:
                 raise ValueError("승인된 기록에 거절 사유가 있습니다.")

@@ -11,10 +11,12 @@ from pathlib import Path
 import pytest
 from PIL import Image
 
-from babplanner_ai.collection.cli import main
+from babplanner_ai.collection.cli import CURRENT_PROTOCOL_VERSION, main
+from babplanner_ai.collection.exporter import export
 from babplanner_ai.collection.ids import is_safe_id
 from babplanner_ai.collection.journal import CollectionStore
 from babplanner_ai.collection.qc import build_report
+from babplanner_ai.dataset.schema import CURRENT_LABEL_VERSION
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
@@ -313,6 +315,138 @@ def test_closing_twice_is_harmless(field, capsys) -> None:
 
 def test_unknown_session_fails(tmp_path: Path) -> None:
     assert run("qc", "--root", str(tmp_path), "--session", "cs_000000000009") == 1
+
+
+# --- 정답 제외 --------------------------------------------------------------
+#
+# 메뉴에 한 번 걸면 그 메뉴의 표본에 자동으로 붙는다. 수집자는 표본마다 다시
+# 판단하지 않는다.
+
+
+def exclude(root: Path, session: str, *extra: str, menu_id: str = "7") -> int:
+    return run(
+        "menu-exclusion",
+        "--root", str(root),
+        "--session", session,
+        "--menu-id", menu_id,
+        *extra,
+    )
+
+
+def test_menu_exclusion_propagates_to_new_samples(field, tmp_path, capsys) -> None:
+    root, session_id, tare_id = field
+    assert exclude(root, session_id, "--reason", "BONE_IN", "--note", "닭볶음탕") == 0
+    capsys.readouterr()
+
+    assert add(root, session_id, tare_id, photo(tmp_path / "a.jpg"), menu_id="7") == 0
+
+    output = capsys.readouterr().out
+    assert "정답 제외 BONE_IN" in output
+    assert "관문 계산에서 빠집니다" in output
+
+    record = CollectionStore(root, session_id).latest_records()[0]
+    assert record.gt_exclusion_reason is not None
+    assert record.gt_exclusion_reason.value == "BONE_IN"
+
+
+def test_other_menus_are_untouched(field, tmp_path, capsys) -> None:
+    root, session_id, tare_id = field
+    assert exclude(root, session_id, "--reason", "BONE_IN") == 0
+
+    assert add(root, session_id, tare_id, photo(tmp_path / "b.jpg"), menu_id="3") == 0
+
+    record = CollectionStore(root, session_id).latest_records()[0]
+    assert record.gt_exclusion_reason is None
+
+
+def test_other_needs_a_note_and_says_so_plainly(field, capsys) -> None:
+    root, session_id, _ = field
+
+    assert exclude(root, session_id, "--reason", "OTHER") == 1
+
+    # pydantic이 내는 말은 현장에서 읽기 어렵다.
+    assert "이유를 함께 적습니다" in capsys.readouterr().err
+
+
+def test_clearing_does_not_reach_back(field, tmp_path, capsys) -> None:
+    root, session_id, tare_id = field
+    assert exclude(root, session_id, "--reason", "BONE_IN") == 0
+    assert add(root, session_id, tare_id, photo(tmp_path / "c.jpg"), menu_id="7") == 0
+    capsys.readouterr()
+
+    assert exclude(root, session_id, "--reason", "NONE") == 0
+
+    output = capsys.readouterr().out
+    assert "이미 기록한 표본이 1건" in output
+    assert "소급되지 않습니다" in output
+    # 이미 적힌 표본은 그대로다. 조용히 바꾸면 어제 내보낸 매니페스트와
+    # 오늘 것이 달라지고 이유를 알 수 없다.
+    record = CollectionStore(root, session_id).latest_records()[0]
+    assert record.gt_exclusion_reason is not None
+
+
+def test_correct_sample_can_clear_one_sample(field, tmp_path, capsys) -> None:
+    root, session_id, tare_id = field
+    assert exclude(root, session_id, "--reason", "BONE_IN") == 0
+    assert add(root, session_id, tare_id, photo(tmp_path / "d.jpg"), menu_id="7") == 0
+    sample_id = CollectionStore(root, session_id).latest_records()[0].sample_id
+    capsys.readouterr()
+
+    assert run(
+        "correct-sample",
+        "--root", str(root),
+        "--session", session_id,
+        "--sample-id", sample_id,
+        "--gt-exclusion-reason", "NONE",
+        "--note", "뼈 없는 부위만 배식된 것을 확인",
+    ) == 0
+
+    assert "정답 제외를 해제했습니다" in capsys.readouterr().out
+    assert CollectionStore(root, session_id).latest_records()[0].gt_exclusion_reason is None
+
+
+def test_qc_separates_usable_from_excluded(field, tmp_path, capsys) -> None:
+    root, session_id, tare_id = field
+    assert exclude(root, session_id, "--reason", "BONE_IN") == 0
+    assert add(root, session_id, tare_id, photo(tmp_path / "e.jpg", (10, 20, 30)), menu_id="7") == 0
+    assert add(root, session_id, tare_id, photo(tmp_path / "f.jpg", (40, 50, 60)), menu_id="3") == 0
+
+    report = build_report(CollectionStore(root, session_id))
+
+    assert report.effective_samples == 2
+    assert report.supervised_usable == 1
+    assert report.gt_excluded == 1
+    assert report.gt_exclusion_reasons["BONE_IN"] == 1
+    assert report.gt_exclusion_by_menu[7] == 1
+    # 관문에 쓰는 메뉴 수는 제외 표본을 세지 않는다.
+    assert report.menu_count == 2
+    assert report.usable_menu_count == 1
+
+
+def test_export_carries_the_exclusion(field, tmp_path, capsys) -> None:
+    root, session_id, tare_id = field
+    assert exclude(root, session_id, "--reason", "BONE_IN") == 0
+    assert add(root, session_id, tare_id, photo(tmp_path / "g.jpg", (11, 22, 33)), menu_id="7") == 0
+    assert add(root, session_id, tare_id, photo(tmp_path / "h.jpg", (44, 55, 66)), menu_id="3") == 0
+
+    result = export(CollectionStore(root, session_id), write=False)
+
+    by_menu = {sample.menu_id: sample for sample in result.samples}
+    assert by_menu[7].is_gt_excluded
+    assert not by_menu[3].is_gt_excluded
+    # 제외 표본도 매니페스트에 남는다. 버리는 것이 아니라 빼는 것이다.
+    assert len(result.samples) == 2
+
+
+def test_init_session_records_the_new_protocol_version(field) -> None:
+    root, session_id, _ = field
+
+    session = CollectionStore(root, session_id).read_session()
+
+    # 산술식은 그대로이므로 label_version은 바뀌지 않는다.
+    assert session.label_version == CURRENT_LABEL_VERSION
+    # 수집 규칙이 바뀌었으므로 protocol_version은 올라간다.
+    assert session.protocol_version == CURRENT_PROTOCOL_VERSION
 
 
 def test_module_entry_point_runs() -> None:
