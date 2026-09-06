@@ -1,0 +1,218 @@
+{
+  "benchmark": "external-public",
+  "split": "EXTERNAL_PUBLIC_FOOD_WASTE",
+  "dataset": "Voxel51/food-waste-dataset",
+  "datasetRegistry": "research/waste_estimation/datasets/x1_food_waste_registry.json",
+  "frozenPolicySha256": "cbcebd037f6677e127372576a8dbc106818e0aeb9b1244bc8afe360b9b04c6e0",
+  "selected": "S2_SOFT_HIGH_LOW_MIXTURE",
+  "trainingSource": "LeFood DEVELOPMENT only",
+  "globalMeanSource": "LeFood DEVELOPMENT mean",
+  "images": 375,
+  "effectiveSamples": 16,
+  "highWasteSamples": 0,
+  "criticalUnderestimation": null,
+  "criticalUnderestimationNote": "고잔반(>= 0.8) 표본이 0건이라 측정할 수 없다. 0%가 아니라 N/A다.",
+  "candidates": [
+    {
+      "candidate": "B0_GLOBAL_MEAN",
+      "isSelected": false,
+      "benchmark": "external-public",
+      "split": "EXTERNAL_PUBLIC_FOOD_WASTE",
+      "effectiveSamples": 16,
+      "groupMae": 0.13420852570850034,
+      "groupRmse": 0.15825023602125288,
+      "groupBias": 0.06659367939505148,
+      "groupP90AbsError": 0.2526046242453204,
+      "imageMae": 0.11943790560288135,
+      "imageBias": 0.06357604594432291,
+      "highWasteCount": 0,
+      "highMae": null,
+      "catastrophicRate": null
+    },
+    {
+      "candidate": "S0_STANDARD_RIDGE",
+      "isSelected": false,
+      "benchmark": "external-public",
+      "split": "EXTERNAL_PUBLIC_FOOD_WASTE",
+      "effectiveSamples": 16,
+      "groupMae": 0.18045713515801798,
+      "groupRmse": 0.20267912860322776,
+      "groupBias": 0.12369599428618867,
+      "groupP90AbsError": 0.2927741708668895,
+      "imageMae": 0.21246472252581047,
+      "imageBias": 0.09709012540391097,
+      "highWasteCount": 0,
+      "highMae": null,
+      "catastrophicRate": null
+    },
+    {
+      "candidate": "S1_CUMULATIVE_ORDINAL_EXPECTATION",
+      "isSelected": false,
+      "benchmark": "external-public",
+      "split": "EXTERNAL_PUBLIC_FOOD_WASTE",
+      "effectiveSamples": 16,
+      "groupMae": 0.4084576912733832,
+      "groupRmse": 0.4398215314809577,
+      "groupBias": 0.3978607228648989,
+      "groupP90AbsError": 0.5636969362214943,
+      "imageMae": 0.39565820855618683,
+      "imageBias": 0.3680923123414473,
+      "highWasteCount": 0,
+      "highMae": null,
+      "catastrophicRate": null
+    },
+    {
+      "candidate": "S2_SOFT_HIGH_LOW_MIXTURE",
+      "isSelected": true,
+      "benchmark": "external-public",
+      "split": "EXTERNAL_PUBLIC_FOOD_WASTE",
+      "effectiveSamples": 16,
+      "groupMae": 0.4978916291640021,
+      "groupRmse": 0.5253976772114591,
+      "groupBias": 0.4834367215343393,
+      "groupP90AbsError": 0.6955601730074428,
+      "imageMae": 0.4923607673055819,
+      "imageBias": 0.4565730462893498,
+      "highWasteCount": 0,
+      "highMae": null,
+      "catastrophicRate": null
+    }
+  ],
+  "pairs": [
+    {
+      "group": "bon_497816",
+      "images": 12,
+      "groundTruth": 0.06175771971496437,
+      "prediction": 0.7914645078977395,
+      "error": 0.7297067881827751,
+      "absError": 0.7297067881827751
+    },
+    {
+      "group": "bon_497814",
+      "images": 12,
+      "groundTruth": 0.09497206703910614,
+      "prediction": 0.46787790307182525,
+      "error": 0.3729058360327191,
+      "absError": 0.3729058360327191
+    },
+    {
+      "group": "bon_497812",
+      "images": 14,
+      "groundTruth": 0.11891891891891893,
+      "prediction": 0.7803324767510292,
+      "error": 0.6614135578321103,
+      "absError": 0.6614135578321103
+    },
+    {
+      "group": "bon_497810",
+      "images": 17,
+      "groundTruth": 0.1509433962264151,
+      "prediction": 0.9968397679928467,
+      "error": 0.8458963717664316,
+      "absError": 0.8458963717664316
+    },
+    {
+      "group": "bon_539006",
+      "images": 40,
+      "groundTruth": 0.16428571428571428,
+      "prediction": 0.6714628087641927,
+      "error": 0.5071770944784785,
+      "absError": 0.5071770944784785
+    },
+    {
+      "group": "bon_497808",
+      "images": 23,
+      "groundTruth": 0.23460410557184752,
+      "prediction": 0.8302433622570098,
+      "error": 0.5956392566851623,
+      "absError": 0.5956392566851623
+    },
+    {
+      "group": "bon_539002",
+      "images": 40,
+      "groundTruth": 0.24788732394366197,
+      "prediction": 0.13224806290635982,
+      "error": -0.11563926103730215,
+      "absError": 0.11563926103730215
+    },
+    {
+      "group": "bon_538369",
+      "images": 40,
+      "groundTruth": 0.2857142857142857,
+      "prediction": 0.8605556572243078,
+      "error": 0.5748413715100221,
+      "absError": 0.5748413715100221
+    },
+    {
+      "group": "bon_480658",
+      "images": 18,
+      "groundTruth": 0.31333333333333335,
+      "prediction": 0.7197047256086191,
+      "error": 0.40637139227528574,
+      "absError": 0.40637139227528574
+    },
+    {
+      "group": "bon_538642",
+      "images": 40,
+      "groundTruth": 0.31666666666666665,
+      "prediction": 0.9316958142575589,
+      "error": 0.6150291475908922,
+      "absError": 0.6150291475908922
+    },
+    {
+      "group": "bon_480659",
+      "images": 19,
+      "groundTruth": 0.3780821917808219,
+      "prediction": 0.8212354224573634,
+      "error": 0.44315323067654144,
+      "absError": 0.44315323067654144
+    },
+    {
+      "group": "bon_480657",
+      "images": 23,
+      "groundTruth": 0.41846153846153844,
+      "prediction": 0.8630062356897811,
+      "error": 0.44454469722824264,
+      "absError": 0.44454469722824264
+    },
+    {
+      "group": "bon_497821",
+      "images": 18,
+      "groundTruth": 0.4404040404040404,
+      "prediction": 0.9370951699387291,
+      "error": 0.4966911295346887,
+      "absError": 0.4966911295346887
+    },
+    {
+      "group": "bon_480660",
+      "images": 23,
+      "groundTruth": 0.4444444444444444,
+      "prediction": 0.7759016742113883,
+      "error": 0.3314572297669439,
+      "absError": 0.3314572297669439
+    },
+    {
+      "group": "bon_480654",
+      "images": 18,
+      "groundTruth": 0.46920821114369504,
+      "prediction": 0.9083047206425108,
+      "error": 0.43909650949881573,
+      "absError": 0.43909650949881573
+    },
+    {
+      "group": "bon_480656",
+      "images": 18,
+      "groundTruth": 0.5476190476190477,
+      "prediction": 0.9343222401466692,
+      "error": 0.38670319252762153,
+      "absError": 0.38670319252762153
+    }
+  ],
+  "claimLimit": "외부 공개 도메인에서의 전이 확인이다. 밥플래너 급식소 성능이 아니며, 유효 표본 16으로 잰 값이라 순위 비교 이상으로 인용하지 않는다.",
+  "interpretationLimits": [
+    "이 결과는 '구조가 전이되지 않는다'와 'frozen resnet18 특징이 이 영상에서 분포 밖이다'를 구분하지 못한다. 둘 다 같은 증상을 낸다.",
+    "정답 분포가 0.0618~0.5476 로 잘려 있다. 고잔반 구간이 없는 곳에서 고잔반을 놓치지 않으려 위로 미는 구조는 그 밀기가 그대로 오차가 된다.",
+    "촬영 조건이 다르다 — 독일 급식소, 둥근 접시, 다른 카메라.",
+    "이 결과로 W5 선택을 되돌리지 않는다. 그러려면 밥플래너 실제 데이터가 있어야 한다."
+  ]
+}
