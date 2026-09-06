@@ -1,0 +1,286 @@
+{
+  "benchmark": "external-public",
+  "dataset": "crowd_cctv permissive subset (COCO only)",
+  "registry": "research/cctv_counting/datasets/c1_crowd_cctv_registry.json",
+  "split": "test",
+  "splitSource": "C2 group-wise resplit (제공 split 미사용)",
+  "frames": 150,
+  "sources": {
+    "coco": 150
+  },
+  "detector": {
+    "backend": "torchvision",
+    "model": "fasterrcnn_mobilenet_v3_large_fpn",
+    "weights": "FasterRCNN_MobileNet_V3_Large_FPN_Weights.COCO_V1",
+    "device": "cuda",
+    "personClassId": 1,
+    "maxInputSize": null,
+    "minSize": 800,
+    "maxSize": 1333
+  },
+  "detectorChanged": false,
+  "iouThreshold": 0.5,
+  "results": [
+    {
+      "scoreThreshold": 0.3,
+      "occupancyMae": 1.68,
+      "occupancyRmse": 3.4583232931581165,
+      "occupancyBias": 1.0533333333333332,
+      "boxPrecision": 0.5603557814485387,
+      "boxRecall": 0.7011128775834659,
+      "truePositive": 441,
+      "falsePositive": 346,
+      "falseNegative": 188,
+      "byCrowdLevel": {
+        "1-2": {
+          "frames": 80,
+          "meanTruth": 1.3125,
+          "mae": 0.35,
+          "bias": 0.225
+        },
+        "11+": {
+          "frames": 20,
+          "meanTruth": 12.5,
+          "mae": 7.1,
+          "bias": 5.6
+        },
+        "3-5": {
+          "frames": 27,
+          "meanTruth": 3.5185185185185186,
+          "mae": 1.2592592592592593,
+          "bias": 0.7407407407407407
+        },
+        "6-10": {
+          "frames": 23,
+          "meanTruth": 7.782608695652174,
+          "mae": 2.0869565217391304,
+          "bias": 0.34782608695652173
+        }
+      }
+    },
+    {
+      "scoreThreshold": 0.4,
+      "occupancyMae": 1.1733333333333333,
+      "occupancyRmse": 2.452209887699936,
+      "occupancyBias": 0.18666666666666668,
+      "boxPrecision": 0.6453576864535768,
+      "boxRecall": 0.6740858505564388,
+      "truePositive": 424,
+      "falsePositive": 233,
+      "falseNegative": 205,
+      "byCrowdLevel": {
+        "1-2": {
+          "frames": 80,
+          "meanTruth": 1.3125,
+          "mae": 0.275,
+          "bias": 0.075
+        },
+        "11+": {
+          "frames": 20,
+          "meanTruth": 12.5,
+          "mae": 4.2,
+          "bias": 2.0
+        },
+        "3-5": {
+          "frames": 27,
+          "meanTruth": 3.5185185185185186,
+          "mae": 0.9259259259259259,
+          "bias": 0.18518518518518517
+        },
+        "6-10": {
+          "frames": 23,
+          "meanTruth": 7.782608695652174,
+          "mae": 1.9565217391304348,
+          "bias": -1.0
+        }
+      }
+    },
+    {
+      "scoreThreshold": 0.5,
+      "occupancyMae": 1.1,
+      "occupancyRmse": 2.1924111536540463,
+      "occupancyBias": -0.5,
+      "boxPrecision": 0.7256317689530686,
+      "boxRecall": 0.6391096979332274,
+      "truePositive": 402,
+      "falsePositive": 152,
+      "falseNegative": 227,
+      "byCrowdLevel": {
+        "1-2": {
+          "frames": 80,
+          "meanTruth": 1.3125,
+          "mae": 0.2375,
+          "bias": -0.0375
+        },
+        "11+": {
+          "frames": 20,
+          "meanTruth": 12.5,
+          "mae": 3.35,
+          "bias": -0.55
+        },
+        "3-5": {
+          "frames": 27,
+          "meanTruth": 3.5185185185185186,
+          "mae": 0.7777777777777778,
+          "bias": -0.25925925925925924
+        },
+        "6-10": {
+          "frames": 23,
+          "meanTruth": 7.782608695652174,
+          "mae": 2.5217391304347827,
+          "bias": -2.347826086956522
+        }
+      }
+    },
+    {
+      "scoreThreshold": 0.6,
+      "occupancyMae": 1.18,
+      "occupancyRmse": 2.4069344264714263,
+      "occupancyBias": -0.94,
+      "boxPrecision": 0.7930327868852459,
+      "boxRecall": 0.615262321144674,
+      "truePositive": 387,
+      "falsePositive": 101,
+      "falseNegative": 242,
+      "byCrowdLevel": {
+        "1-2": {
+          "frames": 80,
+          "meanTruth": 1.3125,
+          "mae": 0.225,
+          "bias": -0.075
+        },
+        "11+": {
+          "frames": 20,
+          "meanTruth": 12.5,
+          "mae": 3.55,
+          "bias": -2.85
+        },
+        "3-5": {
+          "frames": 27,
+          "meanTruth": 3.5185185185185186,
+          "mae": 0.8148148148148148,
+          "bias": -0.4444444444444444
+        },
+        "6-10": {
+          "frames": 23,
+          "meanTruth": 7.782608695652174,
+          "mae": 2.869565217391304,
+          "bias": -2.869565217391304
+        }
+      }
+    },
+    {
+      "scoreThreshold": 0.7,
+      "occupancyMae": 1.4066666666666667,
+      "occupancyRmse": 2.843706501498821,
+      "occupancyBias": -1.3,
+      "boxPrecision": 0.8502304147465438,
+      "boxRecall": 0.5866454689984102,
+      "truePositive": 369,
+      "falsePositive": 65,
+      "falseNegative": 260,
+      "byCrowdLevel": {
+        "1-2": {
+          "frames": 80,
+          "meanTruth": 1.3125,
+          "mae": 0.225,
+          "bias": -0.1
+        },
+        "11+": {
+          "frames": 20,
+          "meanTruth": 12.5,
+          "mae": 4.7,
+          "bias": -4.5
+        },
+        "3-5": {
+          "frames": 27,
+          "meanTruth": 3.5185185185185186,
+          "mae": 0.7777777777777778,
+          "bias": -0.7037037037037037
+        },
+        "6-10": {
+          "frames": 23,
+          "meanTruth": 7.782608695652174,
+          "mae": 3.391304347826087,
+          "bias": -3.391304347826087
+        }
+      }
+    },
+    {
+      "scoreThreshold": 0.8,
+      "occupancyMae": 1.6533333333333333,
+      "occupancyRmse": 3.2,
+      "occupancyBias": -1.5733333333333333,
+      "boxPrecision": 0.8778625954198473,
+      "boxRecall": 0.548489666136725,
+      "truePositive": 345,
+      "falsePositive": 48,
+      "falseNegative": 284,
+      "byCrowdLevel": {
+        "1-2": {
+          "frames": 80,
+          "meanTruth": 1.3125,
+          "mae": 0.25,
+          "bias": -0.175
+        },
+        "11+": {
+          "frames": 20,
+          "meanTruth": 12.5,
+          "mae": 5.65,
+          "bias": -5.45
+        },
+        "3-5": {
+          "frames": 27,
+          "meanTruth": 3.5185185185185186,
+          "mae": 0.9259259259259259,
+          "bias": -0.8518518518518519
+        },
+        "6-10": {
+          "frames": 23,
+          "meanTruth": 7.782608695652174,
+          "mae": 3.9130434782608696,
+          "bias": -3.9130434782608696
+        }
+      }
+    },
+    {
+      "scoreThreshold": 0.9,
+      "occupancyMae": 2.033333333333333,
+      "occupancyRmse": 3.7157323190276594,
+      "occupancyBias": -2.033333333333333,
+      "boxPrecision": 0.9444444444444444,
+      "boxRecall": 0.4864864864864865,
+      "truePositive": 306,
+      "falsePositive": 18,
+      "falseNegative": 323,
+      "byCrowdLevel": {
+        "1-2": {
+          "frames": 80,
+          "meanTruth": 1.3125,
+          "mae": 0.275,
+          "bias": -0.275
+        },
+        "11+": {
+          "frames": 20,
+          "meanTruth": 12.5,
+          "mae": 7.2,
+          "bias": -7.2
+        },
+        "3-5": {
+          "frames": 27,
+          "meanTruth": 3.5185185185185186,
+          "mae": 1.0740740740740742,
+          "bias": -1.0740740740740742
+        },
+        "6-10": {
+          "frames": 23,
+          "meanTruth": 7.782608695652174,
+          "mae": 4.782608695652174,
+          "bias": -4.782608695652174
+        }
+      }
+    }
+  ],
+  "limitation": "허용 subset이 COCO뿐이라 감시 카메라 영상이 아니다. 웹 사진에서 잰 값이며 급식소 천장 카메라로의 전이를 보장하지 않는다.",
+  "claimLimit": "external-public 벤치마크다. 밥플래너 성능이 아니다. fine-tuning 여부는 이 숫자를 보고 나서 정한다."
+}

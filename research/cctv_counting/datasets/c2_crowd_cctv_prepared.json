@@ -1,0 +1,37 @@
+{
+  "datasetKey": "crowd_cctv_permissive",
+  "benchmark": "external-public",
+  "licenseClass": "permissive",
+  "registry": "research/cctv_counting/datasets/c1_crowd_cctv_registry.json",
+  "frames": 1000,
+  "sources": {
+    "coco": 1000
+  },
+  "groups": 1000,
+  "personBoxes": 4048,
+  "framesWithoutPeople": 0,
+  "framesWithDroppedLabelLines": 0,
+  "split": {
+    "method": "group-wise, seed-deterministic",
+    "groupKey": "source:sequence (시퀀스가 없으면 프레임 자신)",
+    "seed": 42,
+    "ratios": [
+      0.7,
+      0.15,
+      0.15
+    ],
+    "counts": {
+      "test": 150,
+      "train": 700,
+      "val": 150
+    },
+    "providedSplitUsed": false,
+    "providedSplitReason": "MOT 시퀀스 11개 전부가 train·val·test에 동시에 있고 프레임 간격 최빈값이 1이다. 연속 프레임이 갈렸다."
+  },
+  "schema": {
+    "boxes": "픽셀 좌표 [x1, y1, x2, y2]. 이미지 밖은 잘라 넣었다.",
+    "classes": "person(0)과 pedestrian(1)을 사람 하나로 합쳤다.",
+    "trackIds": false
+  },
+  "note": "annotations.jsonl 은 커밋하지 않는다. 이 요약만 남긴다."
+}

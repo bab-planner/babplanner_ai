@@ -115,7 +115,10 @@ def main(argv: list[str] | None = None) -> int:
                 "truth": row["personCount"],
                 "boxes": row["boxes"],
                 "detections": [
-                    {"box": [d.box.x1, d.box.y1, d.box.x2, d.box.y2], "score": d.score}
+                    {
+                        "box": [d.bbox.x1, d.bbox.y1, d.bbox.x2, d.bbox.y2],
+                        "score": d.confidence,
+                    }
                     for d in detections
                 ],
             }
