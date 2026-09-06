@@ -1,0 +1,78 @@
+{
+  "datasetKey": "food_waste_voxel51",
+  "source": "https://huggingface.co/datasets/Voxel51/food-waste-dataset",
+  "originalSource": "https://huggingface.co/datasets/AI-ServicesBB/food-waste-dataset",
+  "curatedBy": "L. Stroetmann, a la QUARTO, AI Service Center at Hasso Plattner Institute, Voxel51",
+  "license": "MIT",
+  "licenseVerifiedFrom": "https://huggingface.co/api/datasets/Voxel51/food-waste-dataset (tag license:mit)",
+  "commercialUse": "허용 (MIT)",
+  "revision": "ddaa9e2e8c03aa3914fb74988144f3665f8f9462",
+  "downloadedOn": "2026-09-06",
+  "files": {
+    "metadata.json": {
+      "sha256": "74f1018a772dfa99fe5c2890f5e5e3b420e39441104582625ef6d56ce26f7fc6",
+      "bytes": 22094
+    },
+    "samples.json": {
+      "sha256": "09a6d5898ba09de27bc67ee8f0e031ae1296675279c756c4c317aae5d6d13f4f",
+      "bytes": 16571610
+    }
+  },
+  "images": {
+    "count": 375,
+    "totalBytes": 128429378,
+    "sha256OfSortedFileDigests": "a36d78d90f7e8e167c9690a55a8f94ea0f39e366c0c783e4ae45e1ab64c133f3"
+  },
+  "checks": {
+    "images": 375,
+    "distinctLabels": 16,
+    "distinctWasteRates": 16,
+    "wasteRateMin": 0.0618,
+    "wasteRateMax": 0.5476,
+    "highWasteSamples": 0,
+    "plateSumMatchesWeightBefore": 375,
+    "splits": {
+      "train": 215,
+      "test": 160
+    },
+    "distinctBonIds": 16,
+    "distinctDishes": 16,
+    "problems": []
+  },
+  "annotationMeaning": {
+    "weight_per_plate": "재료별 배식 질량(g). 합이 weight_before와 같다.",
+    "return_quantity": "재료별 잔반 질량(g). **원시값이다.**",
+    "return_percentage": "return_quantity / weight_per_plate. 파생값이므로 쓰지 않는다.",
+    "weight_before": "배식 총 질량(g) = sum(weight_per_plate)",
+    "weight_after": "**쓰지 않는다.** 375건 중 160건이 정확히 0이고(test split 전체), 모든 *_after 필드가 *_before의 균일 배수라 측정값이 아니라 파생값이다. '먹은 양'과 30/375, '남긴 양'과 0/375만 일치한다.",
+    "bonid": "영수증 식별자. 같은 값이면 같은 식사이므로 분할 그룹 키로 쓴다.",
+    "dish": "메뉴 이름(독일어). bonid와 1:1이다.",
+    "yoloe_segmentation": "기계 생성 세그멘테이션. 우리 과제에 쓰지 않는다.",
+    "dinov2-*-embeddings": "기계 생성 임베딩. 우리는 W2 backbone을 쓰므로 쓰지 않는다."
+  },
+  "groundTruth": {
+    "formula": "waste_rate = sum(return_quantity) / sum(weight_per_plate)",
+    "matchesBabplannerContract": true,
+    "note": "우리 leftover_edible_mass_g / served_edible_mass_g 와 같은 정의다."
+  },
+  "usage": {
+    "role": "external-domain transfer sanity check",
+    "benchmark": "external-public",
+    "effectiveSampleSize": 16,
+    "warning": "이미지 375장은 서로 다른 식사 375건이 아니다. 측정된 잔반 상태 16개를 여러 각도로 다시 찍은 것이며, 구조적으로 연출 파일럿(CONTROLLED_STAGED)과 같다.",
+    "forbidden": [
+      "재학습 / fine-tuning",
+      "threshold tuning",
+      "모델 선택",
+      "high-waste critical underestimation 성능 주장 (고잔반 표본 0건)",
+      "밥플래너 성능으로 인용"
+    ],
+    "allowedReporting": [
+      "전체 MAE",
+      "prediction / GT 쌍",
+      "오차 분포",
+      "명백한 실패 사례"
+    ]
+  },
+  "note": "원본 파일은 커밋하지 않는다. 지문만 남긴다."
+}
