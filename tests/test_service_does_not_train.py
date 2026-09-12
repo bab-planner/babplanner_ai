@@ -1,11 +1,21 @@
-"""아직 모델을 만들지 않았다는 것을 소스로 고정한다.
+"""서비스는 학습하지 않는다는 것을 소스로 고정한다.
 
-지금까지 한 것은 정답을 정의하고 모으는 도구까지다. 학습 코드가 슬쩍
-들어오면 "모델이 있다"는 인상만 생기고 실제로 맞히는 것은 없다.
+처음에는 "아직 모델이 없다"를 고정하던 테스트다. 이제 서비스는 식수 예측
+모델 artifact 하나를 **읽어서 추론**한다. 그 모델은 합성데이터 PoC이고,
+학습은 research/demand_forecasting 에서 한다.
+
+그래서 지키는 선을 이렇게 옮긴다.
+
+- 서비스 소스에 학습 코드가 없다. fit, optimizer, checkpoint 같은 말이 없다.
+- 서비스 소스가 학습 프레임워크를 직접 import하지 않는다. artifact는 joblib으로
+  읽고, sklearn과 lightgbm은 그 안에서 딸려 올 뿐이다.
+- ML 런타임은 핵심 의존성이 아니다. 선택 extra(demand-model)이고 버전을 못 박는다.
+  extra 없이도 서비스 전체가 import되고 기동된다(수요 예측만 503).
 """
 
 from __future__ import annotations
 
+import ast
 import tomllib
 from pathlib import Path
 
@@ -87,6 +97,34 @@ def test_dependencies_stayed_small() -> None:
         "pydantic-settings",
         "pillow",
     }
+
+
+#: artifact를 읽을 때만 필요한 런타임. 모듈 맨 위에서 import하면 extra가 없는
+#: 환경에서 서비스 전체가 import되지 않는다.
+MODEL_RUNTIME = ("joblib", "pandas", "numpy", "sklearn", "lightgbm", "xgboost", "scipy")
+
+
+def test_model_runtime_is_imported_lazily() -> None:
+    for path, text in sources():
+        tree = ast.parse(text)
+        for node in tree.body:
+            names: list[str] = []
+            if isinstance(node, ast.Import):
+                names = [alias.name for alias in node.names]
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                names = [node.module]
+            for name in names:
+                assert name.split(".")[0] not in MODEL_RUNTIME, f"{path}: {name}"
+
+
+def test_model_runtime_is_an_optional_pinned_extra() -> None:
+    manifest = tomllib.loads((PROJECT_ROOT / "pyproject.toml").read_text("utf-8"))
+    extra = manifest["project"]["optional-dependencies"]["demand-model"]
+    names = {entry.split("==")[0].strip().lower() for entry in extra}
+
+    assert {"joblib", "scikit-learn", "lightgbm", "pandas", "numpy"} <= names
+    # pickle은 라이브러리 버전이 다르면 조용히 다르게 동작할 수 있다.
+    assert all("==" in entry for entry in extra), extra
 
 
 def test_collected_data_is_ignored_by_git() -> None:

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from enum import Enum
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -51,6 +52,15 @@ MIN_SERVICE_TOKEN_LENGTH = 32
 #: 이미지 최대 크기. 서비스 백엔드에도 상한이 있지만 여기서도 스스로 막는다.
 DEFAULT_MAX_IMAGE_BYTES = 10 * 1024 * 1024
 
+#: 식수 예측 artifact의 기본 위치. 저장소를 editable로 설치해 로컬에서 돌릴 때
+#: research가 만든 파일을 그대로 쓰게 한다. 컨테이너에서는 환경 변수로
+#: 마운트 경로를 준다. 파일이 없어도 기동은 하고, 수요 예측만 503이 된다.
+_DEMAND_FORECASTING_ROOT = Path(__file__).resolve().parents[2] / "research" / "demand_forecasting"
+DEFAULT_DEMAND_FORECAST_MODEL_PATH = _DEMAND_FORECASTING_ROOT / "models" / "meal_demand_model.joblib"
+DEFAULT_DEMAND_FORECAST_METADATA_PATH = _DEMAND_FORECASTING_ROOT / "models" / "metadata.json"
+DEFAULT_DEMAND_HISTORY_PATH = _DEMAND_FORECASTING_ROOT / "data" / "synthetic_meal_demand.csv"
+DEFAULT_DEMAND_CCTV_LOG_PATH = _DEMAND_FORECASTING_ROOT / "data" / "synthetic_cctv_daily.csv"
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=None, extra="ignore")
@@ -66,6 +76,19 @@ class Settings(BaseSettings):
     service_token: str = Field(alias="AI_SERVICE_TOKEN")
     max_image_bytes: int = Field(
         default=DEFAULT_MAX_IMAGE_BYTES, alias="AI_MAX_IMAGE_BYTES"
+    )
+    # 식수 예측(demand-forecast). 읽기만 한다. 서비스가 이 파일들을 쓰지 않는다.
+    demand_forecast_model_path: Path = Field(
+        default=DEFAULT_DEMAND_FORECAST_MODEL_PATH, alias="DEMAND_FORECAST_MODEL_PATH"
+    )
+    demand_forecast_metadata_path: Path = Field(
+        default=DEFAULT_DEMAND_FORECAST_METADATA_PATH, alias="DEMAND_FORECAST_METADATA_PATH"
+    )
+    demand_history_path: Path = Field(
+        default=DEFAULT_DEMAND_HISTORY_PATH, alias="DEMAND_HISTORY_PATH"
+    )
+    demand_cctv_log_path: Path = Field(
+        default=DEFAULT_DEMAND_CCTV_LOG_PATH, alias="DEMAND_CCTV_LOG_PATH"
     )
 
     def validated(self) -> "Settings":

@@ -29,6 +29,19 @@ cctv = [
     "torchvision>=0.19",    # COCO pretrained person detector (BSD-3-Clause)
     "httpx>=0.27",          # demo collector -> Spring. dev extra에 이미 있는 것을 재사용한다
 ]
+# 식수 예측 모델 artifact(joblib으로 저장한 sklearn Pipeline)를 **읽는** 데만
+# 필요하다. 학습은 research/demand_forecasting 에서 한다. 이 extra가 없어도
+# 서비스는 뜨고, 수요 예측 status가 unavailable, predict가 503이 된다.
+# 버전은 artifact를 저장한 환경과 정확히 맞춘다. pickle은 라이브러리 버전이
+# 다르면 조용히 다르게 동작하거나 깨질 수 있다. artifact를 다시 학습하면
+# research/demand_forecasting/models/metadata.json 의 versions 와 함께 올린다.
+demand-model = [
+    "joblib==1.5.3",
+    "numpy==2.4.4",
+    "pandas==3.0.2",
+    "scikit-learn==1.8.0",
+    "lightgbm==4.7.0",
+]
 
 [build-system]
 requires = ["setuptools>=68"]

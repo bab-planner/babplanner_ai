@@ -11,7 +11,7 @@
 |---|---|---|---|---|
 | AI-1 | [CCTV 기반 비식별 혼잡도·이용 인원 분석](cctv_counting/) | 영상 | 현재 인원, 입장 인원 | baseline 구현됨, 벤치마크 미측정 |
 | AI-2 | [식판 이미지 기반 잔반 분석](waste_estimation/) | 이미지 | 잔반률, 신뢰도 | 정의만. 구현 없음 |
-| AI-3 | [과거 이용 패턴 기반 식수 예측](demand_forecasting/) | 시계열 | 예상 식수 | 정의만. 구현 없음 |
+| AI-3 | [과거 이용 패턴 기반 식수 예측](demand_forecasting/) | 시계열 | 예상 식수 | 합성데이터 PoC 파이프라인. 실제 데이터 없음 |
 
 AI-3의 출력은 별도 발주 추천 로직으로 이어진다. 그쪽 경계는 이미
 `src/babplanner_ai/procurement/`에 있다.
@@ -114,7 +114,7 @@ research/
     src/cctv_counting/  라이브러리
     tests/              단위 테스트
   waste_estimation/     AI-2. README만
-  demand_forecasting/   AI-3. README만
+  demand_forecasting/   AI-3. 합성데이터 PoC (생성 → EDA → 학습 → 예측 CLI)
 ```
 
 `reports/`는 저장소 루트에 있다. 포트폴리오용 보고서가 들어간다.
