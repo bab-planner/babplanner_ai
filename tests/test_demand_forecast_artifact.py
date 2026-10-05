@@ -134,7 +134,10 @@ class TestRefusals:
     def test_production_refuses_a_synthetic_model(self, tmp_path: Path) -> None:
         loader, factory = fake_loader(tmp_path, allow_synthetic=False)
 
-        assert reason_of(loader) == "synthetic-data model is not allowed in production"
+        reason = reason_of(loader)
+        assert reason.startswith("synthetic-data model is not allowed in production")
+        # 막힌 이유와 함께, 명시적으로 허용하는 방법도 알려 준다.
+        assert "DEMAND_FORECAST_MODE=poc" in reason
         assert factory.loads == 0
 
     def test_production_accepts_a_real_data_model(self, tmp_path: Path) -> None:

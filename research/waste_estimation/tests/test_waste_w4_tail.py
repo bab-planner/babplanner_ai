@@ -724,10 +724,15 @@ def test_charts_exist_for_the_three_required_views():
 # --- production 경계 -----------------------------------------------------------
 
 
-def test_fixture_mode_was_not_replaced():
-    from babplanner_ai.waste.fixture_estimator import FixtureWasteEstimator
+def test_ai_service_has_no_runtime_waste_analysis():
+    """최종 AI 범위는 CCTV 혼잡도와 식수 인원 예측 둘뿐이다.
 
-    assert FixtureWasteEstimator is not None
+    잔반 분석은 AI 서비스의 운영 경로가 아니다(잔반 인증은 Backend의 관리자 승인
+    기능). 연구 결과가 운영 경로로 들어오지 않았음을 이 경계로 확인한다.
+    """
+    assert not (ROOT / "src" / "babplanner_ai" / "waste").exists()
+    main = (ROOT / "src" / "babplanner_ai" / "main.py").read_text(encoding="utf-8")
+    assert "waste" not in main
 
 
 def test_no_w4_research_code_is_wired_into_the_service():

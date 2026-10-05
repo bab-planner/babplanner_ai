@@ -237,7 +237,10 @@ class ModelArtifactLoader:
         # 합성데이터로 학습한 모델은 운영에서 쓰지 않는다. fixture를 운영에서
         # 막는 것과 같은 이유다. 지어낸 관계를 배운 숫자로 식재료를 주문하게 된다.
         if metadata.synthetic_data and not self._allow_synthetic:
-            raise ArtifactError("synthetic-data model is not allowed in production")
+            raise ArtifactError(
+                "synthetic-data model is not allowed in production "
+                "(set DEMAND_FORECAST_MODE=poc to allow the synthetic PoC model explicitly)"
+            )
 
         digest = hashlib.sha256(self._model_path.read_bytes()).hexdigest()
         warnings: list[str] = []

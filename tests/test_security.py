@@ -8,19 +8,15 @@ from fastapi.testclient import TestClient
 
 from babplanner_ai import security
 from babplanner_ai.security import SERVICE_TOKEN_HEADER, tokens_match
-from tests.conftest import TEST_SERVICE_TOKEN, png_bytes
+from tests.conftest import TEST_SERVICE_TOKEN
 
-PATH = "/internal/v1/ai/waste/analyze"
+# 서비스 토큰을 요구하는 내부 endpoint 중 하나. 모델이 없어도 200으로 상태를 답한다.
+PATH = "/internal/v1/ai/demand-forecast/status"
 
 
 def _post(client: TestClient, token: str | None) -> object:
     headers = {} if token is None else {SERVICE_TOKEN_HEADER: token}
-    return client.post(
-        PATH,
-        data={"requestId": "waste-1", "menuId": "3"},
-        files={"image": ("a.png", png_bytes(), "image/png")},
-        headers=headers,
-    )
+    return client.get(PATH, headers=headers)
 
 
 def test_missing_token_is_unauthorized(client: TestClient) -> None:

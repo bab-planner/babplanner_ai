@@ -1,6 +1,8 @@
 # babplanner-ai
 
-밥플래너 AI 추론 서버. 잔반 분석, 수요 예측, 발주 추천의 내부 경계다.
+밥플래너 AI 추론 서버. 식수 인원 예측의 내부 경계다. 최종 AI 범위는 **CCTV 혼잡도**(영상 수집기가
+Backend로 push)와 **식수 인원 예측** 둘이다. 잔반 사진은 AI가 분석하지 않는다. 사용자가 제출하면
+Backend가 관리자 승인 대기(PENDING)로 두고, 관리자가 사진을 보고 승인/거절한다.
 
 ## 아키텍처
 
@@ -31,7 +33,6 @@ FastAPI AI 추론 서버 (이 저장소)   저장된 모델을 로드해 추론�
 
 | 기능 | 구현 | 돌려주는 값 |
 |---|---|---|
-| 잔반 분석 | `FixtureWasteEstimator` | 이미지를 판독하지 않고 고정값 |
 | 수요 예측 (기존 계약) | `FixtureDemandEstimator` | 입력과 무관하게 고정된 인원 수 |
 | **식수 예측 (demand-forecast)** | 저장된 LightGBM Pipeline | **합성데이터로 학습한 PoC 모델의 예측값** |
 | 발주 추천 | `FixtureProcurementRecommender` | 계획 수량 그대로, 조정률 0 |
@@ -84,8 +85,8 @@ demand-forecast도 과거 관측치 배열을 받지 않는다. 과거 feature�
 | | 트랙 | 상태 |
 |---|---|---|
 | AI-1 | [CCTV 혼잡도·이용 인원](research/cctv_counting/) | **공개 데이터 cross-sequence 평가 완료.** 급식소 검증은 아직 |
-| AI-2 | [잔반 분석](research/waste_estimation/) | 외부 벤치마크 완료(W2). 밥플래너 데이터는 **여전히 0건**이라 in-domain 모델 없음 |
-| AI-3 | [식수 예측](research/demand_forecasting/) | **합성데이터 PoC.** 저장 모델을 demand-forecast API로 서빙. 실제 식수 데이터 0건이라 실제 모델 없음. Spring 미연결 |
+| (보관) | [잔반 분석 연구](research/waste_estimation/) | **서비스 범위 밖.** 과거 연구 기록으로만 남아 있고 운영 경로는 없다(잔반 인증은 Backend의 관리자 승인) |
+| AI-3 | [식수 예측](research/demand_forecasting/) | **합성데이터 PoC.** 저장 모델을 demand-forecast API로 서빙. 실제 식수 데이터 0건이라 실제 모델 없음. Spring Backend가 호출한다 |
 
 AI-1은 영상에서 현재 인원(occupancy)과 입구 통과 인원(entry count)을 따로
 낸다. 두 값은 다르다. 점심에 300명이 다녀가도 한 순간의 인원은 40명일 수 있다.
@@ -170,7 +171,6 @@ artifact와 합성 이력은 git에 없다. 처음이면 research 파이프라�
 환경 변수는 셸에만 둔다. 파일로 남기지 않는다.
 
     APP_ENV=local
-    WASTE_MODEL_MODE=fixture
     DEMAND_MODEL_MODE=fixture
     PROCUREMENT_MODEL_MODE=fixture
     AI_SERVICE_TOKEN=<secret, 32자 이상>
@@ -195,8 +195,14 @@ artifact와 합성 이력은 git에 없다. 처음이면 research 파이프라�
 `http://127.0.0.1:8001/docs`. demand-forecast 경로는 각 요청의 `X-Service-Token`
 칸에 `AI_SERVICE_TOKEN` 값을 넣고 "Try it out"으로 부른다. 요청 예시가 채워져 있다.
 
-`WASTE_MODEL_MODE`에 기본값은 없다. 운영에서 `fixture`를 고르면 기동에
-실패한다. 실제 모델 어댑터가 없는 동안에는 그것이 정상이다.
+`DEMAND_MODEL_MODE`/`PROCUREMENT_MODEL_MODE`에서 운영에 `fixture`를 고르면 기동에 실패한다.
+운영에서는 이 서비스의 `/docs`와 `/openapi.json`도 닫힌다.
+
+`DEMAND_FORECAST_MODE`(`strict` 기본 | `poc`)는 합성데이터 식수 예측 모델을 운영에서
+쓸지 정한다. `strict`에서는 `APP_ENV=production`이면 합성 모델을 로드하지 않고
+`poc`를 **명시했을 때만** 로드한다. 합성 PoC 모델임은 status의
+`modelKind: "SYNTHETIC_POC"`, `syntheticData: true`와 응답의 `disclaimer`로 계속
+드러난다. fixture 금지는 `poc`와 무관하게 유지된다.
 
 `DEMAND_MODEL_MODE`와 `PROCUREMENT_MODEL_MODE`의 기본값은 `disabled`다.
 `disabled`는 fixture가 아니라 "꺼짐"이며, 호출하면 503이 나간다. 끈 기능이
@@ -205,7 +211,6 @@ fixture로 대신 답하면 예측이 없는 배포가 예측을 하고 있는 �
 ## 내부 API
 
     GET  /health
-    POST /internal/v1/ai/waste/analyze
     POST /internal/v1/ai/demand/predict
     GET  /internal/v1/ai/demand-forecast/status
     POST /internal/v1/ai/demand-forecast/predict
@@ -239,23 +244,21 @@ fixture로 대신 답하면 예측이 없는 배포가 예측을 하고 있는 �
   "humidity": 60.0,
   "menuCategory": "양식",
   "mainMenu": "돈까스",
-  "menuPopularity": 0.9,
   "specialMenu": false
 }
 ```
 
 모든 필드가 필수다. 서버가 빠진 값을 조용히 채우지 않는다. 모르는 필드(예: `lag_1`,
-`weekday`, `userId`)는 422로 거절한다. 과거 feature를 보내도 쓰지 않는데, 조용히
+`weekday`, `userId`, 제거된 `menuPopularity`)는 422로 거절한다. 과거 feature를 보내도 쓰지 않는데, 조용히
 무시하면 보낸 쪽은 쓰였다고 믿기 때문이다.
 
 | 필드 | 검증 |
 |---|---|
 | `date` | 평일만. 주말은 422. 요일은 서버가 계산한다 |
 | `semester` / `semesterWeek` | 1~2 / 1~16 |
-| `temperature` / `rainfall` / `humidity` | -30~45℃ / 0~500mm / 0~100% |
+| `temperature` / `rainfall` / `humidity` | -30~45℃ / 0~500mm / 0~100%. **D-1 예보값**이다(실제 당일 날씨가 아니다) |
 | `menuCategory` | 한식·중식·양식·일식·분식·기타 |
 | `mainMenu` | 1~50자. 모델이 모르는 메뉴면 예측은 하고 `warnings`에 적는다 |
-| `menuPopularity` | 0~1. PoC에서는 호출자가 준다 |
 
 아래는 실제 저장 artifact로 받은 응답이다.
 
@@ -263,24 +266,24 @@ fixture로 대신 답하면 예측이 없는 배포가 예측을 하고 있는 �
 {
   "forecastDate": "2026-09-15",
   "mealType": "LUNCH",
-  "predictedMealCount": 431,
+  "predictedMealCount": 425,
   "reference": {
-    "previousDay": 350,
-    "sameWeekdayPreviousWeek": 375,
-    "rolling7DayAverage": 367,
+    "previousDay": 405,
+    "sameWeekdayPreviousWeek": 405,
+    "rolling7DayAverage": 426,
     "historyAsOf": "2026-09-11"
   },
   "conditions": {
     "weekday": "화요일", "semester": 2, "semesterWeek": 3,
     "examPeriod": false, "holiday": false, "campusEvent": false,
-    "menuCategory": "양식", "mainMenu": "돈까스", "menuPopularity": 0.9, "specialMenu": false,
+    "menuCategory": "양식", "mainMenu": "돈까스", "specialMenu": false,
     "temperature": 24.0, "rainfall": 0.0, "humidity": 60.0
   },
   "model": {
     "name": "lightgbm",
-    "version": "54453980807e",
+    "version": "04ffceab1186",
     "syntheticData": true,
-    "trainedAt": "2026-09-12T23:43:37"
+    "trainedAt": "2026-10-05T23:59:59"
   },
   "warnings": [
     "직전 평일(2026-09-14) 기록이 이력에 없어 가장 최근 기록(2026-09-11)을 기준으로 과거 feature를 만들었습니다."
@@ -293,8 +296,8 @@ fixture로 대신 답하면 예측이 없는 배포가 예측을 하고 있는 �
 - `model.version`은 모델 파일 SHA-256의 앞 12자리다. 저장한 예측이 어느 모델에서
   나왔는지 가리는 데 쓴다.
 - **예측 구간(95% 등)은 주지 않는다.** 통계적으로 보정된 구간이 없다.
-- 같은 입력으로 research CLI(`predict.py --menu-popularity 0.9 ...`)를 돌리면 같은
-  431명이 나온다.
+- 같은 입력으로 research CLI(`predict.py ...`)를 돌리면 같은
+  425명이 나온다.
 
 | 상태 | 뜻 |
 |---|---|

@@ -54,7 +54,6 @@ def post(client: TestClient, body: dict[str, object], token: str | None):
 def disabled(client: TestClient) -> Iterator[None]:
     settings = Settings(
         APP_ENV=AppEnv.LOCAL,
-        WASTE_MODEL_MODE="fixture",
         DEMAND_MODEL_MODE=PredictiveModelMode.FIXTURE,
         PROCUREMENT_MODEL_MODE=PredictiveModelMode.DISABLED,
         AI_SERVICE_TOKEN=TEST_SERVICE_TOKEN,
@@ -238,8 +237,7 @@ class TestProductionSafety:
     def test_production_rejects_the_procurement_fixture(self) -> None:
         settings = Settings(
             APP_ENV=AppEnv.PRODUCTION,
-            WASTE_MODEL_MODE="fixture",
-            PROCUREMENT_MODEL_MODE=PredictiveModelMode.FIXTURE,
+                PROCUREMENT_MODEL_MODE=PredictiveModelMode.FIXTURE,
             AI_SERVICE_TOKEN=TEST_SERVICE_TOKEN,
         )
 

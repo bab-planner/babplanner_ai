@@ -28,7 +28,6 @@ REQUEST_FEATURES = (
     "humidity",
     "menu_category",
     "main_menu",
-    "menu_popularity",
     "special_menu",
 )
 HISTORY_FEATURES = (
@@ -68,7 +67,6 @@ def build_feature_row(
         "humidity": request.humidity,
         "menu_category": request.menuCategory.value,
         "main_menu": request.mainMenu,
-        "menu_popularity": request.menuPopularity,
         "special_menu": int(request.specialMenu),
         **history.as_model_inputs(),
     }

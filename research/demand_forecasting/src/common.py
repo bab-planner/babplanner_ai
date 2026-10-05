@@ -37,8 +37,9 @@ CATEGORICAL_FEATURES = ["weekday", "semester", "menu_category", "main_menu"]
 
 PAST_DEMAND_FEATURES = ["lag_1", "lag_7", "rolling_mean_7"]
 ACADEMIC_FEATURES = ["semester", "semester_week", "exam_period", "holiday", "campus_event"]
+# D-1 예측 시점에 확보 가능한 날씨 "예보값"이다(실제 날씨가 아니다).
 WEATHER_FEATURES = ["temperature", "rainfall", "humidity"]
-MENU_FEATURES = ["menu_category", "main_menu", "menu_popularity", "special_menu"]
+MENU_FEATURES = ["menu_category", "main_menu", "special_menu"]
 CCTV_FEATURES = ["prev_avg_occupancy", "prev_peak_occupancy", "same_weekday_prev_occupancy"]
 
 # 과거 식수와 과거 CCTV. 예측일 이전 기록에서만 만든다.

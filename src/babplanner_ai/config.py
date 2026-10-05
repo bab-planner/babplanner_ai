@@ -20,12 +20,6 @@ class AppEnv(str, Enum):
     PRODUCTION = "production"
 
 
-class WasteModelMode(str, Enum):
-    """분석기 구현 선택. 기본값을 두지 않는다."""
-
-    FIXTURE = "fixture"
-
-
 class PredictiveModelMode(str, Enum):
     """수요/발주 구현 선택.
 
@@ -38,6 +32,21 @@ class PredictiveModelMode(str, Enum):
     FIXTURE = "fixture"
 
 
+class DemandForecastMode(str, Enum):
+    """식수 예측에 합성데이터 PoC 모델을 허용할지.
+
+    - strict(기본): 운영(production)에서는 합성 모델을 로드하지 않는다.
+    - poc: 합성 PoC 모델을 **명시적으로** 허용한다. 실데이터를 구할 수 없는
+      프로젝트 단계에서 운영 환경이 PoC 예측을 내놓을 수 있게 하되, 응답과
+      status가 합성 PoC임을 계속 밝힌다.
+
+    기본값이 poc면 아무도 고르지 않았을 때 합성 모델이 운영에 나간다.
+    """
+
+    STRICT = "strict"
+    POC = "poc"
+
+
 class ConfigurationError(ValueError):
     """구성이 잘못됐다.
 
@@ -48,9 +57,6 @@ class ConfigurationError(ValueError):
 
 #: 서비스 토큰 최소 길이. 짧은 토큰은 사실상 없는 것과 같다.
 MIN_SERVICE_TOKEN_LENGTH = 32
-
-#: 이미지 최대 크기. 서비스 백엔드에도 상한이 있지만 여기서도 스스로 막는다.
-DEFAULT_MAX_IMAGE_BYTES = 10 * 1024 * 1024
 
 #: 식수 예측 artifact의 기본 위치. 저장소를 editable로 설치해 로컬에서 돌릴 때
 #: research가 만든 파일을 그대로 쓰게 한다. 컨테이너에서는 환경 변수로
@@ -66,17 +72,16 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=None, extra="ignore")
 
     app_env: AppEnv = Field(alias="APP_ENV")
-    waste_model_mode: WasteModelMode = Field(alias="WASTE_MODEL_MODE")
     demand_model_mode: PredictiveModelMode = Field(
         default=PredictiveModelMode.DISABLED, alias="DEMAND_MODEL_MODE"
     )
     procurement_model_mode: PredictiveModelMode = Field(
         default=PredictiveModelMode.DISABLED, alias="PROCUREMENT_MODEL_MODE"
     )
-    service_token: str = Field(alias="AI_SERVICE_TOKEN")
-    max_image_bytes: int = Field(
-        default=DEFAULT_MAX_IMAGE_BYTES, alias="AI_MAX_IMAGE_BYTES"
+    demand_forecast_mode: DemandForecastMode = Field(
+        default=DemandForecastMode.STRICT, alias="DEMAND_FORECAST_MODE"
     )
+    service_token: str = Field(alias="AI_SERVICE_TOKEN")
     # 식수 예측(demand-forecast). 읽기만 한다. 서비스가 이 파일들을 쓰지 않는다.
     demand_forecast_model_path: Path = Field(
         default=DEFAULT_DEMAND_FORECAST_MODEL_PATH, alias="DEMAND_FORECAST_MODEL_PATH"
@@ -97,11 +102,9 @@ class Settings(BaseSettings):
             raise ConfigurationError(
                 f"AI_SERVICE_TOKEN 은 최소 {MIN_SERVICE_TOKEN_LENGTH}자여야 합니다."
             )
-        if self.max_image_bytes <= 0:
-            raise ConfigurationError("AI_MAX_IMAGE_BYTES 는 양수여야 합니다.")
         # fixture는 판독도 예측도 하지 않고 고정된 개발용 값을 돌려준다.
-        # 운영에서 선택되면 분석하지 않은 결과가 승인으로 나가고, 예측하지
-        # 않은 숫자를 보고 관리자가 식수를 잡고 식재료를 주문하게 된다.
+        # 운영에서 선택되면 예측하지 않은 숫자를 보고 관리자가 식수를 잡고
+        # 식재료를 주문하게 된다.
         #
         # 위반을 하나 찾고 멈추지 않는다. 첫 항목만 알려주면 그것을 고친 뒤
         # 다시 기동해서 다음 항목을 만나게 되고, 무엇이 남았는지는 매번
@@ -109,7 +112,6 @@ class Settings(BaseSettings):
         offenders = [
             name
             for name, offending in (
-                ("WASTE_MODEL_MODE", self.waste_model_mode is WasteModelMode.FIXTURE),
                 (
                     "DEMAND_MODEL_MODE",
                     self.demand_model_mode is PredictiveModelMode.FIXTURE,

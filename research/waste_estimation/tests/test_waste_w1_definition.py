@@ -14,16 +14,6 @@ from pathlib import Path
 
 import pytest
 
-from babplanner_ai.waste.estimator import WasteEstimateError
-from babplanner_ai.waste.fixture_estimator import (
-    FIXTURE_MODEL_VERSION,
-    FixtureWasteEstimator,
-)
-from babplanner_ai.waste.models import (
-    AIWasteResponse,
-    WasteAnalysisDecision,
-    WasteEstimate,
-)
 from waste_estimation.public_datasets import (
     CANDIDATES,
     DatasetRole,
@@ -43,76 +33,15 @@ DATASETS = ROOT / "research" / "waste_estimation" / "datasets" / "README.md"
 # --- 서비스 경계 -----------------------------------------------------------
 
 
-def test_production_decision_has_exactly_two_values():
-    """판정은 둘뿐이다. 장애는 판정이 아니다."""
-    assert {item.value for item in WasteAnalysisDecision} == {"APPROVED", "REJECTED"}
+def test_ai_service_has_no_runtime_waste_analysis():
+    """최종 AI 범위는 CCTV 혼잡도와 식수 인원 예측 둘뿐이다.
 
-
-def test_failure_is_a_separate_type_not_a_decision():
-    """분석을 못 한 것을 REJECTED로 위장하지 않는다."""
-    assert issubclass(WasteEstimateError, RuntimeError)
-    assert not issubclass(WasteEstimateError, WasteAnalysisDecision.__class__)
-    # 판정 열거형에 실패를 뜻하는 값이 없다.
-    assert not any(
-        "FAIL" in item.value or "ERROR" in item.value
-        for item in WasteAnalysisDecision
-    )
-
-
-def test_waste_rate_range_matches_the_dataset_definition():
-    """API와 데이터셋이 같은 단위를 쓴다. 백분율과 비율이 섞이지 않는다."""
-    WasteEstimate(
-        decision=WasteAnalysisDecision.APPROVED, waste_rate=0.0, model_version="v"
-    )
-    WasteEstimate(
-        decision=WasteAnalysisDecision.APPROVED, waste_rate=1.0, model_version="v"
-    )
-    with pytest.raises(Exception):
-        WasteEstimate(
-            decision=WasteAnalysisDecision.APPROVED, waste_rate=1.5, model_version="v"
-        )
-    with pytest.raises(Exception):
-        WasteEstimate(
-            decision=WasteAnalysisDecision.APPROVED, waste_rate=-0.1, model_version="v"
-        )
-
-
-def test_rejected_may_carry_no_number():
-    """REJECTED는 '잔반이 많다'가 아니라 '값을 낼 수 없다'이다."""
-    estimate = WasteEstimate(
-        decision=WasteAnalysisDecision.REJECTED, model_version="v"
-    )
-    assert estimate.waste_rate is None
-    response = AIWasteResponse.of("req-1", estimate)
-    assert response.decision is WasteAnalysisDecision.REJECTED
-    assert response.wasteRate is None
-
-
-def test_response_carries_only_the_contract_fields():
-    """계약에 없는 필드를 연구가 몰래 늘리지 않는다."""
-    estimate = WasteEstimate(
-        decision=WasteAnalysisDecision.APPROVED,
-        waste_rate=0.2,
-        confidence=0.8,
-        model_version="v",
-    )
-    payload = AIWasteResponse.of("req-1", estimate).model_dump()
-    assert set(payload) == {
-        "requestId",
-        "decision",
-        "wasteRate",
-        "confidence",
-        "modelVersion",
-    }
-
-
-def test_fixture_is_still_present_and_named_as_a_fixture():
-    """fixture를 지우지 않는다. 그리고 이름이 fixture라고 말해야 한다."""
-    estimate = FixtureWasteEstimator().estimate(b"not-an-image", menu_id=1)
-    assert estimate.model_version == FIXTURE_MODEL_VERSION
-    assert "fixture" in FIXTURE_MODEL_VERSION
-    # 판독하지 않는 구현이므로 이 값은 분석 결과가 아니다.
-    assert estimate.decision is WasteAnalysisDecision.APPROVED
+    잔반 분석은 AI 서비스의 운영 경로가 아니다(잔반 인증은 Backend의 관리자 승인
+    기능). 연구 결과가 운영 경로로 들어오지 않았음을 이 경계로 확인한다.
+    """
+    assert not (ROOT / "src" / "babplanner_ai" / "waste").exists()
+    main = (ROOT / "src" / "babplanner_ai" / "main.py").read_text(encoding="utf-8")
+    assert "waste" not in main
 
 
 # --- 정답 정의가 문서와 같은가 ---------------------------------------------

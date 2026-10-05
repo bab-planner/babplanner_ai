@@ -262,6 +262,22 @@ def main() -> None:
         "target": TARGET,
         "prediction_task": "D-1 시점에서 다음 운영일 중식 식수 예측",
         "features": ALL_FEATURES,
+        "feature_semantics": {
+            "weather": "temperature/rainfall/humidity는 D-1 예측 시점에 확보 가능한 날씨 예보값이다. "
+                       "실제 당일 날씨가 아니다. 학습 데이터도 예보 오차를 더한 값으로 만들었다.",
+            "cctv": "prev_avg_occupancy/prev_peak_occupancy는 직전 운영일, "
+                    "same_weekday_prev_occupancy는 직전 동일 요일의 CCTV 평균 동시 인원이다. "
+                    "예측 대상일 당일 CCTV 값은 쓰지 않는다. 합성 CCTV 이력이다.",
+            "past_demand": "lag_1, lag_7, rolling_mean_7은 예측일 이전 식수 기록만으로 계산한다.",
+        },
+        "removed_features": {
+            "menu_popularity": "예측 시점에 객관적으로 얻을 수 없는 시뮬레이션 가정값이라 제거했다. "
+                               "운영 데이터가 생기면 과거 동일 메뉴 평균 식수 같은 계산 가능한 값으로 "
+                               "대체를 검토할 수 있다.",
+        },
+        "cctv_contribution_note": "합성 환경에서 CCTV feature를 포함할 수 있는 구조를 검증했다. "
+                                  "성능 개선 여부는 판정하지 않았고 실제 기여도는 운영 데이터 확보 후 "
+                                  "평가해야 한다.",
         "categorical_features": CATEGORICAL_FEATURES,
         # 학습 데이터에 나온 범주값. 서빙 쪽이 sklearn 내부 속성을 들추지 않고
         # "모델이 본 적 없는 메뉴"를 알아챌 수 있게 한다.

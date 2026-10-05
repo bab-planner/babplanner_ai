@@ -59,7 +59,6 @@ class DemandForecastRequest(BaseModel):
                 "humidity": 60.0,
                 "menuCategory": "양식",
                 "mainMenu": "돈까스",
-                "menuPopularity": 0.9,
                 "specialMenu": False,
             }
         },
@@ -76,10 +75,6 @@ class DemandForecastRequest(BaseModel):
     humidity: float = Field(ge=0, le=100, allow_inf_nan=False, description="D-1 예보 습도(%)")
     menuCategory: MenuCategory
     mainMenu: MenuName
-    menuPopularity: float = Field(
-        ge=0, le=1, allow_inf_nan=False,
-        description="메뉴 선호도 0~1. PoC에서는 호출자가 준다(합성 가정값)",
-    )
     specialMenu: bool
 
     @field_validator("date")
@@ -109,7 +104,6 @@ class ForecastConditions(BaseModel):
     campusEvent: bool
     menuCategory: MenuCategory
     mainMenu: str
-    menuPopularity: float
     specialMenu: bool
     temperature: float
     rainfall: float
@@ -147,6 +141,9 @@ class DemandForecastStatus(BaseModel):
     modelVersion: str | None = None
     target: str | None = None
     syntheticData: bool | None = None
+    #: 모델 종류 표지. 합성데이터 모델이면 "SYNTHETIC_POC"다. 실데이터 모델이
+    #: 생기면 "TRAINED"가 된다. 모델이 없으면 없다.
+    modelKind: str | None = None
     trainingPeriod: list[dt.date] | None = None
     reason: str | None = None
     warnings: list[str] | None = None

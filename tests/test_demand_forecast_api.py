@@ -56,7 +56,6 @@ def body(**overrides: object) -> dict[str, object]:
         "humidity": 60.0,
         "menuCategory": "양식",
         "mainMenu": "돈까스",
-        "menuPopularity": 0.9,
         "specialMenu": False,
     }
     payload.update(overrides)
@@ -131,6 +130,8 @@ class TestStatus:
         assert data["modelName"] == "fake_model"
         assert data["target"] == "meal_count"
         assert data["syntheticData"] is True
+        # 합성데이터 모델은 status에서 합성 PoC임을 스스로 밝힌다.
+        assert data["modelKind"] == "SYNTHETIC_POC"
         assert "reason" not in data
 
     def test_missing_artifact(self, client: TestClient, tmp_path: Path, use_service) -> None:
@@ -164,7 +165,6 @@ class TestValidation:
             ("semesterWeek", 17),
             ("rainfall", -0.1),
             ("temperature", 80),
-            ("menuPopularity", 1.2),
             ("mainMenu", "   "),
             ("date", "2026-13-45"),
         ],
@@ -184,7 +184,7 @@ class TestValidation:
 
         assert client.post(PREDICT, json=payload, headers=AUTH).status_code == 422
 
-    @pytest.mark.parametrize("field", ["weekday", "lag_1", "prevAvgOccupancy", "userId", "studentId"])
+    @pytest.mark.parametrize("field", ["weekday", "lag_1", "prevAvgOccupancy", "userId", "studentId", "menuPopularity"])
     def test_unknown_fields_are_refused(self, client: TestClient, predictor, field: str) -> None:
         # 과거 feature를 보내도 쓰지 않는다. 조용히 무시하면 보낸 쪽은 쓰였다고 믿는다.
         response = client.post(PREDICT, json=body(**{field: 1}), headers=AUTH)
@@ -362,6 +362,7 @@ class TestRealArtifactSmoke:
         assert data["available"] is True, data
         assert data["modelLoaded"] is True
         assert data["syntheticData"] is True
+        assert data["modelKind"] == "SYNTHETIC_POC"
         assert data["target"] == "meal_count"
         assert data["modelName"] in {"lightgbm", "random_forest", "xgboost", "hist_gradient_boosting"}
 
@@ -414,7 +415,6 @@ def test_served_inputs_reproduce_the_training_rows(client: TestClient) -> None:
             humidity=float(row["humidity"]),
             menuCategory=str(row["menu_category"]),
             mainMenu=str(row["main_menu"]),
-            menuPopularity=float(row["menu_popularity"]),
             specialMenu=bool(row["special_menu"]),
         )
         response = client.post(PREDICT, json=request, headers=AUTH)

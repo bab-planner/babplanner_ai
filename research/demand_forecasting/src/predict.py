@@ -51,8 +51,6 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--date", help="예측일 YYYY-MM-DD. 기본값: 합성 이력 마지막 날의 다음 평일")
     p.add_argument("--menu-category", default="양식", choices=list(CONFIG["menus"]))
     p.add_argument("--main-menu", default="돈까스")
-    p.add_argument("--menu-popularity", type=float,
-                   help="0~1. 기본값: 메뉴별 기본 선호도(시뮬레이션 가정값)")
     p.add_argument("--special-menu", type=int, choices=[0, 1], default=0)
     p.add_argument("--temperature", type=float, default=24.0, help="예보 기온(℃)")
     p.add_argument("--rainfall", type=float, default=0.0, help="예보 강수량(mm)")
@@ -117,17 +115,9 @@ def main() -> None:
 
     # --- 메뉴 ---------------------------------------------------------------
     menus = CONFIG["menus"][args.menu_category]
-    popularity = args.menu_popularity
     if args.main_menu not in menus:
         warnings.append(f"'{args.main_menu}'은(는) {args.menu_category} 메뉴 목록에 없다. "
                         "모델은 이 메뉴 이름을 모르는 값으로 처리한다.")
-        if popularity is None:
-            popularity = 0.5
-            warnings.append("메뉴 선호도를 알 수 없어 0.5를 썼다. --menu-popularity 로 지정할 수 있다.")
-    elif popularity is None:
-        popularity = menus[args.main_menu]
-    if not 0 <= popularity <= 1:
-        fail("--menu-popularity 는 0~1 사이여야 한다.")
 
     # --- 과거 feature: 예측일 이전 기록만 ------------------------------------
     hist = history_features(meal_log, cctv_log, target)
@@ -165,7 +155,6 @@ def main() -> None:
         "humidity": args.humidity,
         "menu_category": args.menu_category,
         "main_menu": args.main_menu,
-        "menu_popularity": popularity,
         "special_menu": args.special_menu,
         **{name: hist[name] for name in HISTORY_OPTIONS},
     }
@@ -185,9 +174,9 @@ def main() -> None:
     print("입력 조건:")
     print(f"- {target} {WEEKDAYS[target.weekday()]}요일")
     print(f"- {semester}학기 {week}주차")
-    print(f"- {args.menu_category} / {args.main_menu} (메뉴 선호도 {popularity:.2f}, 시뮬레이션 가정값)"
+    print(f"- {args.menu_category} / {args.main_menu} "
           f"{', 특식' if args.special_menu else ''}")
-    print(f"- 기온 {args.temperature:g}℃, {rain_text}, 습도 {args.humidity:g}%")
+    print(f"- D-1 예보: 기온 {args.temperature:g}℃, {rain_text}, 습도 {args.humidity:g}%")
     print(f"- {'시험기간' if exam else '시험기간 아님'}, {'공휴일' if holiday else '공휴일 아님'}, "
           f"{'교내 행사 있음' if args.campus_event else '교내 행사 없음'}")
     print()

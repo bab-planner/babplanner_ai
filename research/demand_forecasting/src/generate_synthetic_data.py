@@ -2,7 +2,7 @@
 
 **이 파일이 만드는 데이터는 실제 호서대학교 식당 데이터가 아니다.** 아래
 CONFIG의 가정으로 만든 시뮬레이션이다. 요인 사이의 관계(비가 오면 식수가
-준다, 메뉴 선호도가 높으면 는다 등)는 전부 이 파일이 **정해 넣은** 것이다.
+준다, 메뉴별 고유 효과가 있다 등)는 전부 이 파일이 **정해 넣은** 것이다.
 이 데이터로 학습한 모델이 그 관계를 찾아내는 것은 파이프라인이 동작한다는
 뜻일 뿐, 실제 인과관계나 실제 예측 성능의 근거가 되지 않는다.
 
@@ -12,6 +12,9 @@ CONFIG의 가정으로 만든 시뮬레이션이다. 요인 사이의 관계(비
 출력:
     data/synthetic_meal_demand.csv    학습용 (한 행 = 하루 중식)
     data/synthetic_cctv_daily.csv     CCTV 일일 관측 로그 (당일 값)
+
+날씨 열(temperature/rainfall/humidity)은 D-1 예보값이다. 식수는 실제 날씨로
+만들고, 학습 feature에는 예보 오차를 더한 값이 들어간다.
     outputs/synthetic_effect_shares.csv  생성 요인별 분산 비중
 
 같은 CONFIG와 seed로 다시 돌리면 같은 데이터가 나온다.
@@ -105,7 +108,9 @@ CONFIG: dict = {
     "campus_event_effect_range": (20, 50),
     "holiday_demand_ratio": 0.30,  # 공휴일은 정상 수요의 30%
     "holiday_noise_sd": 8,
-    # 날씨. 기온은 연중 사인 곡선 + AR(1) 잡음. 값은 D-1 예보로 간주한다.
+    # 날씨. 기온은 연중 사인 곡선 + AR(1) 잡음으로 만든 "당일 실제 날씨"다.
+    # 식수 생성식은 이 실제 날씨를 쓰고, 학습 feature(temperature/rainfall/
+    # humidity)에는 아래 forecast_error를 더한 D-1 예보값이 들어간다.
     "temperature": {"annual_mean": 13.0, "amplitude": 14.0, "coldest_doy": 20,
                     "noise_sd": 2.5, "noise_ar": 0.6},
     # 쾌적 구간을 벗어난 1℃마다 -1.8명 (춥거나 더우면 캠퍼스 체류가 준다는 가정)
@@ -118,7 +123,17 @@ CONFIG: dict = {
     # 습도는 강수·계절과 상관만 있고 식수 생성식에 직접 들어가지 않는다.
     "humidity": {"base": 55.0, "seasonal_amplitude": 12.0, "rain_bump": 20.0,
                  "noise_sd": 7.0},
-    # 메뉴. 선호도(0~1)는 메뉴별 기본값에 매일 작은 흔들림을 더한다.
+    # D-1 예보 오차(실제 날씨 -> 예보값). 모두 가정값이다.
+    "forecast_error": {
+        "temperature_sd": 1.5,       # 기온 예보 오차 표준편차(℃)
+        "humidity_sd": 6.0,          # 습도 예보 오차 표준편차(%p)
+        "rain_amount_log_sd": 0.4,   # 비가 온 날 강수량 예보 오차(로그 정규)
+        "rain_miss_prob": 0.10,      # 비가 왔는데 무강수로 예보
+        "rain_false_alarm_prob": 0.05,  # 비가 안 왔는데 강수로 예보
+        "false_alarm_range_mm": (0.5, 3.0),
+    },
+    # 메뉴. 아래 값은 메뉴별 고유 효과를 만드는 시뮬레이션 가정 계수(0~1)다.
+    # feature로 노출하지 않는다. 모델은 main_menu 이름으로만 이 효과를 배운다.
     "menu_category_prob": {"한식": 0.30, "중식": 0.15, "양식": 0.17,
                            "일식": 0.13, "분식": 0.15, "기타": 0.10},
     "menu_category_effect": {"한식": 5, "중식": 15, "양식": 20,
@@ -137,8 +152,7 @@ CONFIG: dict = {
         "기타": {"샐러드": 0.18, "샌드위치": 0.30, "죽": 0.12,
                  "덮밥류 기타": 0.42, "실험 메뉴": 0.25},
     },
-    "menu_popularity_noise_sd": 0.04,
-    "menu_popularity_effect_scale": 60,  # (선호도 - 0.5) * 60 → 약 ±30명
+    "menu_item_effect_scale": 60,  # (메뉴 계수 - 0.5) * 60 → 약 ±30명
     "special_menu_prob": 0.08,
     "special_menu_effect": 25,
     # 과거 수요 패턴을 만드는 잠재 요인. 모델은 이것을 직접 보지 못하고
@@ -247,26 +261,50 @@ def add_weather(df: pd.DataFrame, rng: np.random.Generator) -> pd.DataFrame:
     )
 
 
+def to_weather_forecast(df: pd.DataFrame, rng: np.random.Generator) -> pd.DataFrame:
+    """실제 날씨 열을 D-1 예보값으로 바꾼다.
+
+    식수 생성식은 이미 실제 날씨로 계산이 끝났다. 이 함수 이후의
+    temperature / rainfall / humidity는 "예측 시점(D-1)에 확보 가능한 예보값"이며
+    실제 날씨와 오차가 있다. 서빙에서 관리자가 입력하는 값과 같은 의미다.
+    """
+    e = CONFIG["forecast_error"]
+    n = len(df)
+    temperature = df["temperature"].to_numpy() + rng.normal(0, e["temperature_sd"], n)
+    humidity = df["humidity"].to_numpy() + rng.normal(0, e["humidity_sd"], n)
+
+    actual_rain = df["rainfall"].to_numpy()
+    rained = actual_rain > 0
+    scaled = actual_rain * np.exp(rng.normal(0, e["rain_amount_log_sd"], n))
+    missed = rng.random(n) < e["rain_miss_prob"]
+    false_alarm = (rng.random(n) < e["rain_false_alarm_prob"]) & ~rained
+    false_amount = rng.uniform(*e["false_alarm_range_mm"], n)
+    rainfall = np.where(rained, np.where(missed, 0.0, scaled), np.where(false_alarm, false_amount, 0.0))
+
+    return df.assign(
+        temperature=np.round(temperature, 1),
+        rainfall=np.round(rainfall, 1),
+        humidity=np.clip(np.round(humidity), 15, 100).astype(int),
+    )
+
+
 def add_menu(df: pd.DataFrame, rng: np.random.Generator) -> pd.DataFrame:
     categories = list(CONFIG["menu_category_prob"])
     probs = np.array(list(CONFIG["menu_category_prob"].values()))
-    chosen_category, chosen_menu, popularity = [], [], []
+    chosen_category, chosen_menu = [], []
     previous_menu = None
     for _ in range(len(df)):
         category = categories[rng.choice(len(categories), p=probs)]
         options = [m for m in CONFIG["menus"][category] if m != previous_menu]
         menu = options[rng.integers(len(options))]
-        base = CONFIG["menus"][category][menu]
         chosen_category.append(category)
         chosen_menu.append(menu)
-        popularity.append(np.clip(base + rng.normal(0, CONFIG["menu_popularity_noise_sd"]), 0, 1))
         previous_menu = menu
 
     special = (rng.random(len(df)) < CONFIG["special_menu_prob"]) & (df["holiday"] == 0)
     return df.assign(
         menu_category=chosen_category,
         main_menu=chosen_menu,
-        menu_popularity=np.round(popularity, 2),
         special_menu=special.astype(int),
     )
 
@@ -297,7 +335,8 @@ def generate_meal_count(df: pd.DataFrame, rng: np.random.Generator) -> tuple[pd.
     comp["rain_effect"] = np.where(df["rainfall"] > 0, rain_effect, 0.0)
 
     comp["menu_category_effect"] = df["menu_category"].map(c["menu_category_effect"])
-    comp["menu_popularity_effect"] = c["menu_popularity_effect_scale"] * (df["menu_popularity"] - 0.5)
+    menu_coefficient = {m: v for menus in c["menus"].values() for m, v in menus.items()}
+    comp["menu_item_effect"] = c["menu_item_effect_scale"] * (df["main_menu"].map(menu_coefficient) - 0.5)
     comp["special_menu_effect"] = df["special_menu"] * c["special_menu_effect"]
 
     # 잠재 요인. 방학을 지나면 이어지지 않으므로 학기마다 새로 시작한다.
@@ -363,7 +402,7 @@ def effect_shares(df: pd.DataFrame, comp: pd.DataFrame) -> pd.DataFrame:
     groups = {
         "과거 수요 패턴 (학기 수준 + 자기상관)": ["semester_level", "autoregressive_effect"],
         "요일·학사": ["weekday_effect", "semester_effect", "exam_effect", "campus_event_effect"],
-        "메뉴": ["menu_category_effect", "menu_popularity_effect", "special_menu_effect"],
+        "메뉴": ["menu_category_effect", "menu_item_effect", "special_menu_effect"],
         "날씨": ["temperature_effect", "rain_effect"],
         "캠퍼스 체류 수준 (CCTV가 부분 관측)": ["campus_presence"],
         "noise": ["random_noise"],
@@ -387,6 +426,7 @@ def main() -> None:
     df = add_campus_event(df, rng)
     df, components = generate_meal_count(df, rng)
     cctv_log = generate_cctv_log(df, components, rng)
+    df = to_weather_forecast(df, rng)  # 이후 날씨 열은 D-1 예보값
     shares = effect_shares(df, components)
 
     df = add_history_features(df, cctv_log)
@@ -403,7 +443,7 @@ def main() -> None:
         "date", "weekday",
         "semester", "semester_week", "exam_period", "holiday", "campus_event",
         "temperature", "rainfall", "humidity",
-        "menu_category", "main_menu", "menu_popularity", "special_menu",
+        "menu_category", "main_menu", "special_menu",
         "lag_1", "lag_7", "rolling_mean_7",
         "prev_avg_occupancy", "prev_peak_occupancy", "same_weekday_prev_occupancy",
         "meal_count",

@@ -21,7 +21,7 @@ from babplanner_ai.demand_forecast.service import DemandForecastService
 FEATURES = [
     "lag_1", "lag_7", "rolling_mean_7", "weekday", "semester", "semester_week",
     "exam_period", "holiday", "campus_event", "temperature", "rainfall", "humidity",
-    "menu_category", "main_menu", "menu_popularity", "special_menu",
+    "menu_category", "main_menu", "special_menu",
     "prev_avg_occupancy", "prev_peak_occupancy", "same_weekday_prev_occupancy",
 ]
 

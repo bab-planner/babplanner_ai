@@ -7,13 +7,12 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from babplanner_ai.config import get_settings
+from babplanner_ai.config import AppEnv, get_settings
 from babplanner_ai.demand.api import router as demand_router
 from babplanner_ai.demand_forecast.api import router as demand_forecast_router
 from babplanner_ai.demand_forecast.service import build_demand_forecast_service
 from babplanner_ai.health import router as health_router
 from babplanner_ai.procurement.api import router as procurement_router
-from babplanner_ai.waste.api import router as waste_router
 
 
 @asynccontextmanager
@@ -36,12 +35,15 @@ def create_app() -> FastAPI:
             "서비스 백엔드 전용 내부 AI 추론 API. 사용자 앱이 직접 호출하는 endpoint는 없다."
         ),
         lifespan=lifespan,
+        # 운영에서는 내부 API 문서 화면을 열어 두지 않는다.
+        docs_url=None if settings.app_env is AppEnv.PRODUCTION else "/docs",
+        redoc_url=None if settings.app_env is AppEnv.PRODUCTION else "/redoc",
+        openapi_url=None if settings.app_env is AppEnv.PRODUCTION else "/openapi.json",
     )
     app.state.demand_forecast_service = build_demand_forecast_service(settings)
     # 라우트는 항상 등록한다. 꺼진 기능은 없는 척하는 대신 503으로 답한다.
     # 404로 만들면 배포가 잘못됐는지 기능이 꺼졌는지 구분되지 않는다.
     app.include_router(health_router)
-    app.include_router(waste_router)
     app.include_router(demand_router)
     app.include_router(demand_forecast_router)
     app.include_router(procurement_router)

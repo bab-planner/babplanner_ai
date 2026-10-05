@@ -306,25 +306,15 @@ def test_failure_cases_carry_no_image_data():
 # --- 제품 경계 --------------------------------------------------------------
 
 
-def test_fixture_was_not_replaced():
-    """외부 벤치마크 결과만으로 운영 분석기를 바꾸지 않는다."""
-    from babplanner_ai.waste.fixture_estimator import (
-        FIXTURE_MODEL_VERSION,
-        FixtureWasteEstimator,
-    )
+def test_ai_service_has_no_runtime_waste_analysis():
+    """최종 AI 범위는 CCTV 혼잡도와 식수 인원 예측 둘뿐이다.
 
-    estimate = FixtureWasteEstimator().estimate(b"x", menu_id=1)
-    assert estimate.model_version == FIXTURE_MODEL_VERSION
-    assert "fixture" in FIXTURE_MODEL_VERSION
-
-
-def test_no_trained_estimator_is_wired_into_the_service():
-    """W2에서 FastAPI 경로에 학습된 모델을 붙이지 않았다."""
-    api = (ROOT / "src" / "babplanner_ai" / "waste" / "api.py").read_text(
-        encoding="utf-8"
-    )
-    assert "waste_estimation" not in api
-    assert "torch" not in api
+    잔반 분석은 AI 서비스의 운영 경로가 아니다(잔반 인증은 Backend의 관리자 승인
+    기능). 연구 결과가 운영 경로로 들어오지 않았음을 이 경계로 확인한다.
+    """
+    assert not (ROOT / "src" / "babplanner_ai" / "waste").exists()
+    main = (ROOT / "src" / "babplanner_ai" / "main.py").read_text(encoding="utf-8")
+    assert "waste" not in main
 
 
 def test_report_states_this_is_not_cafeteria_performance():

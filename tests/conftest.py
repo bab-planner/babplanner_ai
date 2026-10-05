@@ -20,7 +20,6 @@ TEST_SERVICE_TOKEN = "test-only-service-token-not-a-real-secret-0123456789"
 
 TEST_ENV = {
     "APP_ENV": "local",
-    "WASTE_MODEL_MODE": "fixture",
     # 수요/발주는 기본이 disabled다. 경계를 확인하려면 켜 둬야 한다. 꺼진
     # 상태는 설정을 갈아 끼우는 테스트에서 따로 확인한다.
     "DEMAND_MODEL_MODE": "fixture",
@@ -31,7 +30,6 @@ TEST_ENV = {
 # main 모듈은 import 시점에 앱을 만들면서 설정을 읽는다. 잘못 뜬 서버가
 # 정상으로 보이지 않게 하려는 의도이므로, 테스트도 import 전에 환경을 세운다.
 os.environ.update(TEST_ENV)
-os.environ.pop("AI_MAX_IMAGE_BYTES", None)
 
 #: 이 환경의 socket 생성이 간헐적으로 내는 오류. 다른 OSError는 다시
 #: 시도하지 않는다.
@@ -64,7 +62,6 @@ def client() -> Iterator[TestClient]:
     from babplanner_ai.main import create_app
 
     os.environ.update(TEST_ENV)
-    os.environ.pop("AI_MAX_IMAGE_BYTES", None)
     get_settings.cache_clear()
 
     with ExitStack() as stack:
@@ -95,7 +92,7 @@ def clean_env(monkeypatch: pytest.MonkeyPatch) -> Iterator[pytest.MonkeyPatch]:
     """설정 관련 환경 변수를 모두 지운 상태."""
     from babplanner_ai.config import get_settings
 
-    for key in (*TEST_ENV, "AI_MAX_IMAGE_BYTES"):
+    for key in TEST_ENV:
         monkeypatch.delenv(key, raising=False)
     get_settings.cache_clear()
     yield monkeypatch

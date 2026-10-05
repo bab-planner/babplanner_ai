@@ -12,7 +12,7 @@ import datetime as dt
 import logging
 import math
 
-from babplanner_ai.config import AppEnv, Settings
+from babplanner_ai.config import AppEnv, DemandForecastMode, Settings
 from babplanner_ai.demand_forecast.artifact import ArtifactError, ModelArtifactLoader
 from babplanner_ai.demand_forecast.features import (
     BUILDABLE_FEATURES,
@@ -91,6 +91,11 @@ class DemandForecastService:
             modelVersion=model.version if model else None,
             target=model.metadata.target if model else None,
             syntheticData=model.metadata.synthetic_data if model else None,
+            modelKind=(
+                ("SYNTHETIC_POC" if model.metadata.synthetic_data else "TRAINED")
+                if model
+                else None
+            ),
             trainingPeriod=list(model.metadata.training_period)
             if model and model.metadata.training_period
             else None,
@@ -150,7 +155,6 @@ class DemandForecastService:
                 campusEvent=request.campusEvent,
                 menuCategory=request.menuCategory,
                 mainMenu=request.mainMenu,
-                menuPopularity=request.menuPopularity,
                 specialMenu=request.specialMenu,
                 temperature=request.temperature,
                 rainfall=request.rainfall,
@@ -188,11 +192,17 @@ class DemandForecastService:
 
 
 def build_demand_forecast_service(settings: Settings) -> DemandForecastService:
+    synthetic_poc_opted_in = settings.demand_forecast_mode is DemandForecastMode.POC
+    if settings.app_env is AppEnv.PRODUCTION and synthetic_poc_opted_in:
+        log.warning(
+            "운영 환경에서 합성데이터 PoC 식수 예측 모델을 쓰도록 명시했습니다 "
+            "(DEMAND_FORECAST_MODE=poc). 응답은 실제 급식 운영 정확도를 뜻하지 않습니다."
+        )
     loader = ModelArtifactLoader(
         settings.demand_forecast_model_path,
         settings.demand_forecast_metadata_path,
         buildable_features=BUILDABLE_FEATURES,
-        allow_synthetic=settings.app_env is not AppEnv.PRODUCTION,
+        allow_synthetic=settings.app_env is not AppEnv.PRODUCTION or synthetic_poc_opted_in,
     )
     history = SyntheticDemandHistoryRepository(
         settings.demand_history_path, settings.demand_cctv_log_path

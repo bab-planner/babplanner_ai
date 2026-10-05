@@ -52,7 +52,6 @@ def disabled(client: TestClient) -> Iterator[None]:
     """
     settings = Settings(
         APP_ENV=AppEnv.LOCAL,
-        WASTE_MODEL_MODE="fixture",
         DEMAND_MODEL_MODE=PredictiveModelMode.DISABLED,
         PROCUREMENT_MODEL_MODE=PredictiveModelMode.FIXTURE,
         AI_SERVICE_TOKEN=TEST_SERVICE_TOKEN,
@@ -181,8 +180,7 @@ class TestDisabled:
 
         settings = Settings(
             APP_ENV=AppEnv.LOCAL,
-            WASTE_MODEL_MODE="fixture",
-            AI_SERVICE_TOKEN=TEST_SERVICE_TOKEN,
+                AI_SERVICE_TOKEN=TEST_SERVICE_TOKEN,
         )
 
         assert settings.demand_model_mode is PredictiveModelMode.DISABLED
@@ -193,8 +191,7 @@ class TestProductionSafety:
     def test_production_rejects_the_demand_fixture(self) -> None:
         settings = Settings(
             APP_ENV=AppEnv.PRODUCTION,
-            WASTE_MODEL_MODE="fixture",
-            DEMAND_MODEL_MODE=PredictiveModelMode.FIXTURE,
+                DEMAND_MODEL_MODE=PredictiveModelMode.FIXTURE,
             AI_SERVICE_TOKEN=TEST_SERVICE_TOKEN,
         )
 
@@ -206,8 +203,7 @@ class TestProductionSafety:
     def test_production_names_every_offending_mode(self) -> None:
         settings = Settings(
             APP_ENV=AppEnv.PRODUCTION,
-            WASTE_MODEL_MODE="fixture",
-            DEMAND_MODEL_MODE=PredictiveModelMode.FIXTURE,
+                DEMAND_MODEL_MODE=PredictiveModelMode.FIXTURE,
             PROCUREMENT_MODEL_MODE=PredictiveModelMode.FIXTURE,
             AI_SERVICE_TOKEN=TEST_SERVICE_TOKEN,
         )
@@ -217,31 +213,24 @@ class TestProductionSafety:
 
         # 하나씩 알려주면 고칠 때마다 다시 기동해 봐야 남은 것을 안다.
         message = str(failure.value)
-        assert "WASTE_MODEL_MODE" in message
         assert "DEMAND_MODEL_MODE" in message
         assert "PROCUREMENT_MODEL_MODE" in message
 
     def test_production_allows_disabled(self) -> None:
         settings = Settings(
             APP_ENV=AppEnv.PRODUCTION,
-            WASTE_MODEL_MODE="fixture",
             DEMAND_MODEL_MODE=PredictiveModelMode.DISABLED,
             PROCUREMENT_MODEL_MODE=PredictiveModelMode.DISABLED,
             AI_SERVICE_TOKEN=TEST_SERVICE_TOKEN,
         )
 
-        # waste fixture 때문에 막히는 것이지 demand/procurement 때문이 아니다.
-        with pytest.raises(ConfigurationError) as failure:
-            settings.validated()
-
-        assert "DEMAND_MODEL_MODE" not in str(failure.value)
-        assert "PROCUREMENT_MODEL_MODE" not in str(failure.value)
+        # fixture가 없으면 운영 구성이 그대로 통과한다.
+        assert settings.validated() is settings
 
     def test_failure_message_never_carries_the_token(self) -> None:
         settings = Settings(
             APP_ENV=AppEnv.PRODUCTION,
-            WASTE_MODEL_MODE="fixture",
-            DEMAND_MODEL_MODE=PredictiveModelMode.FIXTURE,
+                DEMAND_MODEL_MODE=PredictiveModelMode.FIXTURE,
             AI_SERVICE_TOKEN=TEST_SERVICE_TOKEN,
         )
 
