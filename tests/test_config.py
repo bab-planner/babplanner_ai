@@ -57,33 +57,23 @@ def test_token_error_does_not_leak_the_value() -> None:
     assert secret not in str(error.value)
 
 
-def test_fixture_estimator_is_rejected_in_production() -> None:
-    with pytest.raises(Exception) as error:
-        _settings(APP_ENV="production", DEMAND_MODEL_MODE="fixture")
+def test_removed_legacy_settings_are_ignored_not_required() -> None:
+    # 예전 배포 환경에 남아 있을 수 있는 환경 변수는 무시된다. 기동을 막지도,
+    # 어떤 기능을 켜지도 않는다.
+    settings = _settings(
+        WASTE_MODEL_MODE="fixture",
+        DEMAND_MODEL_MODE="fixture",
+        PROCUREMENT_MODEL_MODE="fixture",
+        AI_MAX_IMAGE_BYTES="1",
+    )
 
-    assert "운영" in str(error.value)
-
-
-def test_fixture_estimator_is_allowed_locally() -> None:
-    settings = _settings(APP_ENV="local", DEMAND_MODEL_MODE="fixture")
-
-    assert settings.demand_model_mode.value == "fixture"
-
-
-def test_unknown_model_mode_is_rejected() -> None:
-    with pytest.raises(Exception):
-        _settings(DEMAND_MODEL_MODE="best-model-v3")
-
-
-def test_waste_analysis_is_not_part_of_the_service() -> None:
-    # 최종 AI 범위는 CCTV 혼잡도와 식수 인원 예측 둘뿐이다. 잔반 분석 설정과 라우트가
-    # 다시 생기지 않게 막는다. (잔반 사진 제출/승인은 Backend 기능이다.)
-    from babplanner_ai.main import app
-
-    assert not hasattr(Settings, "waste_model_mode")
-    paths = set(app.openapi()["paths"])
-    assert paths, "라우트가 하나도 없으면 이 검사는 의미가 없다"
-    assert not any("waste" in path for path in paths)
+    for removed in (
+        "waste_model_mode",
+        "demand_model_mode",
+        "procurement_model_mode",
+        "max_image_bytes",
+    ):
+        assert not hasattr(settings, removed)
 
 
 class TestDemandForecastMode:
@@ -93,17 +83,6 @@ class TestDemandForecastMode:
         from babplanner_ai.config import DemandForecastMode
 
         assert _settings().demand_forecast_mode is DemandForecastMode.STRICT
-
-    def test_poc_does_not_relax_the_fixture_ban_in_production(self) -> None:
-        # 합성 PoC 허용은 식수 예측 모델 하나에만 해당한다. fixture는 계속 금지다.
-        from babplanner_ai.config import ConfigurationError
-
-        with pytest.raises(ConfigurationError):
-            _settings(
-                APP_ENV="production",
-                DEMAND_FORECAST_MODE="poc",
-                DEMAND_MODEL_MODE="fixture",
-            )
 
     def test_poc_mode_value_is_accepted(self) -> None:
         from babplanner_ai.config import DemandForecastMode
@@ -126,7 +105,6 @@ class TestDemandForecastMode:
         ],
     )
     def test_synthetic_model_gate(self, env: str, mode: str, allowed: bool) -> None:
-        from babplanner_ai.config import Settings
         from babplanner_ai.demand_forecast.service import build_demand_forecast_service
 
         settings = Settings(
@@ -141,17 +119,18 @@ class TestDemandForecastMode:
 
 
 class TestProductionConfiguration:
-    """운영 구성: fixture 없이 모두 disabled, 식수 예측만 PoC로 명시한다."""
+    """운영 구성: 합성 PoC 식수 예측은 DEMAND_FORECAST_MODE=poc로 명시한다."""
 
     def test_production_with_poc_demand_forecast_is_allowed(self) -> None:
         from babplanner_ai.config import AppEnv, DemandForecastMode
 
-        settings = _settings(
-            APP_ENV="production",
-            DEMAND_MODEL_MODE="disabled",
-            PROCUREMENT_MODEL_MODE="disabled",
-            DEMAND_FORECAST_MODE="poc",
-        )
+        settings = _settings(APP_ENV="production", DEMAND_FORECAST_MODE="poc")
 
         assert settings.app_env is AppEnv.PRODUCTION
         assert settings.demand_forecast_mode is DemandForecastMode.POC
+
+    def test_production_without_poc_still_starts(self) -> None:
+        # strict로 두면 합성 모델만 로드되지 않을 뿐 서비스는 뜬다(status unavailable).
+        settings = _settings(APP_ENV="production")
+
+        assert settings.validated() is settings

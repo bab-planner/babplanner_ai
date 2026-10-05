@@ -232,8 +232,9 @@ peak_occupancy = avg_occupancy × U(1.6, 2.0) + N(0, 3)   (항상 avg보다 크�
 
 ## 6. 실행 방법
 
-`research/demand_forecasting/`에서 실행한다. 서비스 환경(`.venv`)에는 pandas와
-sklearn이 없고, 넣지도 않는다(`tests/test_no_model_yet.py`).
+`research/demand_forecasting/`에서 실행한다. 서비스 소스는 학습 코드를 import하지 않는다
+(`tests/test_service_does_not_train.py`). 학습은 이 폴더의 스크립트가 하고, 서버는 저장된
+artifact만 읽는다.
 
     cd research/demand_forecasting
     python src/generate_synthetic_data.py   # 1. 합성데이터 생성 + leakage 검증
@@ -243,12 +244,20 @@ sklearn이 없고, 넣지도 않는다(`tests/test_no_model_yet.py`).
 
 Windows에서 여러 Python이 있으면 `py -3.12 src/...`처럼 부른다.
 
-검증은 이미 패키지가 설치된 시스템 Python 3.12.1에서 했다(버전은
-`requirements.txt`). 새 가상환경에 설치하는 절차는 돌려 보지 않았다. 새로 만든다면
-이 폴더 안에서 한다. `.venv/`는 어느 깊이에서든 `.gitignore`에 걸린다.
+새 가상환경에서 처음부터 만드는 절차는 **실제로 돌려 확인했다**(Python 3.12). 저장소 루트에서:
 
     python -m venv .venv
-    .venv\Scripts\python.exe -m pip install -r requirements.txt
+    python -m pip install -e ".[dev,demand-model]" matplotlib
+    python research/demand_forecasting/src/generate_synthetic_data.py
+    python research/demand_forecasting/src/train.py
+
+`demand-model` extra가 학습과 추론에 쓰는 라이브러리(numpy, pandas, scikit-learn, lightgbm,
+joblib)를 **버전 고정**으로 설치한다. 학습 그래프용 matplotlib만 따로 더한다. 이
+폴더의 `requirements.txt`는 하한만 적은 참고용이다. artifact를 서버가 읽으려면 학습
+환경과 서버 환경의 버전이 같아야 하므로 위 extra를 쓰는 것이 안전하다.
+
+seed가 고정이라 이렇게 만든 합성 CSV 2개, `meal_demand_model.joblib`, 평가 지표 CSV가
+기존 artifact와 byte 단위로 같았다. metadata의 `training_date`만 다르다.
 
 ### 예측 CLI
 

@@ -20,18 +20,6 @@ class AppEnv(str, Enum):
     PRODUCTION = "production"
 
 
-class PredictiveModelMode(str, Enum):
-    """수요/발주 구현 선택.
-
-    disabled는 fixture가 아니다. 끄면 숫자를 만들지 않고 503을 돌려준다.
-    아직 실제 모델이 없으므로 기본값은 disabled다. 기본이 fixture면 아무도
-    고르지 않았을 때 지어낸 숫자가 나간다.
-    """
-
-    DISABLED = "disabled"
-    FIXTURE = "fixture"
-
-
 class DemandForecastMode(str, Enum):
     """식수 예측에 합성데이터 PoC 모델을 허용할지.
 
@@ -72,12 +60,6 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=None, extra="ignore")
 
     app_env: AppEnv = Field(alias="APP_ENV")
-    demand_model_mode: PredictiveModelMode = Field(
-        default=PredictiveModelMode.DISABLED, alias="DEMAND_MODEL_MODE"
-    )
-    procurement_model_mode: PredictiveModelMode = Field(
-        default=PredictiveModelMode.DISABLED, alias="PROCUREMENT_MODEL_MODE"
-    )
     demand_forecast_mode: DemandForecastMode = Field(
         default=DemandForecastMode.STRICT, alias="DEMAND_FORECAST_MODE"
     )
@@ -101,33 +83,6 @@ class Settings(BaseSettings):
         if len(self.service_token.strip()) < MIN_SERVICE_TOKEN_LENGTH:
             raise ConfigurationError(
                 f"AI_SERVICE_TOKEN 은 최소 {MIN_SERVICE_TOKEN_LENGTH}자여야 합니다."
-            )
-        # fixture는 판독도 예측도 하지 않고 고정된 개발용 값을 돌려준다.
-        # 운영에서 선택되면 예측하지 않은 숫자를 보고 관리자가 식수를 잡고
-        # 식재료를 주문하게 된다.
-        #
-        # 위반을 하나 찾고 멈추지 않는다. 첫 항목만 알려주면 그것을 고친 뒤
-        # 다시 기동해서 다음 항목을 만나게 되고, 무엇이 남았는지는 매번
-        # 기동해 봐야 알 수 있다.
-        offenders = [
-            name
-            for name, offending in (
-                (
-                    "DEMAND_MODEL_MODE",
-                    self.demand_model_mode is PredictiveModelMode.FIXTURE,
-                ),
-                (
-                    "PROCUREMENT_MODEL_MODE",
-                    self.procurement_model_mode is PredictiveModelMode.FIXTURE,
-                ),
-            )
-            if offending
-        ]
-        if self.app_env is AppEnv.PRODUCTION and offenders:
-            raise ConfigurationError(
-                "운영 환경에서는 fixture 구현을 쓸 수 없습니다: "
-                + ", ".join(f"{name}=fixture" for name in offenders)
-                + ". 실제 모델 어댑터를 등록하거나 disabled 로 두세요."
             )
         return self
 

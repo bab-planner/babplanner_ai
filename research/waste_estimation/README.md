@@ -44,7 +44,7 @@ image
 
 서비스 계약과 데이터셋 도구도 이미 있다.
 
-- `src/babplanner_ai/waste/` — API와 `WasteEstimator` 경계. 지금은 fixture
+- (제거됨) 서비스의 잔반 분석 API 경계(`src/babplanner_ai/waste/`)는 최종 AI 범위에서 빠져 삭제했다. 이 연구는 오프라인 기록이며 runtime에 연결되지 않는다.
 - `src/babplanner_ai/dataset/` — 매니페스트 검증, 요약, 분할
 - `src/babplanner_ai/collection/` — 현장 수집 도구
 - `docs/waste_dataset_spec.md` — 매니페스트 열, 개인정보 규칙

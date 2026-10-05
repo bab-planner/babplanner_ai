@@ -1,7 +1,7 @@
 [project]
 name = "babplanner-ai"
 version = "0.1.0"
-description = "밥플래너 잔반 이미지 분석 서비스"
+description = "밥플래너 AI 서비스 (다음 운영일 중식 식수 인원 예측)"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115",

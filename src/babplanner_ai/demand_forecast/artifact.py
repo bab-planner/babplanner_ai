@@ -234,8 +234,9 @@ class ModelArtifactLoader:
             raise ArtifactError("model metadata is invalid") from error
         metadata = ModelMetadata.parse(raw, self._buildable)
 
-        # 합성데이터로 학습한 모델은 운영에서 쓰지 않는다. fixture를 운영에서
-        # 막는 것과 같은 이유다. 지어낸 관계를 배운 숫자로 식재료를 주문하게 된다.
+        # 합성데이터로 학습한 모델은 운영에서 기본적으로 쓰지 않는다. 지어낸 관계를
+        # 배운 숫자로 식수를 잡게 되기 때문이다. DEMAND_FORECAST_MODE=poc로 명시했을
+        # 때만 허용한다.
         if metadata.synthetic_data and not self._allow_synthetic:
             raise ArtifactError(
                 "synthetic-data model is not allowed in production "

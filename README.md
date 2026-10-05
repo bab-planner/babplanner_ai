@@ -1,6 +1,6 @@
 # babplanner-ai
 
-밥플래너 AI 추론 서버. 식수 인원 예측의 내부 경계다. 최종 AI 범위는 **CCTV 혼잡도**(영상 수집기가
+밥플래너 AI 추론 서버. **다음 운영일 중식 식수 인원 예측**의 내부 경계다. 최종 AI 범위는 **CCTV 혼잡도**(영상 수집기가
 Backend로 push)와 **식수 인원 예측** 둘이다. 잔반 사진은 AI가 분석하지 않는다. 사용자가 제출하면
 Backend가 관리자 승인 대기(PENDING)로 두고, 관리자가 사진을 보고 승인/거절한다.
 
@@ -33,49 +33,41 @@ FastAPI AI 추론 서버 (이 저장소)   저장된 모델을 로드해 추론�
 
 | 기능 | 구현 | 돌려주는 값 |
 |---|---|---|
-| 수요 예측 (기존 계약) | `FixtureDemandEstimator` | 입력과 무관하게 고정된 인원 수 |
 | **식수 예측 (demand-forecast)** | 저장된 LightGBM Pipeline | **합성데이터로 학습한 PoC 모델의 예측값** |
-| 발주 추천 | `FixtureProcurementRecommender` | 계획 수량 그대로, 조정률 0 |
+| CCTV 혼잡도 | 영상 수집기(`demo/cctv_collector`) | 사람 수와 혼잡 단계를 Backend로 push. 이 서버를 거치지 않는다 |
 
-fixture 값을 분석 결과나 예측으로 읽으면 안 된다. `modelVersion`이
-`fastapi-fixture-*`로 시작하면 fixture가 낸 값이다.
+이 서버의 runtime 경로는 `/health`와 식수 예측 status/predict 셋뿐이다. 잔반 분석,
+일반 수요 예측, 발주 추천, 추천 같은 다른 AI 경로는 두지 않는다. 이를
+`tests/test_runtime_ai_scope.py`가 소스로 고정한다.
 
 demand-forecast의 값은 모델이 실제로 계산한 예측이지만, 학습 데이터가 합성이다.
-응답의 `model.syntheticData: true`와 `disclaimer`가 그것을 알린다. 이 값으로 식재료를
-주문하면 안 된다. 그래서 `APP_ENV=production`에서는 합성데이터 모델을 로드하지 않는다
-(status unavailable, predict 503).
+응답의 `model.syntheticData: true`와 `disclaimer`가 그것을 알린다. 이 값을 실제 급식
+운영 정확도로 소개하면 안 된다. 그래서 `APP_ENV=production`에서는 합성데이터 모델을
+기본적으로 로드하지 않고(status unavailable, predict 503), `DEMAND_FORECAST_MODE=poc`로
+**명시했을 때만** 로드한다.
 
-교체 지점은 `WasteEstimator` / `DemandEstimator` / `ProcurementRecommender`
-셋이다. HTTP 계층과 인증은 그대로 두고 구현만 바꾸면 된다.
+모델을 실데이터 모델로 바꾸는 지점은 artifact 파일(joblib + metadata.json)이다. HTTP
+계층과 인증은 그대로 두고 artifact만 교체하면 된다. 이 extra 없이도 서버는 뜨고, 식수
+예측만 쓸 수 없다고 답한다.
 
-### 수요 예측: 정답 데이터가 없다
+artifact와 합성 이력은 git에 없다. 처음이면 아래 "식수 예측 PoC artifact 만들기"로
+만든다.
 
-이건 모델을 아직 안 만들었다는 것과는 다른 문제다.
+### 식수 예측: 정답 데이터가 없다
 
-수요 예측이 맞히려는 값은 **실제 급식 이용 인원**이다. 그런데 지금 시스템
-어디에도 그 값이 정답으로 쌓이는 곳이 없다.
+식수 예측이 맞히려는 값은 **실제 급식 이용 인원**이다. 그런데 지금 시스템 어디에도 그
+값이 정답으로 쌓이는 곳이 없다.
 
-- `congestion_observations.peopleCount`는 특정 시점에 관측된 혼잡도 지표다.
-  한 끼를 실제로 먹은 사람 수가 아니다. 이 값을 정답으로 쓰면 관측 시각과
-  관측 방식에 따라 정답이 흔들린다.
+- `congestion_observations.peopleCount`는 특정 시점에 관측된 혼잡도 지표다. 한 끼를
+  실제로 먹은 사람 수가 아니다. 이 값을 정답으로 쓰면 관측 시각과 방식에 따라 정답이
+  흔들린다.
 - 잔반 제출 건수는 인증에 참여한 사람 수다. 이용자 전체가 아니다.
 - 식권/입장 기록 같은 canonical source는 아직 없다.
 
-그래서 `AIDemandRequest`는 과거 관측치 배열을 받지 않는다. 어느 기간의
-무엇을 집계한 값인지 정의된 적이 없는 배열을 계약에 두면, 보내는 쪽은 모델이
-그것을 쓰고 있다고 믿고 받는 쪽은 무시하게 된다.
-
-**실제 식수 ground truth source가 생기기 전까지 수요 모델 학습은 불가능하다.**
-feature 계약 확장은 그 source가 정해진 뒤 별도 version에서 한다.
-
-demand-forecast 계약(아래 "식수 예측 API")은 이 원칙의 예외가 아니다. 합성데이터
-PoC 파이프라인이 끝까지 도는지 보이려고 **별도 경로**로 만든 계약이다. 기존
-`AIDemandRequest`와 `/internal/v1/ai/demand/predict`는 바꾸지 않았다. 그리고
-demand-forecast도 과거 관측치 배열을 받지 않는다. 과거 feature는 AI 서버가 자기
-이력 저장소에서 예측일 이전 기록만으로 만든다.
-
-발주 추천도 마찬가지다. 계획 발주량의 canonical source가 백엔드에 없어서,
-관리자가 요청 본문으로 명시하도록 계약을 정했다.
+**실제 식수 ground truth source가 생기기 전까지 실데이터 모델 학습은 불가능하다.**
+그래서 합성데이터 PoC로 파이프라인이 끝까지 도는지 보이는 데까지만 했다. 이 계약은
+과거 관측치 배열을 받지 않는다. 과거 feature는 AI 서버가 자기 이력 저장소에서 예측일
+**이전** 기록만으로 만든다.
 
 ## AI 연구 트랙
 
@@ -85,7 +77,7 @@ demand-forecast도 과거 관측치 배열을 받지 않는다. 과거 feature�
 | | 트랙 | 상태 |
 |---|---|---|
 | AI-1 | [CCTV 혼잡도·이용 인원](research/cctv_counting/) | **공개 데이터 cross-sequence 평가 완료.** 급식소 검증은 아직 |
-| (보관) | [잔반 분석 연구](research/waste_estimation/) | **서비스 범위 밖.** 과거 연구 기록으로만 남아 있고 운영 경로는 없다(잔반 인증은 Backend의 관리자 승인) |
+| (보관) | [잔반 분석 연구](research/waste_estimation/) | **서비스 범위 밖.** 과거 연구 기록으로만 남아 있고 runtime 경로는 없다(잔반 인증은 Backend의 관리자 승인) |
 | AI-3 | [식수 예측](research/demand_forecasting/) | **합성데이터 PoC.** 저장 모델을 demand-forecast API로 서빙. 실제 식수 데이터 0건이라 실제 모델 없음. Spring Backend가 호출한다 |
 
 AI-1은 영상에서 현재 인원(occupancy)과 입구 통과 인원(entry count)을 따로
@@ -153,26 +145,66 @@ opencv가 필요하다. **그것은 이 저장소의 `.venv`가 아니라 별도
 
 ### 설치
 
-    .venv\Scripts\python.exe -m pip install -e ".[dev,demand-model]"
+    python -m venv .venv
+    # Windows:      .venv\Scripts\activate
+    # macOS/Linux:  source .venv/bin/activate
+    python -m pip install -e ".[dev,demand-model]"
 
 `demand-model`은 식수 예측 artifact를 읽는 데 필요한 ML 런타임이다(joblib,
 scikit-learn, lightgbm, pandas, numpy). 버전은 artifact를 저장한 환경과 정확히
 맞춰 두었다. 이 extra 없이도 서버는 뜨고, 식수 예측만 쓸 수 없다고 답한다.
 
-artifact와 합성 이력은 git에 없다. 처음이면 research 파이프라인으로 만든다
-(`research/demand_forecasting/README.md`).
+### 식수 예측 PoC artifact 만들기 (clone 직후)
 
-    cd research/demand_forecasting
-    python src/generate_synthetic_data.py
-    python src/train.py
+artifact(모델)와 합성 데이터(`research/demand_forecasting/{models,data,outputs}`)는 git에
+없다. clone한 직후에는 아래 순서로 만든다. Python 3.12에서 검증했다.
+
+    # 1. 위 "설치"를 마친 가상환경에서 학습 그래프용 matplotlib만 더한다
+    python -m pip install matplotlib
+
+    # 2. 합성 식수/CCTV 이력 생성 (+ leakage 검증)
+    python research/demand_forecasting/src/generate_synthetic_data.py
+
+    # 3. 학습·평가·모델 저장 (models/meal_demand_model.joblib, metadata.json)
+    python research/demand_forecasting/src/train.py
+
+    # 4. 서버 기동 후 확인 (아래 "기동" 참고)
+    #    GET  /health
+    #    GET  /internal/v1/ai/demand-forecast/status    -> available: true
+    #    POST /internal/v1/ai/demand-forecast/predict
+
+seed가 고정(42)이라 **같은 소스에서는 같은 데이터와 같은 모델이 나온다.** 새 가상환경에서
+이 순서로 만든 결과의 합성 CSV 2개, `meal_demand_model.joblib`, 평가 지표 CSV가 기존
+artifact와 byte 단위로 일치하는 것을 확인했다(`model_sha256` 동일, status의
+`modelVersion`은 이 해시의 앞 12자리). metadata의 `training_date`만 실행 시각이라 다르다.
+artifact를 만든 환경과 서버 환경의 라이브러리 버전이 다르면 status `warnings`에 나온다.
+
+서버가 기동할 때마다 학습하지는 않는다. artifact는 한 번 만들어 두고 서버는 읽기만 한다.
+
+### 컨테이너 배포 (Docker)
+
+`Dockerfile`은 두 단계다. build 단계에서 위 2~3을 한 번 실행해 artifact를 만들고, runtime
+이미지에는 추론에 필요한 고정 버전 의존성과 그 artifact(모델, metadata, 합성 이력)만
+복사한다. matplotlib 같은 학습 도구는 runtime 이미지에 없다. 모델 binary를 git에 넣지
+않아도 이미지가 재현된다.
+
+    docker build -t babplanner-ai .
+    docker run --rm -p 8000:8000 ^
+        -e APP_ENV=production -e AI_SERVICE_TOKEN=<secret, 32자 이상> ^
+        -e DEMAND_FORECAST_MODE=poc babplanner-ai
+
+- `AI_SERVICE_TOKEN`과 `APP_ENV`는 이미지에 넣지 않고 실행할 때 준다.
+- **`DEMAND_FORECAST_MODE=poc`를 명시해야** production에서 합성 PoC 모델이 서비스된다.
+  빼면 status는 `available: false`, predict는 503이다(합성 모델이 운영에 조용히 나가지
+  않게 하려는 정책이다).
+- 실데이터 모델이 생기면 Dockerfile의 build 단계(generate/train)를 실제 artifact를
+  복사하는 것으로 바꾸면 된다. 서버와 API는 그대로다.
 
 ### 기동
 
 환경 변수는 셸에만 둔다. 파일로 남기지 않는다.
 
     APP_ENV=local
-    DEMAND_MODEL_MODE=fixture
-    PROCUREMENT_MODEL_MODE=fixture
     AI_SERVICE_TOKEN=<secret, 32자 이상>
 
     uvicorn babplanner_ai.main:app --host 127.0.0.1 --port 8001 --reload
@@ -195,26 +227,19 @@ artifact와 합성 이력은 git에 없다. 처음이면 research 파이프라�
 `http://127.0.0.1:8001/docs`. demand-forecast 경로는 각 요청의 `X-Service-Token`
 칸에 `AI_SERVICE_TOKEN` 값을 넣고 "Try it out"으로 부른다. 요청 예시가 채워져 있다.
 
-`DEMAND_MODEL_MODE`/`PROCUREMENT_MODEL_MODE`에서 운영에 `fixture`를 고르면 기동에 실패한다.
-운영에서는 이 서비스의 `/docs`와 `/openapi.json`도 닫힌다.
+운영(`APP_ENV=production`)에서는 이 서비스의 `/docs`와 `/openapi.json`이 닫힌다.
 
 `DEMAND_FORECAST_MODE`(`strict` 기본 | `poc`)는 합성데이터 식수 예측 모델을 운영에서
 쓸지 정한다. `strict`에서는 `APP_ENV=production`이면 합성 모델을 로드하지 않고
 `poc`를 **명시했을 때만** 로드한다. 합성 PoC 모델임은 status의
 `modelKind: "SYNTHETIC_POC"`, `syntheticData: true`와 응답의 `disclaimer`로 계속
-드러난다. fixture 금지는 `poc`와 무관하게 유지된다.
-
-`DEMAND_MODEL_MODE`와 `PROCUREMENT_MODEL_MODE`의 기본값은 `disabled`다.
-`disabled`는 fixture가 아니라 "꺼짐"이며, 호출하면 503이 나간다. 끈 기능이
-fixture로 대신 답하면 예측이 없는 배포가 예측을 하고 있는 것처럼 보인다.
+드러난다.
 
 ## 내부 API
 
     GET  /health
-    POST /internal/v1/ai/demand/predict
     GET  /internal/v1/ai/demand-forecast/status
     POST /internal/v1/ai/demand-forecast/predict
-    POST /internal/v1/ai/procurement/recommend
 
 `/health`를 뺀 전부가 `X-Service-Token` 헤더를 요구한다. 없거나 틀리면 똑같이
 401이다. `/health`는 컨테이너 헬스체크용이고 `{"status": "ok"}` 외에 아무것도
@@ -335,8 +360,8 @@ artifact가 없으면 서버는 뜬 채로 이렇게 답한다(predict는 503).
 - 모델이 기억하는 입력 컬럼(`feature_names_in_`)과 metadata `features`를 다시 맞춘다.
   예측 때도 입력 행의 컬럼이 metadata 순서와 같은지 확인한다.
 - 학습 때와 라이브러리 버전이 다르면 status의 `warnings`에 적는다.
-- **`APP_ENV=production`에서는 합성데이터 모델을 로드하지 않는다.** fixture를 운영에서
-  막는 것과 같은 이유다.
+- **`APP_ENV=production`에서는 합성데이터 모델을 기본적으로 로드하지 않는다.**
+  `DEMAND_FORECAST_MODE=poc`로 명시했을 때만 로드한다.
 
 ### 과거 feature
 

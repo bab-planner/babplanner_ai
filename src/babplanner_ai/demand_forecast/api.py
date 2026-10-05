@@ -6,7 +6,8 @@
 - GET  /internal/v1/ai/demand-forecast/status   모델·이력 사용 가능 여부
 - POST /internal/v1/ai/demand-forecast/predict  다음 날 중식 식수 예측
 
-기존 /internal/v1/ai/demand/predict 는 그대로 둔다. 다른 계약이다.
+이 서비스가 제공하는 AI 기능은 이 식수 예측 하나다. CCTV 혼잡도는 영상 수집기가
+Backend로 직접 push한다.
 """
 
 from __future__ import annotations
